@@ -564,6 +564,45 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
   .rgrid,.sgrid{grid-template-columns:1fr}
   .opt{grid-template-columns:1fr}
 }
+/* ===================== Goniometrie (klas 3 vwo) ===================== */
+.gnwrap{flex:1;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.2rem;min-height:0}
+.gnfig{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;min-height:0;padding:.8rem;overflow:hidden}
+.gnfig svg{width:100%;flex:1;min-height:0;max-height:100%;border-radius:1rem}
+.gnleg{display:flex;gap:1.2rem;flex-wrap:wrap;justify-content:center;font-weight:700;font-size:1rem}
+.gnleg i{display:inline-block;width:1.5rem;height:.5rem;border-radius:.3rem;margin-right:.4rem;vertical-align:middle}
+.gnside{display:flex;flex-direction:column;gap:.8rem;min-height:0}
+.gnans{display:flex;align-items:baseline;justify-content:center;gap:.7rem;font-family:var(--fd);font-size:clamp(2.2rem,7vmin,4.6rem);padding:.5rem 1rem;line-height:1.1}
+.gnlbl{color:var(--muted)}
+.gnval{display:inline-block;min-width:3.2ch;text-align:center;color:var(--sub);border-bottom:.08em solid var(--line)}
+.gnval.rv{color:var(--bad)}
+.gnunit{font-size:.6em;color:var(--muted)}
+.gnnote{padding:.8rem 1.1rem;font-size:1.05rem;line-height:1.55;overflow:auto;max-height:42%;flex:0 0 auto}
+.gnnote .gnerr{font-weight:800;color:var(--gold);margin-bottom:.35rem}
+.gnnote .gnl{margin:.15rem 0}
+.gnnote .gnyou{color:var(--muted);margin-bottom:.3rem}
+.gnnote .gnyou s{color:var(--bad)}
+.gnnote .gnnx{margin-top:.5rem;min-height:2.6rem}
+.gnnote b.co{color:#5CA8FF}.gnnote b.ca{color:#2EE59D}.gnnote b.ch{color:#FFA23A}
+.gnnote .fr{font-size:.85em}
+.gnrule{font-weight:700}
+.gnrule small{display:block;color:var(--muted);font-weight:600;margin-top:.3rem}
+.gnsub{display:block;font-family:"Segoe UI","Nunito",Roboto,system-ui,sans-serif;font-size:.5em;font-weight:600;color:var(--muted);letter-spacing:0;text-transform:none;font-style:normal}
+.gnpad{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:.6rem;flex:1;min-height:0}
+.gnpad .key{font-size:clamp(1.4rem,4.4vmin,3rem)}
+.gnpad .key.ok{grid-row:auto;grid-column:1 / -1}
+.gnsum{color:var(--good);font-weight:700;margin-bottom:.5rem}
+.gnpad.pick{grid-template-rows:1fr}
+.gnpad .key.big{font-size:clamp(2rem,7vmin,4.6rem)}
+.gnpad.two{display:flex;flex-direction:column;gap:.7rem}
+.gnrow{flex:1;display:flex;flex-direction:column;gap:.35rem;min-height:0}
+.gnrow .gl{font-weight:800;color:var(--muted)}
+.gnrow .opts{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));gap:.5rem;min-height:0}
+.gnpad .key.sm{font-size:clamp(.9rem,2.1vmin,1.35rem);line-height:1.2;padding:.3rem .5rem}
+.gnpad .key.sel{background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--ctaInk)}
+.gnpad .key.right{background:linear-gradient(180deg,#6FF5C0,var(--good));color:var(--dark)}
+.gnpad .key.wrong{background:linear-gradient(180deg,#FF8095,var(--bad));color:#fff}
+.mini-gon{height:4.6rem;display:flex;align-items:center;justify-content:center;background:#0E1430;border-radius:1rem}
+.mini-gon svg{height:100%;width:auto}
 </style>
 </head>
 <body>
@@ -588,6 +627,12 @@ const LEVELS = [
 const timeLabel = t => t < 60 ? t + ' sec' : (t / 60) + ' min';
 const OPTDEFS = {
   ops: {label: 'Sommen', multi: true, allName: 'Alles door elkaar', choices: OP_ORDER.map(o => ({v: o, name: o, sub: OPS[o].name, long: OPS[o].name, cls: OPS[o].cls}))},
+gt: {label: 'Soort', multi: true, allName: 'alle soorten', choices: [
+    {v: 'z1', name: 'Zijde: keer', sub: 'x = 8 · tan 35°', long: 'zijde (keer)'}, {v: 'z2', name: 'Zijde: delen', sub: 'x = 8 : tan 35°', long: 'zijde (delen)'},
+    {v: 'h', name: 'Hoek', sub: 'x = tan⁻¹(6 : 8)', long: 'hoek'}]},
+  hoekr: {label: 'Afronden', choices: [{v: 1, name: 'Hoek: 1 decimaal', sub: 'zijden altijd 1 decimaal'}, {v: 0, name: 'Hoek: hele graden', sub: 'zijden altijd 1 decimaal'}]},
+  stap: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'verhouding kiezen, gegeven en gevraagd, rekenen'}, {v: 'direct', name: 'Direct rekenen', sub: 'alleen het antwoord intypen'}]},
+  hulp: {label: 'Hulp', choices: [{v: 'ja', name: 'Met hulp', sub: 'zijden gekleurd + sin cos tan'}, {v: 'nee', name: 'Zonder hulp', sub: 'zelf bepalen'}]},
   vt: {label: 'Soort', multi: true, allName: 'alle stappen', choices: [
     {v: 's1', name: '3 + 4 × 5', sub: 'stap 1: × gaat voor +', long: 'stap 1'}, {v: 's2', name: '12 − 8 : 2 + 3', sub: 'stap 2: met delen', long: 'stap 2'},
     {v: 's3', name: '(3 + 4) × 5', sub: 'stap 3: haakjes', long: 'stap 3'}, {v: 's4', name: '20 − (3 + 5) : 4 × 3', sub: 'stap 4: alles samen', long: 'stap 4'}]},
@@ -1131,6 +1176,19 @@ const GAMES = {
     setup: () => { G.bal = []; G.lanes = []; },
     begin: () => balBegin()
   },
+  gonio: {
+    section: 'gon', title: 'Driehoeken', sub: 'Bereken een zijde of een hoek met sin, cos en tan',
+    opts: ['gt', 'stap', 'hoekr', 'hulp', 'time'], choices: {time: [120, 180, 300, 480, 600].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {gt: ['z1', 'z2', 'h'], stap: 'stappen', hoekr: 1, hulp: 'ja', time: 480},
+    scoreLabel: 'stappen goed',
+    example: c => `Voorbeeld: <b>${genGon(c).eqHTML}</b>`,
+    tile: () => `<div class="mini-gon"><svg viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="66" x2="110" y2="66" stroke="#5CA8FF" stroke-width="5" stroke-linecap="round"/><line x1="110" y1="66" x2="110" y2="14" stroke="#2EE59D" stroke-width="5" stroke-linecap="round"/><line x1="12" y1="66" x2="110" y2="14" stroke="#FFA23A" stroke-width="5" stroke-linecap="round"/><path d="M98 66 V54 H110" fill="none" stroke="#F2F4FF" stroke-width="2.5"/><text x="42" y="58" font-size="14" font-weight="800" fill="#F2F4FF">35°</text><text x="120" y="45" font-size="18" font-weight="800" font-style="italic" fill="#FF4D6D">x</text></svg></div>`,
+    frame: () => `<div class="bq"><div class="qcard gqc" id="qcard"><div class="qtext" id="qtext">&nbsp;</div></div></div>
+      <div class="gnwrap"><div class="card gnfig" id="gnfig"></div>
+        <div class="gnside"><div class="card gnans" id="gnans"></div><div class="card gnnote" id="gnnote"></div><div class="gnpad" id="gnpad"></div></div></div>`,
+    setup: () => {},
+    begin: () => gnNext()
+  },
   voorrang: {
     section: 'vr', title: 'Voorrangsregels', sub: 'Werk onder elkaar, stap voor stap naar het antwoord',
     opts: ['vt', 'time'], choices: {time: [30, 60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
@@ -1163,7 +1221,7 @@ const GAMES = {
     begin: () => grNext()
   }
 };
-const SECTIONS = [['neg', 'Negatieve getallen', 'klas 1'], ['vr', 'Voorrangsregels', 'klas 1'], ['lin', 'Lineaire formules en vergelijkingen', 'klas 2']];
+const SECTIONS = [['neg', 'Negatieve getallen', 'klas 1'], ['vr', 'Voorrangsregels', 'klas 1'], ['lin', 'Lineaire formules en vergelijkingen', 'klas 2'], ['gon', 'Goniometrie', 'klas 3']];
 let GID = 'rekenrace';
 function cfg(gid = GID) {
   const g = GAMES[gid];
@@ -1945,6 +2003,25 @@ const GRAF_ERR = {
   snijx: {name: 'Snijpunt x-as gekozen', desc: 'Snijpunt met de x-as i.p.v. de y-as', tip: 'De y-as is de verticale as.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
 };
+const GON_ERR = {
+  rad: {name: 'Rekenmachine op RAD', desc: 'Antwoord klopt met radialen in plaats van graden', tip: 'Laat leerlingen eerst de stand van de rekenmachine controleren: DEG (graden), niet RAD.'},
+  bewerking: {name: 'Keer en delen verwisseld', desc: 'Vermenigvuldigd waar gedeeld moest worden, of andersom', tip: 'Laat de vergelijking opschrijven (bijv. tan 35° = 8 / x) en kijk of x boven of onder de deelstreep staat.'},
+  zijden: {name: 'Overstaand en aanliggend verwisseld', desc: 'Verkeerde zijde als overstaand of aanliggend gezien, vanuit de gegeven hoek', tip: 'Laat de overstaande, aanliggende en schuine zijde eerst aanwijzen of inkleuren, steeds vanuit de gegeven hoek.'},
+  formule: {name: 'Verkeerde verhouding', desc: 'sin, cos of tan verkeerd gekozen', tip: 'Laat leerlingen opschrijven welke twee zijden er een rol spelen, en kies dan sin, cos of tan (SOS CAS TOA).'},
+  invers: {name: 'Niet teruggerekend naar de hoek', desc: 'De verhouding ingevuld in plaats van de hoek', tip: 'Gebruik sin⁻¹, cos⁻¹ of tan⁻¹ (tweede functie) om van de verhouding naar de hoek te gaan.'},
+  gegeven: {name: 'Gegeven en gevraagd verkeerd herkend', desc: 'Verkeerde zijde als gegeven of gevraagd aangewezen', tip: 'Laat leerlingen de zijden eerst benoemen vanuit de hoek met de boogjes: overstaand, aanliggend, schuin.'},
+  afronden: {name: 'Afronding', desc: 'Dichtbij, maar niet goed afgerond', tip: 'Rond pas aan het eind af, op het gevraagde aantal decimalen.'},
+  anders: {name: 'Andere fout', desc: 'Past niet in een van de andere soorten', tip: ''}
+};
+const GON_TIP = {
+  rad: 'Je rekenmachine staat waarschijnlijk op RAD. Zet hem op DEG (graden).',
+  bewerking: 'Let op: moest je hier keer of delen? Kijk of x boven of onder de deelstreep staat.',
+  zijden: 'Kijk goed welke zijde overstaand en welke aanliggend is, vanuit de gegeven hoek.',
+  formule: 'Kies sin, cos of tan op basis van de twee zijden waar het om gaat.',
+  invers: 'Je moet nog terug naar de hoek: gebruik sin⁻¹, cos⁻¹ of tan⁻¹.',
+  afronden: 'Bijna! Rond af op het gevraagde aantal decimalen.',
+  anders: ''
+};
 const VR_ERR = {
   haakjes: {name: 'Haakjes niet eerst', desc: 'Buiten de haakjes begonnen', tip: 'Eerst uitrekenen wat tussen haakjes staat.'},
   puntstreep: {name: '+ of − te vroeg', desc: 'Plus of min gedaan terwijl er nog keer of delen was', tip: 'Keer en delen gaan vóór plus en min.'},
@@ -1958,6 +2035,10 @@ const STAT_TOPICS = {
   vr: {name: 'Voorrangsregels', g: ['v'], unit: 'stappen', fast: 8000, errs: VR_ERR, noLevel: true,
     cats: [{id: 'haak', name: 'Haakjes eerst', short: '( )', color: 'var(--gold)'}, {id: 'punt', name: '× en : vóór + en −', short: '× :', color: 'var(--mul)'},
       {id: 'streep', name: '+ en − van links naar rechts', short: '+ −', color: 'var(--add)'}, {id: 'reken', name: 'Uitrekenen', short: 'Reken', color: 'var(--sub)'}]},
+  gon: {name: 'Goniometrie', g: ['g'], unit: 'vragen', fast: 30000, errs: GON_ERR, noLevel: true,
+    cats: [{id: 'kies', name: 'Verhouding kiezen', short: 'Kiezen', color: 'var(--gold)'}, {id: 'gegv', name: 'Gegeven en gevraagd', short: 'Gegeven', color: 'var(--add)'},
+      {id: 'z1', name: 'Zijde (keer)', short: 'Zijde ×', color: 'var(--sub)'}, {id: 'z2', name: 'Zijde (delen)', short: 'Zijde :', color: 'var(--div)'},
+      {id: 'h', name: 'Hoek', short: 'Hoek', color: 'var(--mul)'}]},
   bal: {name: 'Balansmethode', g: ['l'], unit: 'stappen', fast: 8000, errs: BAL_ERR, noLevel: true,
     cats: [{id: 'haakjes', name: 'Haakjes wegwerken', short: 'Haakjes', color: 'var(--gold)'}, {id: 'xweg', name: 'x naar links', short: 'x links', color: 'var(--div)'},
       {id: 'getalweg', name: 'Getallen naar rechts', short: 'Getal rechts', color: 'var(--sub)'}, {id: 'breukweg', name: 'Breuken wegwerken', short: 'Breuk', color: 'var(--add)'}, {id: 'delen', name: 'Delen', short: 'Delen', color: 'var(--mul)'}]},
@@ -2126,7 +2207,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -2602,6 +2683,228 @@ function grTap(svg, ev) {
   G.timers.push(setTimeout(() => { const j = q.marks.indexOf(mk); if (j >= 0 && G && G.gq === q && !G.locked) { q.marks.splice(j, 1); grRender(); } }, 900));
 }
 
+/* ===================== Goniometrie ===================== */
+const gnRad = d => d * Math.PI / 180, gnDeg = r => r * 180 / Math.PI;
+const GN_F = {sin: d => Math.sin(gnRad(d)), cos: d => Math.cos(gnRad(d)), tan: d => Math.tan(gnRad(d))};
+const GN_INV = {sin: x => gnDeg(Math.asin(x)), cos: x => gnDeg(Math.acos(x)), tan: x => gnDeg(Math.atan(x))};
+const GN_COMBOS = [{t: 'tan', n: 'o', d: 'a'}, {t: 'sin', n: 'o', d: 'h'}, {t: 'cos', n: 'a', d: 'h'}]; // n = teller, d = noemer
+const GN_ROLE = {o: 'overstaande', a: 'aanliggende', h: 'schuine'};
+const GN_COL = {o: '#2C6BD3', a: '#18A058', h: '#E07020'};
+const GN_CLS = {o: 'co', a: 'ca', h: 'ch'};
+const GN_SETS = ['ABC', 'PQR', 'KLM', 'DEF', 'STU', 'XYZ', 'GHI', 'UVW'];
+const gnFm = (n, d = 1) => n.toFixed(d).replace('.', ',');
+const gnNum = v => Number.isInteger(v) ? String(v) : gnFm(v, 1);
+const gnFr = (a, b) => `<span class="fr"><span>${a}</span><span>${b}</span></span>`;
+const gnBorder = (x, d) => Math.abs((x * d) % 1 - 0.5) < 0.04; // te dicht bij een afrondgrens
+const gnTol = q => q.kind === 'h' && q.dec === 0 ? 0.5 : 0.05;
+
+function genGon(cfg, prev) {
+  let q, guard = 0;
+  do { q = genGon1(cfg); } while (prev && prev.eqTxt === q.eqTxt && ++guard < 20);
+  return q;
+}
+function genGon1(cfg) {
+  const type = cfg.gt[rnd(0, cfg.gt.length - 1)];
+  for (;;) {
+    const combo = GN_COMBOS[rnd(0, 2)], t = combo.t, q = {type, kind: type === 'h' ? 'h' : 'z', combo, t};
+    if (q.kind === 'z') {
+      const alpha = rnd(20, 70); if (alpha === 45) continue;
+      const known = Math.random() < 0.65 ? rnd(3, 25) : rnd(30, 250) / 10, mul = type === 'z1';
+      const ans = mul ? known * GN_F[t](alpha) : known / GN_F[t](alpha);
+      if (ans < 1.5 || ans > 60 || gnBorder(ans, 10)) continue;
+      Object.assign(q, {alpha, known, mul, ans, dec: 1, unit: ' cm', knownRole: mul ? combo.d : combo.n, unkRole: mul ? combo.n : combo.d});
+      const val = r => r === q.unkRole ? 'x' : gnNum(known);
+      q.eqTxt = `${t}(${alpha}°) = ${val(combo.n)} / ${val(combo.d)}`;
+      q.eqHTML = `${t} ${alpha}° = ${gnFr(val(combo.n), val(combo.d))}`;
+    } else {
+      const aT = rnd(200, 700) / 10, den = Math.random() < 0.6 ? rnd(4, 25) : rnd(40, 250) / 10;
+      let num = den * GN_F[t](aT); num = Math.random() < 0.6 ? Math.round(num) : Math.round(num * 10) / 10;
+      if (num < 1 || num > 60 || num === den || (t !== 'tan' && num >= den)) continue;
+      const ans = GN_INV[t](num / den), dec = cfg.hoekr ? 1 : 0;
+      if (ans < 15 || ans > 75 || Math.abs(ans - 45) < 1.5 || gnBorder(ans, dec ? 10 : 1)) continue;
+      Object.assign(q, {alpha: ans, num, den, ans, dec, unit: '°'});
+      q.eqTxt = `${t}(x) = ${gnNum(num)} / ${gnNum(den)}`;
+      q.eqHTML = `${t} x = ${gnFr(gnNum(num), gnNum(den))}`;
+    }
+    q.descr = (q.kind === 'z' ? `hoek ${Math.round(q.alpha)}° + ` : '') + `gegeven ${gnGivenTxt(gnGivenKey(q))}, gevraagd ${gnAskedTxt(gnAskedKey(q))}`;
+    q.letters = shuffle(shuffle(GN_SETS.slice())[0].split(''));
+    q.rot = rnd(0, 3) * 90 + (Math.random() < 0.35 ? rnd(-25, 25) : 0); q.mir = Math.random() < 0.5;
+    return q;
+  }
+}
+
+/* De driehoek: rechte hoek in R, de hoek in V (overstaand = RT, aanliggend = VR, schuin = VT). Willekeurig gedraaid en gespiegeld. */
+function gnSVG(q, hulp) {
+  const W = 460, H = 330, A = q.alpha, th = gnRad(q.rot), ca = Math.cos(th), sa = Math.sin(th);
+  const base = {R: [0, 0], V: [-Math.cos(gnRad(A)), 0], T: [0, Math.sin(gnRad(A))]}, raw = {};
+  for (const k of 'RVT') { let [x, y] = base[k]; if (q.mir) x = -x; raw[k] = [x * ca - y * sa, x * sa + y * ca]; }
+  const xs = Object.values(raw).map(p => p[0]), ys = Object.values(raw).map(p => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const sc = Math.min((W - 200) / (maxX - minX), (H - 120) / (maxY - minY), 340);
+  const ox = W / 2 - (minX + maxX) / 2 * sc, oy = H / 2 + (minY + maxY) / 2 * sc, P = {};
+  for (const k of 'RVT') P[k] = [ox + raw[k][0] * sc, oy - raw[k][1] * sc];
+  const cen = [(P.R[0] + P.V[0] + P.T[0]) / 3, (P.R[1] + P.V[1] + P.T[1]) / 3];
+  const unit = (a, b) => { const dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1; return [dx / l, dy / l]; };
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const txt = (p, str, o = {}) => `<text x="${p[0].toFixed(1)}" y="${p[1].toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-size="${o.size || 22}" font-weight="${o.w || 700}"${o.it ? ' font-style="italic"' : ''} fill="${o.fill || '#1C2333'}" stroke="${o.halo || '#fff'}" stroke-width="6" paint-order="stroke" stroke-linejoin="round">${str}</text>`;
+  const SIDES = [['V', 'R', 'a'], ['R', 'T', 'o'], ['V', 'T', 'h']];
+  let s = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Nunito,Roboto,system-ui,sans-serif"><rect width="${W}" height="${H}" rx="16" fill="#fff"/>`;
+  s += `<polygon points="${P.R} ${P.V} ${P.T}" fill="#F4F7FF"/>`;
+  for (const [a, b, role] of SIDES) s += `<line x1="${P[a][0].toFixed(1)}" y1="${P[a][1].toFixed(1)}" x2="${P[b][0].toFixed(1)}" y2="${P[b][1].toFixed(1)}" stroke="${hulp ? GN_COL[role] : '#1C2333'}" stroke-width="5" stroke-linecap="round"/>`;
+  const u1 = unit(P.R, P.V), u2 = unit(P.R, P.T), z = 18;
+  s += `<path d="M${P.R[0] + u1[0] * z} ${P.R[1] + u1[1] * z} L${P.R[0] + (u1[0] + u2[0]) * z} ${P.R[1] + (u1[1] + u2[1]) * z} L${P.R[0] + u2[0] * z} ${P.R[1] + u2[1] * z}" fill="none" stroke="#1C2333" stroke-width="2.5"/>`;
+  const v1 = unit(P.V, P.R), v2 = unit(P.V, P.T), shortest = Math.min(dist(P.V, P.R), dist(P.V, P.T));
+  const r = Math.min(40, shortest * 0.4), cross = v1[0] * v2[1] - v1[1] * v2[0];
+  s += `<path d="M${P.V[0] + v1[0] * r} ${P.V[1] + v1[1] * r} A${r} ${r} 0 0 ${cross > 0 ? 1 : 0} ${P.V[0] + v2[0] * r} ${P.V[1] + v2[1] * r}" fill="none" stroke="#1C2333" stroke-width="3"/>`;
+  const bis = unit([0, 0], [v1[0] + v2[0], v1[1] + v2[1]]);
+  const ld = Math.min(shortest * 0.62, Math.max(r + 22, 17 / Math.sin(gnRad(A / 2))));
+  const aPos = [P.V[0] + bis[0] * ld, P.V[1] + bis[1] * ld];
+  s += q.kind === 'z' ? txt(aPos, Math.round(A) + '°', {size: 21, halo: '#F4F7FF'}) : txt(aPos, 'x', {size: 28, it: 1, w: 800, fill: '#D33F3F', halo: '#F4F7FF'});
+  for (const k of 'RVT') { const u = unit(cen, P[k]); s += txt([P[k][0] + u[0] * 24, P[k][1] + u[1] * 24], q.letters[k === 'R' ? 0 : k === 'V' ? 1 : 2], {size: 22, it: 1, fill: '#5A647D'}); }
+  const known = q.kind === 'z' ? {[q.knownRole]: gnNum(q.known) + ' cm'} : {[q.combo.n]: gnNum(q.num) + ' cm', [q.combo.d]: gnNum(q.den) + ' cm'};
+  for (const [a, b, role] of SIDES) {
+    const unk = q.kind === 'z' && role === q.unkRole, str = unk ? 'x' : known[role]; if (!str) continue;
+    const mid = [(P[a][0] + P[b][0]) / 2, (P[a][1] + P[b][1]) / 2], d = unit(P[a], P[b]);
+    let u = [-d[1], d[0]]; if ((mid[0] - cen[0]) * u[0] + (mid[1] - cen[1]) * u[1] < 0) u = [-u[0], -u[1]];
+    const w = unk ? 16 : str.length * 11.5 + 6, off = Math.abs(u[0]) * w / 2 + Math.abs(u[1]) * 14 + 10;
+    s += txt([mid[0] + u[0] * off, mid[1] + u[1] * off], str, unk ? {size: 30, it: 1, w: 800, fill: '#D33F3F'} : {fill: hulp ? GN_COL[role] : '#1C2333'});
+  }
+  return s + '</svg>';
+}
+const gnLegend = () => `<div class="gnleg">${['o', 'a', 'h'].map(k => `<span><i style="background:${GN_COL[k]}"></i>${GN_ROLE[k]} zijde</span>`).join('')}</div>`;
+const gnRules = () => `<div class="gnrule"><div><b>sin</b> = <b class="co">overstaand</b> : <b class="ch">schuin</b></div><div><b>cos</b> = <b class="ca">aanliggend</b> : <b class="ch">schuin</b></div><div><b>tan</b> = <b class="co">overstaand</b> : <b class="ca">aanliggend</b></div><small>Gezien vanuit de hoek met de boogjes. 🧮 Rekenmachine op DEG.</small></div>`;
+
+const GN_ALL = ['o', 'a', 'h'];
+const gnRoleTxt = k => GN_ROLE[k] + ' zijde';
+const gnGivenKey = q => q.kind === 'z' ? q.knownRole : q.combo.n + q.combo.d;
+const gnAskedKey = q => q.kind === 'z' ? q.unkRole : 'w';
+const gnGivenTxt = k => k.length === 2 ? GN_ROLE[k[0]] + ' en ' + GN_ROLE[k[1]] + ' zijde' : gnRoleTxt(k);
+const gnAskedTxt = k => k === 'w' ? 'de hoek' : 'de ' + gnRoleTxt(k);
+const gnRole = k => `<b class="${GN_CLS[k]}">${GN_ROLE[k]}</b>`;
+
+function gnPad(q) {
+  const el = $('#gnpad'); el.className = 'gnpad' + (q.step === 1 ? ' pick' : q.step === 2 ? ' two' : '');
+  if (q.step === 1) {
+    el.innerHTML = ['sin', 'cos', 'tan'].map(k => `<button class="key big ${q.res ? (k === q.t ? 'right' : k === q.res.pick ? 'wrong' : '') : ''}" data-fast="gpick" data-arg="${k}">${k}</button>`).join('');
+  } else if (q.step === 2) {
+    const S = q.sel, r = q.res;
+    const row = (lab, name, opts, txt, cor) => `<div class="gnrow"><div class="gl">${lab}</div><div class="opts">${opts.map(v =>
+      `<button class="key sm ${r ? (v === cor ? 'right' : v === S[name] ? 'wrong' : '') : (S[name] === v ? 'sel' : '')}" data-fast="gsel" data-arg="${name}:${v}">${txt(v)}</button>`).join('')}</div></div>`;
+    el.innerHTML = row(q.kind === 'z' ? 'Gegeven: de hoek en de…' : 'Gegeven: twee zijden', 'g', q.kind === 'z' ? GN_ALL : ['oa', 'oh', 'ah'], gnGivenTxt, gnGivenKey(q)) +
+      row('Gevraagd:', 'a', ['o', 'a', 'h', 'w'], gnAskedTxt, gnAskedKey(q));
+  } else {
+    el.innerHTML = ['7', '8', '9', '4', '5', '6', '1', '2', '3', ',', '0', 'del'].map(k => `<button class="key ${k === 'del' ? 'del' : ''}" data-fast="gkey" data-arg="${k}">${k === 'del' ? '⌫' : k}</button>`).join('') +
+      `<button class="key ok" data-fast="gkey" data-arg="ok">OK</button>`;
+  }
+}
+function gnNext() {
+  const q = G.gq = genGon(G.cfg, G.gq);
+  q.step = G.cfg.stap === 'direct' ? 3 : 1; q.sel = {}; q.done = []; q.after = null; q.res = null;
+  G.input = ''; G.locked = false; G.qStart = performance.now(); flash(''); gnRender();
+}
+function gnGo(q, step) {
+  q.step = step; q.sel = {}; q.res = null; q.after = null; G.input = ''; G.locked = false; G.qStart = performance.now(); flash(''); gnRender();
+}
+function gnAfter(q) { if (G && G.running && G.gq === q && q.after) { const f = q.after; q.after = null; f(); } }
+function gnRender(reveal) {
+  const q = G.gq, c = G.cfg, hulp = c.hulp === 'ja', st = q.step;
+  $('#qtext').innerHTML = st === 1 ? `Welke verhouding heb je nodig?<span class="gnsub">sin, cos of tan</span>`
+    : st === 2 ? `Wat is gegeven en wat is gevraagd?<span class="gnsub">kies bij allebei het goede</span>`
+    : q.kind === 'z' ? `Bereken <span class="fx">x</span><span class="gnsub">in cm, afgerond op 1 decimaal</span>`
+    : `Bereken hoek <span class="fx">x</span><span class="gnsub">afgerond op ${c.hoekr ? '1 decimaal' : 'hele graden'}</span>`;
+  $('#gnfig').innerHTML = gnSVG(q, hulp) + (hulp ? gnLegend() : '');
+  $('#gnans').innerHTML = `<span class="gnlbl">x =</span><span class="gnval ${reveal ? 'rv' : ''}" id="gnval">${reveal ? gnFm(q.ans, q.dec) : st === 3 ? (G.input || '&nbsp;') : '?'}</span><span class="gnunit">${q.kind === 'z' ? 'cm' : '°'}</span>`;
+  const sum = q.done.length ? `<div class="gnsum">✓ ${q.done.join(' · ')}</div>` : '';
+  $('#gnnote').innerHTML = reveal ? gnExplain(q, reveal) : sum + (hulp ? gnRules() : `<div class="gnrule"><small style="margin:0">🧮 Zet je rekenmachine op DEG (graden).</small></div>`);
+  gnPad(q);
+}
+function gnStepExplain(q, step) {
+  const nx = `<button class="btn primary gnnx" data-act="gnNext">Verder ▶</button>`;
+  if (step === 1) return `<div class="gnerr">Kijk welke zijden een rol spelen.</div><div class="gnl">Je hebt de ${gnRole(q.combo.n)} en de ${gnRole(q.combo.d)} zijde nodig: dat is <b>${q.t}</b>.</div>${nx}`;
+  return `<div class="gnerr">Kijk vanuit de hoek met de boogjes.</div><div class="gnl">Gegeven: <b>${gnGivenTxt(gnGivenKey(q))}</b></div><div class="gnl">Gevraagd: <b>${gnAskedTxt(gnAskedKey(q))}</b></div>${nx}`;
+}
+function gnPick(v) {
+  const q = G && G.gq; if (!G || !G.running || G.locked || !q || q.step !== 1) return;
+  G.locked = true; const ok = v === q.t; q.res = {pick: v}; q.done = [`<b>${q.t}</b>`];
+  recordGen('g', 'kies', ok, ok ? null : 'formule', 'Verhouding kiezen: ' + q.descr, q.t, v);
+  q.after = () => gnGo(q, 2);
+  if (ok) { award(5); beep(true); flash('good', 400); gnPad(q); G.timers.push(setTimeout(() => gnAfter(q), 650)); }
+  else { penalty(); G.mistakes.push({q: `Verhouding bij ${q.descr}: ${q.t}`, given: v}); beep(false); flash('bad', 600); gnPad(q); $('#gnnote').innerHTML = gnStepExplain(q, 1); G.timers.push(setTimeout(() => gnAfter(q), 7000)); }
+}
+function gnSel(arg) {
+  const q = G && G.gq; if (!G || !G.running || G.locked || !q || q.step !== 2) return;
+  const [k, v] = arg.split(':'); q.sel[k] = v;
+  if (!(q.sel.g && q.sel.a)) { gnPad(q); return; }
+  G.locked = true;
+  const gk = gnGivenKey(q), ak = gnAskedKey(q), ok = q.sel.g === gk && q.sel.a === ak; q.res = {ok};
+  recordGen('g', 'gegv', ok, ok ? null : 'gegeven', 'Gegeven en gevraagd herkennen: ' + q.descr, `${gnGivenTxt(gk)}; ${gnAskedTxt(ak)}`, `${gnGivenTxt(q.sel.g)}; ${gnAskedTxt(q.sel.a)}`);
+  q.done.push(`gegeven: ${gnGivenTxt(gk)}`, `gevraagd: ${gnAskedTxt(ak)}`);
+  q.after = () => gnGo(q, 3);
+  if (ok) { award(5); beep(true); flash('good', 400); gnPad(q); G.timers.push(setTimeout(() => gnAfter(q), 650)); }
+  else { penalty(); G.mistakes.push({q: `Gegeven/gevraagd bij ${q.descr}`, given: `${gnGivenTxt(q.sel.g)}; ${gnAskedTxt(q.sel.a)}`}); beep(false); flash('bad', 600); gnPad(q); $('#gnnote').innerHTML = gnStepExplain(q, 2); G.timers.push(setTimeout(() => gnAfter(q), 7000)); }
+}
+function gnExplain(q, r) {
+  const t = q.t, role = gnRole;
+  let h = r.err && GON_TIP[r.err] ? `<div class="gnerr">${GON_TIP[r.err]}</div>` : '';
+  h += `<div class="gnyou">Jouw antwoord: <s>${esc(r.given)}</s></div>`;
+  if (q.kind === 'z') {
+    const kn = gnNum(q.known), val = k => k === q.unkRole ? 'x' : kn;
+    h += `<div class="gnl">x is de ${role(q.unkRole)} zijde en ${kn} is de ${role(q.knownRole)} zijde: dat is <b>${t}</b>.</div>` +
+      `<div class="gnl">${t} ${Math.round(q.alpha)}° = ${gnFr(val(q.combo.n), val(q.combo.d))}</div>` +
+      `<div class="gnl">x = ${kn} ${q.mul ? '·' : ':'} ${t} ${Math.round(q.alpha)}° = <b>${gnFm(q.ans, 1)} cm</b></div>`;
+  } else {
+    h += `<div class="gnl">Gegeven: de ${role(q.combo.n)} zijde (${gnNum(q.num)}) en de ${role(q.combo.d)} zijde (${gnNum(q.den)}): dat is <b>${t}</b>.</div>` +
+      `<div class="gnl">${t} x = ${gnFr(gnNum(q.num), gnNum(q.den))}</div>` +
+      `<div class="gnl">x = ${t}⁻¹(${gnFr(gnNum(q.num), gnNum(q.den))}) = <b>${gnFm(q.ans, q.dec)}°</b></div>`;
+  }
+  return h + `<button class="btn primary gnnx" data-act="gnNext">Volgende ▶</button>`;
+}
+function gnKey(k) {
+  if (!G || !G.running || G.locked || !G.gq || G.gq.step !== 3) return;
+  if (k === 'ok') { gnSubmit(); return; }
+  if (k === 'del') G.input = G.input.slice(0, -1);
+  else if (k === ',') { if (G.input.includes(',')) return; G.input = (G.input || '0') + ','; }
+  else if (G.input.replace(',', '').length < 5) G.input += k;
+  const v = $('#gnval'); if (v) v.innerHTML = G.input || '&nbsp;';
+}
+function gnClassify(q, g) {
+  const tol = gnTol(q), near = x => isFinite(x) && Math.abs(g - x) <= tol + 1e-9;
+  if (q.kind === 'z') {
+    const A = q.alpha, k = q.known, c = q.t, calc = (fn, ang, mul) => mul ? k * GN_F[fn](ang) : k / GN_F[fn](ang);
+    const R = {sin: Math.sin, cos: Math.cos, tan: Math.tan};
+    if (near(q.mul ? k * R[c](A) : k / R[c](A))) return 'rad';
+    if (near(calc(c, A, !q.mul))) return 'bewerking';
+    if (near(calc(c, 90 - A, q.mul)) || near(calc(c, 90 - A, !q.mul))) return 'zijden';
+    for (const fn of ['sin', 'cos', 'tan']) if (fn !== c && (near(calc(fn, A, true)) || near(calc(fn, A, false)))) return 'formule';
+    return Math.abs(g - q.ans) <= 0.35 ? 'afronden' : 'anders';
+  }
+  const r = q.num / q.den, t = q.t, radA = {sin: Math.asin, cos: Math.acos, tan: Math.atan}[t](r);
+  if (near(radA) || near(radA * 200 / Math.PI)) return 'rad';
+  if (Math.abs(g - r) <= 0.06) return 'invers';
+  if (t === 'tan' && near(GN_INV.tan(q.den / q.num))) return 'zijden';
+  for (const fn of ['sin', 'cos', 'tan']) if (fn !== t) for (const x of [r, 1 / r]) if ((Math.abs(x) <= 1 || fn === 'tan') && near(GN_INV[fn](x))) return 'formule';
+  return Math.abs(g - q.ans) <= 1.2 ? 'afronden' : 'anders';
+}
+function gnSubmit() {
+  if (!G || !G.running || G.locked) return;
+  const q = G.gq, txt = G.input; if (q.step !== 3 || !txt || txt === ',') return;
+  const g = parseFloat(txt.replace(',', '.')); if (!isFinite(g)) return;
+  G.locked = true;
+  const ok = Math.abs(g - q.ans) <= gnTol(q) + 1e-9, unit = q.kind === 'z' ? ' cm' : '°';
+  const ansTxt = gnFm(q.ans, q.dec) + unit, given = txt + unit;
+  if (ok) {
+    recordGen('g', q.type, true, null, q.eqTxt, ansTxt, given);
+    award(10); beep(true); flash('good', 450);
+    q.after = gnNext; G.timers.push(setTimeout(() => gnAfter(q), 650));
+  } else {
+    const err = gnClassify(q, g);
+    recordGen('g', q.type, false, err, q.eqTxt, ansTxt, given);
+    penalty(); G.mistakes.push({q: `${q.eqTxt} → ${ansTxt}`, given}); beep(false); flash('bad', 700);
+    gnRender({err, given});
+    q.after = gnNext; G.timers.push(setTimeout(() => gnAfter(q), 12000));
+  }
+}
+
 /* ===================== Voorrangsregels ===================== */
 // Tokens: {t:'n', v} | {t:'op', v:'+'|'−'|'×'|':'} | {t:'('} | {t:')'}
 const VR_LEVELS = [['×', ':'], ['+', '−']];
@@ -2814,6 +3117,24 @@ function duoQuestion(gid, cfg) {
     const eq = stHTML(st, v);
     return {prompt: `<div class="dq small">${eq}</div><div class="dsub">${ask}</div>`, opts, explain,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'l', cat, o.ok ? 1 : 0, o.ok ? '' : o.err, Math.round(performance.now() - ms0), 0, plainTxt(eq), plainTxt(explain), plainTxt(o.html)])};
+  }
+  if (gid === 'gonio') {
+    const q = genGon(cfg, null), hulp = cfg.hulp === 'ja', u = q.kind === 'z' ? ' cm' : '°', cand = [];
+    if (q.kind === 'z') {
+      const A = q.alpha, k = q.known, t = q.t, f = (fn, ang, mul) => mul ? k * GN_F[fn](ang) : k / GN_F[fn](ang);
+      cand.push([f(t, A, !q.mul), 'bewerking'], [f(t, 90 - A, q.mul), 'zijden'], [q.mul ? k * Math[t](A) : k / Math[t](A), 'rad']);
+      for (const fn of ['sin', 'cos', 'tan']) if (fn !== t) cand.push([f(fn, A, q.mul), 'formule']);
+    } else {
+      const r = q.num / q.den, t = q.t;
+      cand.push([GN_INV[t](1 / r), 'zijden'], [{sin: Math.asin, cos: Math.acos, tan: Math.atan}[t](r), 'rad']);
+      for (const fn of ['sin', 'cos', 'tan']) if (fn !== t) for (const x of [r, 1 / r]) if (Math.abs(x) <= 1 || fn === 'tan') cand.push([GN_INV[fn](x), 'formule']);
+    }
+    const opts = [{html: gnFm(q.ans, q.dec) + u, ok: true}];
+    for (const [v, e] of shuffle(cand)) { const h = gnFm(v, q.dec) + u; if (opts.length < 4 && isFinite(v) && v > 0 && !opts.some(o => o.html === h)) opts.push({html: h, ok: false, err: e}); }
+    for (let d = 1; opts.length < 4 && d < 9; d++) { const h = gnFm(q.ans + d * (q.dec ? 0.7 : 3), q.dec) + u; if (!opts.some(o => o.html === h)) opts.push({html: h, ok: false, err: 'anders'}); }
+    return {prompt: `<div class="dsub">Bereken ${q.kind === 'z' ? 'zijde' : 'hoek'} <b>x</b> ${q.kind === 'z' ? '(1 decimaal)' : `(${q.dec ? '1 decimaal' : 'hele graden'})`}</div><div class="dfig">${gnSVG(q, hulp)}</div>`,
+      opts: shuffle(opts), explain: `${q.eqHTML} → x = <b>${gnFm(q.ans, q.dec)}${u}</b>`,
+      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'g', q.type, o.ok ? 1 : 0, o.ok ? '' : o.err, Math.round(performance.now() - ms0), 0, q.eqTxt, gnFm(q.ans, q.dec) + u, o.html])};
   }
   // grafiek
   const q = grMake(cfg, null, true);
@@ -3039,6 +3360,7 @@ function findStudent(id) { for (const c of D.classes) { const s = c.students.fin
 
 /* ===================== Acties ===================== */
 const ACT = {
+  gnNext: () => { if (G && G.running && G.locked && G.gq) gnAfter(G.gq); },
   duo: () => { DUO.sel = DUO.sel.filter(p => p.guest || (curClass() && curClass().students.some(s => s.id === p.id))); showDuoPick(); },
   duoTog: id => { const i = DUO.sel.findIndex(p => p.id === id); if (i >= 0) DUO.sel.splice(i, 1); else { if (DUO.sel.length >= 3) { toast('Maximaal 3 spelers.'); return; } const st = curClass().students.find(s => s.id === id); if (st) DUO.sel.push(st); } showDuoPick(); },
   duoGuest: () => { if (DUO.sel.length >= 3) { toast('Maximaal 3 spelers.'); return; } DUO.sel.push({id: 'gast' + Date.now(), name: 'Gast ' + (DUO.sel.filter(p => p.guest).length + 1), guest: true}); showDuoPick(); },
@@ -3185,12 +3507,22 @@ app.addEventListener('pointerdown', e => {
   else if (f === 'gans') grAnswer(b.dataset.arg);
   else if (f === 'vop') vrOp(b.dataset.arg);
   else if (f === 'dans') duoAnswer(b.dataset.arg);
+  else if (f === 'gkey') gnKey(b.dataset.arg);
+  else if (f === 'gpick') gnPick(b.dataset.arg);
+  else if (f === 'gsel') gnSel(b.dataset.arg);
   else if (f === 'vans') vrAns(b.dataset.arg);
 });
 app.addEventListener('change', e => { const el = e.target.closest('[data-change]'); if (el && CHANGE[el.dataset.change]) CHANGE[el.dataset.change](el.dataset.arg, el); });
 app.addEventListener('input', e => { if (e.target.dataset.change === 'impName') CHANGE.impName(e.target.dataset.arg, e.target); });
 app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'newcls') ACT.addClass(); });
 document.addEventListener('keydown', e => {
+  if (screen === 'play' && G && G.running && G.game === 'gonio') {
+    if (/^[0-9]$/.test(e.key)) gnKey(e.key);
+    else if (e.key === ',' || e.key === '.') gnKey(',');
+    else if (e.key === 'Backspace') gnKey('del');
+    else if (e.key === 'Enter') { if (G.locked) ACT.gnNext(); else gnKey('ok'); }
+    return;
+  }
   if (screen !== 'play' || !G || !G.running || G.game !== 'rekenrace') return;
   if (G.cfg.input === 'typ') {
     if (/^[0-9]$/.test(e.key)) rrKey(e.key);
