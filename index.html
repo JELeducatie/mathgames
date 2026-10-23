@@ -586,6 +586,9 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .gnnote b.co{color:#5CA8FF}.gnnote b.ca{color:#2EE59D}.gnnote b.ch{color:#FFA23A}
 .gnnote .fr{font-size:.85em}
 .gnrule{font-weight:700}
+.gnsos{display:flex;align-items:baseline;gap:.5rem}
+.gnmn{display:inline-block;min-width:3.6rem;font-family:var(--fd);font-style:italic;letter-spacing:.05em;color:var(--gold);margin-right:.3rem}
+.gncap{font-family:var(--fd);font-size:1.25em;line-height:1}
 .gnrule small{display:block;color:var(--muted);font-weight:600;margin-top:.6rem;font-size:.75em}
 .gnrule>div{margin:.15rem 0}
 .gnsub{display:block;font-family:"Segoe UI","Nunito",Roboto,system-ui,sans-serif;font-size:.5em;font-weight:600;color:var(--muted);letter-spacing:0;text-transform:none;font-style:normal}
@@ -2774,7 +2777,9 @@ function gnSVG(q, hulp) {
   return s + '</svg>';
 }
 const gnLegend = () => `<div class="gnleg">${['o', 'a', 'h'].map(k => `<span><i style="background:${GN_COL[k]}"></i>${GN_ROLE[k]} zijde</span>`).join('')}</div>`;
-const gnRules = () => `<div class="gnrule"><div><b>sin</b> = <b class="co">overstaand</b> : <b class="ch">schuin</b></div><div><b>cos</b> = <b class="ca">aanliggend</b> : <b class="ch">schuin</b></div><div><b>tan</b> = <b class="co">overstaand</b> : <b class="ca">aanliggend</b></div><small>Gezien vanuit de hoek met de boogjes. 🧮 Rekenmachine op DEG.</small></div>`;
+const gnCap = w => `<span class="gncap">${w[0].toUpperCase()}</span>${w.slice(1)}`;
+const gnRules = () => `<div class="gnrule">${[['SOS', 'sin', 'overstaand', 'schuin', 'co', 'ch'], ['CAS', 'cos', 'aanliggend', 'schuin', 'ca', 'ch'], ['TOA', 'tan', 'overstaand', 'aanliggend', 'co', 'ca']].map(([m, f, a, b, ca, cb]) =>
+  `<div class="gnsos"><span class="gnmn">${m}</span><b>${gnCap(f)}</b> = <b class="${ca}">${gnCap(a)}</b> : <b class="${cb}">${gnCap(b)}</b></div>`).join('')}<small>Gezien vanuit de hoek met de boogjes. 🧮 Rekenmachine op DEG.</small></div>`;
 
 const GN_ALL = ['o', 'a', 'h'];
 const gnRoleTxt = k => GN_ROLE[k] + ' zijde';
