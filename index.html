@@ -569,7 +569,7 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .gnwrap{flex:1;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:1.6rem;min-height:0}
 .gnfig{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;min-height:0;padding:.8rem;overflow:hidden}
 .gnfig svg{width:100%;flex:1;min-height:0;max-height:100%;border-radius:1rem}
-.gnleg{display:flex;gap:1.6rem;flex-wrap:wrap;justify-content:center;font-weight:700;font-size:1.15rem}
+.gnleg{display:flex;gap:1.8rem;flex-wrap:wrap;justify-content:center;font-weight:700;font-size:1.35rem}
 .gnleg i{display:inline-block;width:1.5rem;height:.5rem;border-radius:.3rem;margin-right:.4rem;vertical-align:middle}
 .gnside{display:flex;flex-direction:column;gap:1.1rem;min-height:0;justify-content:space-between}
 .gnans{display:flex;align-items:baseline;justify-content:center;gap:.6rem;font-family:var(--fd);font-size:clamp(1.8rem,5vmin,3.2rem);padding:.4rem 1rem;line-height:1.1;flex:0 0 auto}
@@ -577,7 +577,7 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .gnval{display:inline-block;min-width:3.2ch;text-align:center;color:var(--sub);border-bottom:.08em solid var(--line)}
 .gnval.rv{color:var(--bad)}
 .gnunit{font-size:.6em;color:var(--muted)}
-.gnnote{padding:1.1rem 1.4rem;font-size:1.4rem;line-height:1.6;overflow:auto;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center}
+.gnnote{padding:1.2rem 1.5rem;font-size:1.6rem;line-height:1.6;overflow:auto;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:safe center}
 .gnnote .gnerr{font-weight:800;color:var(--gold);margin-bottom:.35rem}
 .gnnote .gnl{margin:.15rem 0}
 .gnnote .gnyou{color:var(--muted);margin-bottom:.3rem}
@@ -589,20 +589,21 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .gnsos{display:flex;align-items:baseline;gap:.5rem}
 .gnmn{display:inline-block;min-width:3.6rem;font-family:var(--fd);font-style:italic;letter-spacing:.05em;color:var(--gold);margin-right:.3rem}
 .gncap{font-family:var(--fd);font-size:1.25em;line-height:1}
-.gnrule small{display:block;color:var(--muted);font-weight:600;margin-top:.6rem;font-size:.75em}
+.gnrule small{display:block;color:#AEB6D8;font-weight:600;margin-top:.7rem;font-size:.8em}
 .gnrule>div{margin:.15rem 0}
 .gnsub{display:block;font-family:"Segoe UI","Nunito",Roboto,system-ui,sans-serif;font-size:.5em;font-weight:600;color:var(--muted);letter-spacing:0;text-transform:none;font-style:normal}
 .gnpad{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:3.6rem;gap:.5rem;flex:0 0 auto;width:100%;max-width:30rem;align-self:center}
 .gnpad .key{font-size:clamp(1.3rem,3.2vmin,2rem);border-radius:.8rem}
 .gnpad .key.ok{grid-row:auto;grid-column:1 / -1;height:3.6rem}
-.gnsum{color:var(--good);font-weight:700;margin-bottom:.5rem}
+.gnsum{color:var(--good);font-weight:800;margin-bottom:.7rem}
+.gnnm{font-style:italic;font-family:"Times New Roman",Georgia,serif;font-weight:700;letter-spacing:.02em}
 .gnpad.pick{grid-auto-rows:5.5rem;max-width:34rem}
 .gnpad .key.big{font-size:clamp(1.8rem,4.6vmin,3rem)}
 .gnpad.two{display:flex;flex-direction:column;gap:1rem;max-width:none}
 .gnrow{display:flex;flex-direction:column;gap:.4rem}
-.gnrow .gl{font-weight:800;color:var(--muted);font-size:1.15rem}
-.gnrow .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));grid-auto-rows:3.6rem;gap:.5rem}
-.gnpad .key.sm{font-size:clamp(1rem,2.2vmin,1.35rem);line-height:1.2;padding:.3rem .5rem}
+.gnrow .gl{font-weight:800;color:#C9CFEA;font-size:1.45rem}
+.gnrow .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(8rem,1fr));grid-auto-rows:4rem;gap:.5rem}
+.gnpad .key.sm{font-size:clamp(1.15rem,2.6vmin,1.6rem);line-height:1.2;padding:.3rem .5rem}
 .gnpad .key.sel{background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--ctaInk)}
 .gnpad .key.right{background:linear-gradient(180deg,#6FF5C0,var(--good));color:var(--dark)}
 .gnpad .key.wrong{background:linear-gradient(180deg,#FF8095,var(--bad));color:#fff}
@@ -635,6 +636,7 @@ const OPTDEFS = {
 gt: {label: 'Soort', multi: true, allName: 'alle soorten', choices: [
     {v: 'z1', name: 'Zijde: keer', sub: 'x = 8 · tan 35°', long: 'zijde (keer)'}, {v: 'z2', name: 'Zijde: delen', sub: 'x = 8 : tan 35°', long: 'zijde (delen)'},
     {v: 'h', name: 'Hoek', sub: 'x = tan⁻¹(6 : 8)', long: 'hoek'}]},
+  hnot: {label: 'Hoeknotatie', choices: [{v: 'een', name: '∠G', sub: 'één letter'}, {v: 'drie', name: '∠HGI', sub: 'drie letters'}, {v: 'mix', name: 'Afwisselend', sub: 'extra uitdaging'}]},
   hoekr: {label: 'Afronden', choices: [{v: 1, name: 'Hoek: 1 decimaal', sub: 'zijden altijd 1 decimaal'}, {v: 0, name: 'Hoek: hele graden', sub: 'zijden altijd 1 decimaal'}]},
   stap: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'verhouding kiezen, gegeven en gevraagd, rekenen'}, {v: 'direct', name: 'Direct rekenen', sub: 'alleen het antwoord intypen'}]},
   hulp: {label: 'Hulp', choices: [{v: 'ja', name: 'Met hulp', sub: 'zijden gekleurd + sin cos tan'}, {v: 'nee', name: 'Zonder hulp', sub: 'zelf bepalen'}]},
@@ -1183,8 +1185,8 @@ const GAMES = {
   },
   gonio: {
     section: 'gon', title: 'Driehoeken', sub: 'Bereken een zijde of een hoek met sin, cos en tan',
-    opts: ['gt', 'stap', 'hoekr', 'hulp', 'time'], choices: {time: [120, 180, 300, 480, 600].map(t => ({v: t, name: timeLabel(t)}))},
-    defaults: {gt: ['z1', 'z2', 'h'], stap: 'stappen', hoekr: 1, hulp: 'ja', time: 480},
+    opts: ['gt', 'stap', 'hoekr', 'hnot', 'hulp', 'time'], choices: {time: [120, 180, 300, 480, 600].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {gt: ['z1', 'z2', 'h'], stap: 'stappen', hoekr: 1, hnot: 'een', hulp: 'ja', time: 480},
     scoreLabel: 'stappen goed',
     example: c => `Voorbeeld: <b>${genGon(c).eqHTML}</b>`,
     tile: () => `<div class="mini-gon"><svg viewBox="0 0 150 80" xmlns="http://www.w3.org/2000/svg"><line x1="12" y1="66" x2="110" y2="66" stroke="#5CA8FF" stroke-width="5" stroke-linecap="round"/><line x1="110" y1="66" x2="110" y2="14" stroke="#2EE59D" stroke-width="5" stroke-linecap="round"/><line x1="12" y1="66" x2="110" y2="14" stroke="#FFA23A" stroke-width="5" stroke-linecap="round"/><path d="M98 66 V54 H110" fill="none" stroke="#F2F4FF" stroke-width="2.5"/><text x="42" y="58" font-size="14" font-weight="800" fill="#F2F4FF">35°</text><text x="120" y="45" font-size="18" font-weight="800" font-style="italic" fill="#FF4D6D">x</text></svg></div>`,
@@ -2734,6 +2736,20 @@ function genGon1(cfg) {
     q.descr = (q.kind === 'z' ? `hoek ${Math.round(q.alpha)}° + ` : '') + `gegeven ${gnGivenTxt(gnGivenKey(q))}, gevraagd ${gnAskedTxt(gnAskedKey(q))}`;
     q.letters = shuffle(shuffle(GN_SETS.slice())[0].split(''));
     q.rot = rnd(0, 3) * 90 + (Math.random() < 0.35 ? rnd(-25, 25) : 0); q.mir = Math.random() < 0.5;
+    // naam van het gevraagde: zijde (bijv. GH) of hoek (∠G of ∠HGI)
+    const [Lr, Lv, Lt] = q.letters, ends = {a: Lv + Lr, o: Lr + Lt, h: Lv + Lt};
+    if (q.kind === 'z') {
+      const e = ends[q.unkRole]; q.nmT = Math.random() < 0.5 ? e : e[1] + e[0]; q.nm = `<i class="gnnm">${q.nmT}</i>`;
+      const kn = gnNum(q.known), v1 = r => r === q.unkRole ? q.nm : kn, v2 = r => r === q.unkRole ? q.nmT : kn;
+      q.eqTxt = `${t}(${q.alpha}°) = ${v2(combo.n)} / ${v2(combo.d)}`;
+      q.eqHTML = `${t} ${q.alpha}° = ${gnFr(v1(combo.n), v1(combo.d))}`;
+    } else {
+      const hn = cfg.hnot === 'een' ? 1 : cfg.hnot === 'drie' ? 3 : (Math.random() < 0.5 ? 1 : 3);
+      const l = hn === 1 ? Lv : (Math.random() < 0.5 ? Lr + Lv + Lt : Lt + Lv + Lr);
+      q.nmT = '∠' + l; q.nm = `∠<i class="gnnm">${l}</i>`;
+      q.eqTxt = `${t}(${q.nmT}) = ${gnNum(q.num)} / ${gnNum(q.den)}`;
+      q.eqHTML = `${t} ${q.nm} = ${gnFr(gnNum(q.num), gnNum(q.den))}`;
+    }
     return q;
   }
 }
@@ -2764,11 +2780,11 @@ function gnSVG(q, hulp) {
   const bis = unit([0, 0], [v1[0] + v2[0], v1[1] + v2[1]]);
   const ld = Math.min(shortest * 0.62, Math.max(r + 22, 17 / Math.sin(gnRad(A / 2))));
   const aPos = [P.V[0] + bis[0] * ld, P.V[1] + bis[1] * ld];
-  s += q.kind === 'z' ? txt(aPos, Math.round(A) + '°', {size: 21, halo: '#F4F7FF'}) : txt(aPos, 'x', {size: 28, it: 1, w: 800, fill: '#D33F3F', halo: '#F4F7FF'});
+  s += q.kind === 'z' ? txt(aPos, Math.round(A) + '°', {size: 21, halo: '#F4F7FF'}) : txt(aPos, '?', {size: 30, w: 800, fill: '#D33F3F', halo: '#F4F7FF'});
   for (const k of 'RVT') { const u = unit(cen, P[k]); s += txt([P[k][0] + u[0] * 24, P[k][1] + u[1] * 24], q.letters[k === 'R' ? 0 : k === 'V' ? 1 : 2], {size: 22, it: 1, fill: '#5A647D'}); }
   const known = q.kind === 'z' ? {[q.knownRole]: gnNum(q.known) + ' cm'} : {[q.combo.n]: gnNum(q.num) + ' cm', [q.combo.d]: gnNum(q.den) + ' cm'};
   for (const [a, b, role] of SIDES) {
-    const unk = q.kind === 'z' && role === q.unkRole, str = unk ? 'x' : known[role]; if (!str) continue;
+    const unk = q.kind === 'z' && role === q.unkRole, str = unk ? '?' : known[role]; if (!str) continue;
     const mid = [(P[a][0] + P[b][0]) / 2, (P[a][1] + P[b][1]) / 2], d = unit(P[a], P[b]);
     let u = [-d[1], d[0]]; if ((mid[0] - cen[0]) * u[0] + (mid[1] - cen[1]) * u[1] < 0) u = [-u[0], -u[1]];
     const w = unk ? 16 : str.length * 11.5 + 6, off = Math.abs(u[0]) * w / 2 + Math.abs(u[1]) * 14 + 10;
@@ -2818,13 +2834,14 @@ function gnRender(reveal) {
   const q = G.gq, c = G.cfg, hulp = c.hulp === 'ja', st = q.step;
   $('#qtext').innerHTML = st === 1 ? `Welke verhouding heb je nodig?<span class="gnsub">sin, cos of tan</span>`
     : st === 2 ? `Wat is gegeven en wat is gevraagd?<span class="gnsub">kies bij allebei het goede</span>`
-    : q.kind === 'z' ? `Bereken <span class="fx">x</span><span class="gnsub">in cm, afgerond op 1 decimaal</span>`
-    : `Bereken hoek <span class="fx">x</span><span class="gnsub">afgerond op ${c.hoekr ? '1 decimaal' : 'hele graden'}</span>`;
+    : q.kind === 'z' ? `Bereken zijde <span class="fx">${q.nm}</span><span class="gnsub">in cm, afgerond op 1 decimaal</span>`
+    : `Bereken <span class="fx">${q.nm}</span><span class="gnsub">afgerond op ${c.hoekr ? '1 decimaal' : 'hele graden'}</span>`;
   $('#gnfig').innerHTML = gnSVG(q, hulp) + (hulp ? gnLegend() : '');
-  $('#gnans').innerHTML = `<span class="gnlbl">x =</span><span class="gnval ${reveal ? 'rv' : ''}" id="gnval">${reveal ? gnFm(q.ans, q.dec) : st === 3 ? (G.input || '&nbsp;') : '?'}</span><span class="gnunit">${q.kind === 'z' ? 'cm' : '°'}</span>`;
+  $('#gnans').innerHTML = `<span class="gnlbl">${q.nm} =</span><span class="gnval ${reveal ? 'rv' : ''}" id="gnval">${reveal ? gnFm(q.ans, q.dec) : st === 3 ? (G.input || '&nbsp;') : '?'}</span><span class="gnunit">${q.kind === 'z' ? 'cm' : '°'}</span>`;
   const sum = q.done.length ? `<div class="gnsum">✓ ${q.done.join(' · ')}</div>` : '';
   $('#gnnote').innerHTML = reveal ? gnExplain(q, reveal) : sum + (hulp ? gnRules() : `<div class="gnrule"><small style="margin:0">🧮 Zet je rekenmachine op DEG (graden).</small></div>`);
   gnPad(q);
+  if (reveal) { const pd = $('#gnpad'); pd.innerHTML = ''; pd.style.display = 'none'; } else $('#gnpad').style.display = '';
 }
 function gnStepExplain(q, step) {
   const nx = `<button class="btn primary gnnx" data-act="gnNext">Verder ▶</button>`;
@@ -2856,14 +2873,14 @@ function gnExplain(q, r) {
   let h = r.err && GON_TIP[r.err] ? `<div class="gnerr">${GON_TIP[r.err]}</div>` : '';
   h += `<div class="gnyou">Jouw antwoord: <s>${esc(r.given)}</s></div>`;
   if (q.kind === 'z') {
-    const kn = gnNum(q.known), val = k => k === q.unkRole ? 'x' : kn;
-    h += `<div class="gnl">x is de ${role(q.unkRole)} zijde en ${kn} is de ${role(q.knownRole)} zijde: dat is <b>${t}</b>.</div>` +
+    const kn = gnNum(q.known), val = k => k === q.unkRole ? q.nm : kn;
+    h += `<div class="gnl">${q.nm} is de ${role(q.unkRole)} zijde en ${kn} is de ${role(q.knownRole)} zijde: dat is <b>${t}</b>.</div>` +
       `<div class="gnl">${t} ${Math.round(q.alpha)}° = ${gnFr(val(q.combo.n), val(q.combo.d))}</div>` +
-      `<div class="gnl">x = ${kn} ${q.mul ? '·' : ':'} ${t} ${Math.round(q.alpha)}° = <b>${gnFm(q.ans, 1)} cm</b></div>`;
+      `<div class="gnl">${q.nm} = ${kn} ${q.mul ? '·' : ':'} ${t} ${Math.round(q.alpha)}° = <b>${gnFm(q.ans, 1)} cm</b></div>`;
   } else {
     h += `<div class="gnl">Gegeven: de ${role(q.combo.n)} zijde (${gnNum(q.num)}) en de ${role(q.combo.d)} zijde (${gnNum(q.den)}): dat is <b>${t}</b>.</div>` +
-      `<div class="gnl">${t} x = ${gnFr(gnNum(q.num), gnNum(q.den))}</div>` +
-      `<div class="gnl">x = ${t}⁻¹(${gnFr(gnNum(q.num), gnNum(q.den))}) = <b>${gnFm(q.ans, q.dec)}°</b></div>`;
+      `<div class="gnl">${t} ${q.nm} = ${gnFr(gnNum(q.num), gnNum(q.den))}</div>` +
+      `<div class="gnl">${q.nm} = ${t}⁻¹(${gnFr(gnNum(q.num), gnNum(q.den))}) = <b>${gnFm(q.ans, q.dec)}°</b></div>`;
   }
   return h + `<button class="btn primary gnnx" data-act="gnNext">Volgende ▶</button>`;
 }
@@ -3140,8 +3157,8 @@ function duoQuestion(gid, cfg) {
     const opts = [{html: gnFm(q.ans, q.dec) + u, ok: true}];
     for (const [v, e] of shuffle(cand)) { const h = gnFm(v, q.dec) + u; if (opts.length < 4 && isFinite(v) && v > 0 && !opts.some(o => o.html === h)) opts.push({html: h, ok: false, err: e}); }
     for (let d = 1; opts.length < 4 && d < 9; d++) { const h = gnFm(q.ans + d * (q.dec ? 0.7 : 3), q.dec) + u; if (!opts.some(o => o.html === h)) opts.push({html: h, ok: false, err: 'anders'}); }
-    return {prompt: `<div class="dsub">Bereken ${q.kind === 'z' ? 'zijde' : 'hoek'} <b>x</b> ${q.kind === 'z' ? '(1 decimaal)' : `(${q.dec ? '1 decimaal' : 'hele graden'})`}</div><div class="dfig">${gnSVG(q, hulp)}</div>`,
-      opts: shuffle(opts), explain: `${q.eqHTML} → x = <b>${gnFm(q.ans, q.dec)}${u}</b>`,
+    return {prompt: `<div class="dsub">Bereken ${q.kind === 'z' ? 'zijde ' : ''}<b>${q.nm}</b> ${q.kind === 'z' ? '(1 decimaal)' : `(${q.dec ? '1 decimaal' : 'hele graden'})`}</div><div class="dfig">${gnSVG(q, hulp)}</div>`,
+      opts: shuffle(opts), explain: `${q.eqHTML} → ${q.nm} = <b>${gnFm(q.ans, q.dec)}${u}</b>`,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'g', q.type, o.ok ? 1 : 0, o.ok ? '' : o.err, Math.round(performance.now() - ms0), 0, q.eqTxt, gnFm(q.ans, q.dec) + u, o.html])};
   }
   // grafiek
