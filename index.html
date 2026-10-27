@@ -219,6 +219,18 @@ textarea.inp{width:100%;min-height:12rem;resize:vertical}
 
 /* startscherm secties */
 .hs{flex:1;overflow:auto;padding:.3rem}
+.grades{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:1.6rem;align-content:center;padding:.3rem}
+.gtile{position:relative;overflow:hidden;text-align:left;display:flex;flex-direction:column;gap:1rem;padding:1.8rem 1.8rem 1.6rem;min-height:22rem;border-radius:1.4rem;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--gc) 26%,transparent),rgba(255,255,255,.02) 60%),var(--card);border:2px solid color-mix(in srgb,var(--gc) 55%,transparent);box-shadow:var(--sh);transition:transform .1s}
+.gtile:active{transform:scale(.98)}
+.gtile .gnum{position:absolute;right:-.5rem;top:-2.4rem;font-family:var(--fd);font-style:italic;font-size:12rem;line-height:1;color:var(--gc);opacity:.22}
+.gtile h3{margin:0;font-family:var(--fd);font-style:italic;text-transform:uppercase;font-size:2.6rem;color:#fff;text-shadow:0 .2rem 0 rgba(0,0,0,.4)}
+.gch{display:flex;flex-direction:column;gap:.5rem;flex:1}
+.gch span{font-weight:700;font-size:1.15rem;color:#DCE1F7;padding:.45rem .8rem;border-radius:.6rem;background:rgba(255,255,255,.06);border-left:.3rem solid var(--gc)}
+.gcount{align-self:flex-end;font-family:var(--fd);font-style:italic;font-size:1rem;padding:.45rem 1rem;border-radius:.5rem;background:linear-gradient(var(--cta1),var(--cta2));color:var(--ctaInk);box-shadow:0 .2rem 0 var(--ctaD)}
+.gtitle{color:var(--gc)!important;background:none!important;-webkit-text-fill-color:currentColor}
+.sec.chap{display:flex;align-items:center;gap:.7rem}
+.sec .chn{display:inline-grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:.5rem;background:var(--gc);color:#0B1020;font-size:1.2rem;font-style:normal}
 .hs .tiles{flex:none;overflow:visible;padding:0;margin-bottom:1.6rem}
 .sec{margin:.2rem 0 .9rem;font-size:1.35rem;font-weight:800}
 .sec span{font-size:.9rem;color:var(--muted);font-weight:700;margin-left:.4rem}
@@ -1228,7 +1240,12 @@ const GAMES = {
     begin: () => grNext()
   }
 };
-const SECTIONS = [['neg', 'Negatieve getallen', 'klas 1'], ['vr', 'Voorrangsregels', 'klas 1'], ['lin', 'Lineaire formules en vergelijkingen', 'klas 2'], ['gon', 'Goniometrie', 'klas 3']];
+// Jaarlagen en hoofdstukken. Nieuw hoofdstuk: voeg een regel toe aan SECTIONS met de jaarlaag erbij.
+const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D']];
+const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3]];
+const gamesIn = sid => Object.entries(GAMES).filter(([, g]) => g.section === sid);
+const gradeOf = gid => { const sc = SECTIONS.find(x => x[0] === (GAMES[gid] || {}).section); return sc ? sc[2] : null; };
+let GRADE = null;
 let GID = 'rekenrace';
 function cfg(gid = GID) {
   const g = GAMES[gid];
@@ -1296,10 +1313,23 @@ function showHome() {
       <div><button class="gear" id="gear" aria-label="Instellingen">⚙</button><div class="hint">houd vast</div></div>
     </header>
     ${D.classes.length ? '' : `<div class="notice">Tip voor de docent: houd ⚙ twee seconden vast om klassen en foto's toe te voegen. Spelen als gast kan ook meteen.</div>`}
-    <div class="hs">${SECTIONS.map(([sid, name, grade]) => `<h3 class="sec">${esc(name)} <span>${esc(grade)}</span></h3><div class="tiles">
-      ${Object.entries(GAMES).filter(([, g]) => g.section === sid).map(([id, g]) => `<button class="tile" data-act="openGame" data-arg="${id}">${g.tile()}<h3${g.title.length > 12 ? ' class="long"' : ''}>${esc(g.title)}</h3><p>${esc(g.sub)}</p></button>`).join('')}
-    </div>`).join('')}</div></section>`;
+    <h3 class="sec">Kies je jaarlaag</h3>
+    <div class="grades">${GRADES.map(([gr, name, col]) => { const ch = SECTIONS.filter(x => x[2] === gr), n = ch.reduce((a, x) => a + gamesIn(x[0]).length, 0);
+      return `<button class="gtile" style="--gc:${col}" data-act="grade" data-arg="${gr}"><span class="gnum">${gr}</span><h3>${esc(name)}</h3>
+        <div class="gch">${ch.map(x => `<span>${esc(x[1])}</span>`).join('') || '<span class="muted">nog geen spellen</span>'}</div>
+        <div class="gcount">${n} spel${n === 1 ? '' : 'len'} ▶</div></button>`; }).join('')}</div></section>`;
+  GRADE = null;
   bindLongPress($('#gear'), 1500, showSettings);
+}
+function showGrade(gr) {
+  GRADE = gr; screen = 'grade'; rerender = () => showGrade(gr);
+  const gd = GRADES.find(x => x[0] === gr) || GRADES[0];
+  app.innerHTML = `<section class="screen" style="--gc:${gd[2]}">
+    <header class="top"><button class="btn" data-act="grades">← Jaarlagen</button><h1 class="gtitle">${esc(gd[1])}</h1><div class="spacer"></div>
+      <button class="btn" data-act="fullscreen">⛶ Volledig scherm</button></header>
+    <div class="hs">${SECTIONS.filter(x => x[2] === gr).map(([sid, name], i) => `<h3 class="sec chap"><span class="chn">${i + 1}</span>${esc(name)}</h3><div class="tiles">
+      ${gamesIn(sid).map(([id, g]) => `<button class="tile" data-act="openGame" data-arg="${id}">${g.tile()}<h3${g.title.length > 12 ? ' class="long"' : ''}>${esc(g.title)}</h3><p>${esc(g.sub)}</p></button>`).join('')}
+    </div>`).join('') || '<p class="empty">Voor deze jaarlaag zijn nog geen spellen.</p>'}</div></section>`;
 }
 function bindLongPress(el, ms, fn) {
   let t = null;
@@ -3404,7 +3434,9 @@ const ACT = {
   duoPickAgain: () => { GID = DUO.game || GID; showDuoPick(); },
   duoQuit: async () => { if (await ask('Stoppen met dit potje?', 'Stoppen', 'Doorgaan')) { duoStop(); showDuoPick(); } },
   zoom: v => { D.zoom = +v; save(); applyZoom(); showSettings(); },
-  home: () => { stopGame(); duoStop(); showHome(); },
+  home: () => { stopGame(); duoStop(); const gr = GRADE || gradeOf(GID); if (gr && screen !== 'settings' && screen !== 'stats' && screen !== 'student') showGrade(gr); else showHome(); },
+  grades: () => showHome(),
+  grade: v => showGrade(+v),
   settings: () => showSettings(),
   stats: () => {
     const c = curClass();
