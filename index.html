@@ -3545,7 +3545,7 @@ function duoTick() {
   DUO.raf = requestAnimationFrame(duoTick);
 }
 function duoNext(ln) {
-  ln.q = duoQuestion(DUO.game, DUO.cfg); ln.locked = false;
+  ln.q = duoQuestion(DUO.game, DUO.cfg); ln.locked = false; ln.readyAt = performance.now() + 350;
   $('#lq' + ln.i).innerHTML = ln.q.prompt; $('#lex' + ln.i).innerHTML = '';
   const op = $('#lop' + ln.i); op.className = 'lopts' + (ln.q.big ? ' big' : '');
   op.innerHTML = ln.q.opts.map((o, k) => `<button class="ans dans" data-fast="dans" data-arg="${ln.i}:${k}">${o.html}</button>`).join('');
@@ -3559,7 +3559,7 @@ function duoPts(ln, txt, up) {
 }
 function duoAnswer(arg) {
   if (!DUO.running) return;
-  const [li, k] = arg.split(':').map(Number), ln = DUO.lanes[li]; if (!ln || ln.locked) return;
+  const [li, k] = arg.split(':').map(Number), ln = DUO.lanes[li]; if (!ln || ln.locked || performance.now() < (ln.readyAt || 0)) return;
   const o = ln.q.opts[k]; if (!o) return;
   ln.locked = true; if (ln.q.vals) o.val = ln.q.vals[k];
   ln.q.rec(ln, o);
@@ -3859,7 +3859,33 @@ const CHANGE = {
 };
 
 app.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && !b.disabled && ACT[b.dataset.act]) ACT[b.dataset.act](b.dataset.arg, b, e); });
+/* Veilige aanraking bij Samen spelen. Een infrarood-touchframe kan bij meerdere vingers tegelijk 'spookaanrakingen' melden
+   op het kruispunt van de echte aanrakingen. Daarom: een antwoord telt pas bij loslaten op dezelfde knop, niet bij een
+   handpalm, niet als het precies op het kruispunt van twee andere aanrakingen ligt, en niet vlak nadat een nieuwe vraag verscheen. */
+const TOUCH = new Map(), DPEND = new Map();
+document.addEventListener('pointerdown', e => TOUCH.set(e.pointerId, {x: e.clientX, y: e.clientY, t: performance.now()}), true);
+const touchEnd = e => { TOUCH.delete(e.pointerId); };
+document.addEventListener('pointerup', e => {
+  const pd = DPEND.get(e.pointerId); DPEND.delete(e.pointerId);
+  if (pd && !pd.bad) {
+    const dt = performance.now() - pd.t, mv = Math.hypot(e.clientX - pd.x, e.clientY - pd.y);
+    const el = document.elementFromPoint(e.clientX, e.clientY), b = el && el.closest('[data-fast="dans"]');
+    if (b === pd.btn && dt >= 40 && dt <= 2500 && mv < 40) duoAnswer(b.dataset.arg);
+  }
+  touchEnd(e);
+}, true);
+document.addEventListener('pointercancel', e => { DPEND.delete(e.pointerId); touchEnd(e); }, true);
+function ghostTouch(e) {
+  if (e.pointerType === 'touch' && (e.width > 90 || e.height > 90)) return true; // handpalm of onderarm
+  const o = [...TOUCH.entries()].filter(([id]) => id !== e.pointerId).map(([, p]) => p);
+  if (o.length < 2) return false;
+  const tol = 30;
+  for (const a of o) for (const b of o) if (a !== b && Math.abs(e.clientX - a.x) < tol && Math.abs(e.clientY - b.y) < tol) return true;
+  return false;
+}
 app.addEventListener('pointerdown', e => {
+  const db = e.target.closest('[data-fast="dans"]');
+  if (db) { e.preventDefault(); DPEND.set(e.pointerId, {btn: db, t: performance.now(), x: e.clientX, y: e.clientY, bad: ghostTouch(e)}); return; }
   const tg = e.target.closest('svg.tapgraph');
   if (tg) { e.preventDefault(); grTap(tg, e); return; }
   const bal = e.target.closest('.balloon');
