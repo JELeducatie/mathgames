@@ -655,6 +655,18 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .ttest{max-width:44rem!important}
 .tarea{height:12rem;border:3px dashed var(--sub);border-radius:1rem;display:grid;place-items:center;font-family:var(--fd);font-size:2rem;color:var(--sub);touch-action:none}
 .tlog{margin:1rem 0;min-height:3rem;font-size:1rem;color:var(--gold);word-break:break-word}
+.fdline{display:flex;align-items:baseline;gap:.8rem;width:100%;font-family:var(--fd);font-size:clamp(1.6rem,4.4vmin,3rem);color:var(--ink);padding:.15rem .6rem;margin:.15rem 0;border-radius:.6rem;border:2px dashed transparent;background:none;text-align:left}
+.fdline:not(:disabled){border-color:rgba(255,255,255,.18);background:rgba(255,255,255,.04);cursor:pointer}
+.fdline:not(:disabled):active{background:rgba(255,210,63,.15)}
+.fdline:disabled{opacity:1}
+.fdline.hit{border:2px solid var(--gold);background:rgba(255,210,63,.18)}
+.fdline.miss{border-color:var(--bad);background:rgba(255,77,109,.12)}
+.fdlab{font-family:var(--fd);font-style:italic;text-transform:uppercase;font-size:.95rem;margin:.5rem 0 .2rem}.fdlab.bad{color:#FF97AA}.fdlab.good{color:var(--good)}
+.vline.small{font-size:clamp(1.3rem,3.4vmin,2.2rem);color:#A7F3D0}
+.mv.fdopt.right{background:linear-gradient(180deg,#6FF5C0,var(--good));color:var(--dark)}
+.mv.fdopt.wrong{background:linear-gradient(180deg,#FF8095,var(--bad))}
+.fdmini{font-family:var(--fd);font-size:clamp(1.1rem,2.6vmin,1.7rem);text-align:left;line-height:1.5}
+.fdn{display:inline-block;width:4.6rem;font-size:.6em;color:var(--muted);font-family:system-ui,sans-serif}
 </style>
 </head>
 <body>
@@ -1263,6 +1275,15 @@ const GAMES = {
       <div class="card wa"><div class="wlab">Antwoord van een leerling</div><div class="wea" id="wea"></div></div>
       <div class="wehint" id="wehint"></div><div class="wexp" id="wexp"></div><div class="wopts" id="weopts"></div>`,
     setup: () => {}, begin: () => weNext()
+  },
+  detective: {
+    section: 'vr', title: 'Foutendetective', sub: 'Zoek en verbeter de fout in een uitwerking',
+    opts: ['vt', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {vt: ['s1', 's2', 's3'], time: 180},
+    example: c => { const q = genFD(c); return q ? `Voorbeeld: <b>${vrText(q.shown[0])}</b>` : ''; },
+    tile: () => `<div class="mini-vr"><span>3 + 4 × 5</span><span style="color:#FF6B85;text-decoration:line-through">= 7 × 5</span><span>🔍 = 3 + 20</span></div>`,
+    frame: () => `<div class="bwrap"><div class="bmain"><div class="qcard work" id="qcard"><div class="worktitle">Uitwerking van een leerling</div><div id="fdwork"></div></div><div class="bhint" id="bhint"></div></div><div class="card side"><div class="worktitle">Volgorde</div><div class="vrules" id="vrules"></div></div></div><div class="moves" id="moves"></div>`,
+    setup: () => {}, begin: () => fdNext()
   },
   voorrang: {
     section: 'vr', title: 'Voorrangsregels', sub: 'Werk onder elkaar, stap voor stap naar het antwoord',
@@ -2134,7 +2155,7 @@ const WIA_ERRT = {
 const STAT_TOPICS = {
   neg: {name: 'Negatieve getallen', g: ['r', 'b'], unit: 'sommen', fast: 6000, errs: ERR,
     cats: OP_ORDER.map(o => ({id: o, name: OPS[o].name, short: o, color: `var(--${OPS[o].cls})`}))},
-  vr: {name: 'Voorrangsregels', g: ['v'], unit: 'stappen', fast: 8000, errs: VR_ERR, noLevel: true,
+  vr: {name: 'Voorrangsregels', g: ['v', 'd'], unit: 'stappen', fast: 8000, errs: VR_ERR, noLevel: true,
     cats: [{id: 'haak', name: 'Haakjes eerst', short: '( )', color: 'var(--gold)'}, {id: 'punt', name: '× en : vóór + en −', short: '× :', color: 'var(--mul)'},
       {id: 'streep', name: '+ en − van links naar rechts', short: '+ −', color: 'var(--add)'}, {id: 'reken', name: 'Uitrekenen', short: 'Reken', color: 'var(--sub)'}]},
   gon: {name: 'Goniometrie', g: ['g'], unit: 'vragen', fast: 30000, errs: GON_ERR, noLevel: true,
@@ -2311,7 +2332,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -3466,6 +3487,13 @@ function duoQuestion(gid, cfg) {
     return {prompt: `<div class="dq small">${eq}</div><div class="dsub">${ask}</div>`, opts, explain,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'l', cat, o.ok ? 1 : 0, o.ok ? '' : o.err, Math.round(performance.now() - ms0), 0, plainTxt(eq), plainTxt(explain), plainTxt(o.html)])};
   }
+  if (gid === 'detective') {
+    const q = genFD(cfg), start = vrText(q.shown[0]);
+    return {prompt: `<div class="dsub">In welke regel zit de eerste fout?</div><div class="fdmini">${q.shown.map((t, k) => `<div><span class="fdn">${k ? 'regel ' + k : ''}</span>${k ? '= ' : ''}${vrText(t)}</div>`).join('')}</div>`,
+      opts: q.shown.slice(1).map((t, k) => ({html: 'regel ' + (k + 1), ok: k + 1 === q.bad, err: q.err})).slice(0, 4),
+      explain: `In regel ${q.bad} ging het mis (${FD_ERRNAME[q.err] || 'rekenfout'}). Goed was: = ${vrText(q.opts.find(x => x.ok).t)}`,
+      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'd', vrKind(q.good[q.bad - 1], vrValid(q.good[q.bad - 1])[0]), o.ok ? 1 : 0, o.ok ? '' : q.err, Math.round(performance.now() - ms0), 0, `Fout zoeken: ${start}`, `regel ${q.bad}`, o.html])};
+  }
   if (gid === 'begrip') {
     const q = wiaBegripQ(cfg);
     return {prompt: `<div class="dsub">Welk begrip wordt omschreven?</div><div class="ddesc">${esc(q.t.d)}</div>`, opts: q.opts.map(o => ({html: esc(o.t), ok: o === q.t, err: 'begrip'})),
@@ -3601,6 +3629,84 @@ function duoFinish() {
   if (r[0] && r[0].points > 0 && (!r[1] || r[0].points > r[1].points)) confetti();
 }
 
+/* ===================== Foutendetective (voorrangsregels) ===================== */
+const FD_ERRNAME = {haakjes: 'Haakjes niet eerst', puntstreep: '+ of − vóór × of :', linksrechts: 'Niet van links naar rechts', reken: 'Rekenfout'};
+const fdOK = t => t.every(x => x.t !== 'n' || (Number.isInteger(x.v) && x.v >= 0 && x.v <= 300));
+function fdSolve(t) { const out = [t]; let g = 0; while (t.length > 1 && g++ < 12) { const v = vrValid(t); if (!v.length) return null; t = vrApply(t, v[0]); if (!fdOK(t)) return null; out.push(t); } return out; }
+// alle foute vervolgstappen vanuit regel t, met soort fout
+function fdWrongs(t) {
+  const valid = vrValid(t), out = [], seen = new Set([vrText(vrApply(t, valid[0]))]), val = x => { const e = fdSolve(x); return e ? e[e.length - 1][0].v : null; }, v0 = val(t);
+  // alleen stappen die écht een ander antwoord geven (bijv. 12 + 11 + 44 = 12 + 55 is wiskundig gewoon goed)
+  const add = (nt, err) => { if (!nt || !fdOK(nt)) return; const k = vrText(nt); if (seen.has(k)) return; const v = val(nt); if (v === null || v === v0) return; seen.add(k); out.push({t: nt, err}); };
+  for (let i = 1; i < t.length - 1; i++) if (t[i].t === 'op' && !valid.includes(i) && t[i - 1].t === 'n' && t[i + 1].t === 'n') {
+    const r = vrCalc(t[i - 1].v, t[i].v, t[i + 1].v); if (Number.isInteger(r) && r >= 0) add(vrApply(t, i), vrClassify(t, i));
+  }
+  if (t.some(x => x.t === '(')) { const flat = t.filter(x => x.t !== '(' && x.t !== ')'), fv = vrValid(flat); if (fv.length) add(vrApply(flat, fv[0]), 'haakjes'); }
+  const i = valid[0], r = vrCalc(t[i - 1].v, t[i].v, t[i + 1].v), alt = t[i].v === '×' ? t[i - 1].v + t[i + 1].v : r + (Math.random() < 0.5 ? 1 : -1) * rnd(1, 3);
+  if (alt !== r && alt >= 0) { const nt = vrApply(t, i), j = nt.findIndex((x, k) => x.t === 'n' && x.v === r && k >= i - 2); if (j >= 0) { nt[j] = {t: 'n', v: alt}; add(nt, 'reken'); } }
+  return out;
+}
+function genFD(cfg) {
+  for (let g = 0; g < 300; g++) {
+    const {tk} = genVR(cfg.vt[rnd(0, cfg.vt.length - 1)]), good = fdSolve(tk); if (!good || good.length < 3) continue;
+    const j = rnd(0, good.length - 2), wr = shuffle(fdWrongs(good[j])); if (!wr.length) continue;
+    if (Math.random() < 0.75) wr.sort((a, b) => (a.err === 'reken') - (b.err === 'reken')); // vooral volgordefouten
+    const w = wr[0], rest = fdSolve(w.t); if (!rest) continue;
+    const shown = good.slice(0, j + 1).concat(rest);
+    if (shown[shown.length - 1][0].v === good[good.length - 1][0].v) continue; // foute uitwerking moet ook een fout antwoord geven
+    const fix = vrApply(good[j], vrValid(good[j])[0]);
+    const opts = [{t: fix, ok: true}, {t: w.t, ok: false, err: w.err}].concat(wr.slice(1, 3).map(x => ({t: x.t, ok: false, err: x.err})));
+    if (opts.length < 3) continue;
+    return {good, shown, bad: j + 1, err: w.err, opts: shuffle(opts)};
+  }
+  return null;
+}
+function fdLines(q, o = {}) {
+  return q.shown.map((t, k) => `<button class="fdline ${o.reveal && k === q.bad ? 'hit' : ''} ${o.miss === k ? 'miss' : ''}" data-fast="fdl" data-arg="${k}" ${k === 0 || o.lock ? 'disabled' : ''}>
+    <span class="veq">${k ? '=' : ''}</span><span>${vrText(t)}</span></button>`).join('');
+}
+function fdNext() {
+  const q = genFD(G.cfg); if (!q) return; G.fq = q; q.step = 1; q.miss = null; G.locked = false; G.qStart = performance.now(); flash('');
+  fdRender('');
+}
+function fdRender(hint) {
+  const q = G.fq;
+  $('#fdwork').innerHTML = fdLines(q, {reveal: q.step > 1, miss: q.miss, lock: q.step > 1});
+  $('#vrules').innerHTML = VR_RULES.map(([k, sym, txt], n) => `<div class="vrule"><b>${n + 1}</b><span class="vsym">${sym}</span><span>${txt}</span></div>`).join('');
+  const h = $('#bhint'); h.className = 'bhint' + (hint ? ' warn2' : '');
+  if (q.step === 1) { h.textContent = hint || 'In welke regel gaat het voor het eerst mis? Tik die regel aan.'; $('#moves').innerHTML = ''; }
+  else if (q.step === 2) {
+    h.textContent = hint || 'Wat had er in die regel moeten staan?';
+    $('#moves').innerHTML = q.opts.map((o, i) => `<button class="mv wide fdopt" data-fast="fdo" data-arg="${i}">= ${vrText(o.t)}</button>`).join('');
+  }
+}
+function fdLine(k) {
+  const q = G && G.fq; if (!G || !G.running || G.locked || !q || q.step !== 1) return;
+  k = +k; if (k < 1) return;
+  const ok = k === q.bad, start = vrText(q.shown[0]);
+  recordGen('d', vrKind(q.good[q.bad - 1], vrValid(q.good[q.bad - 1])[0]), ok, ok ? null : q.err, `Fout zoeken: ${start}`, `regel ${q.bad}`, `regel ${k}`);
+  G.qStart = performance.now();
+  if (ok) { award(5); beep(true); flash('good', 300); q.step = 2; fdRender(''); return; }
+  penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: `Fout zoeken in ${start}`, given: `regel ${k}`});
+  q.miss = k; q.step = 2;
+  fdRender(k < q.bad ? `Regel ${k} klopt nog. De fout zit in de gele regel. Wat had daar moeten staan?` : `Het ging al eerder mis: in de gele regel. Wat had daar moeten staan?`);
+}
+function fdOpt(i) {
+  const q = G && G.fq; if (!G || !G.running || G.locked || !q || q.step !== 2) return;
+  const o = q.opts[+i]; if (!o) return; G.locked = true;
+  const prev = q.good[q.bad - 1], start = vrText(q.shown[0]), fixTxt = vrText(q.opts.find(x => x.ok).t);
+  recordGen('d', vrKind(prev, vrValid(prev)[0]), o.ok, o.ok ? null : (o.err || 'reken'), `Verbeteren: ${vrText(prev)}`, fixTxt, vrText(o.t));
+  document.querySelectorAll('.fdopt').forEach((b, k) => { b.disabled = true; if (q.opts[k].ok) b.classList.add('right'); });
+  if (o.ok) { award(10); beep(true); flash('good', 500); }
+  else { penalty(); beep(false); flash('bad', 600); document.querySelectorAll('.fdopt')[+i].classList.add('wrong'); G.mistakes.push({q: `${vrText(prev)} = ${fixTxt}`, given: vrText(o.t)}); }
+  q.step = 3;
+  const lines = q.good.map((t, k) => `<div class="vline small"><span class="veq">${k ? '=' : ''}</span><span>${vrText(t)}</span></div>`).join('');
+  $('#fdwork').innerHTML = `<div class="fdlab bad">De leerling schreef</div>${fdLines(q, {reveal: true, lock: true})}<div class="fdlab good">Zo had het moeten gaan</div>${lines}`;
+  const h = $('#bhint'); h.className = 'bhint'; h.innerHTML = `De fout: <b>${FD_ERRNAME[q.err] || 'rekenfout'}</b>. <button class="btn primary" data-act="fdNext">Volgende ▶</button>`;
+  $('#moves').innerHTML = '';
+  G.fafter = true; G.timers.push(setTimeout(() => { if (G && G.running && G.fafter) { G.fafter = false; fdNext(); } }, 12000));
+}
+
 /* ===================== Import-scherm ===================== */
 let IMP = null;
 function splitName(raw) {
@@ -3725,6 +3831,7 @@ function findStudent(id) { for (const c of D.classes) { const s = c.students.fin
 
 /* ===================== Acties ===================== */
 const ACT = {
+  fdNext: () => { if (G && G.running && G.fafter) { G.fafter = false; fdNext(); } },
   touchTest: () => {
     const m = document.createElement('div'); m.className = 'modal';
     m.innerHTML = `<div class="card ttest"><p>Tik in het vak hieronder</p><div class="tarea" id="tarea">tik hier</div><div class="tlog" id="tlog"></div>
@@ -3940,6 +4047,8 @@ function fastAct(b) {
   else if (f === 'gpick') gnPick(b.dataset.arg);
   else if (f === 'gsel') gnSel(b.dataset.arg);
   else if (f === 'vans') vrAns(b.dataset.arg);
+  else if (f === 'fdl') fdLine(b.dataset.arg);
+  else if (f === 'fdo') fdOpt(b.dataset.arg);
 }
 app.addEventListener('change', e => { const el = e.target.closest('[data-change]'); if (el && CHANGE[el.dataset.change]) CHANGE[el.dataset.change](el.dataset.arg, el); });
 app.addEventListener('input', e => { if (e.target.dataset.change === 'impName') CHANGE.impName(e.target.dataset.arg, e.target); });
