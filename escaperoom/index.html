@@ -1,0 +1,772 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Escaperooms</title>
+<style>
+:root{
+  --bg0:#0C0806;--bg1:#1A120C;--bg2:#2A1C12;
+  --brass1:#FBE6A6;--brass2:#D9A646;--brass3:#8C5A1E;--brass4:#4A2E10;
+  --steel1:#5B636E;--steel2:#2C3138;--steel3:#16191E;
+  --ink:#F6E7C8;--muted:#B49C7A;--glow:#FFC861;--ok:#6BF0A0;--bad:#FF5A4C;
+  --fd:"Georgia","Times New Roman",serif;
+  --fm:"Consolas","Courier New",monospace;
+  --brass:linear-gradient(180deg,var(--brass1),var(--brass2) 42%,var(--brass3) 88%,var(--brass4));
+  --plate:linear-gradient(160deg,#3A281A,#20160E 60%,#170F09);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:clamp(12px,1.05vmin + .45vw,28px)}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg0);color:var(--ink);font-family:"Segoe UI",Roboto,system-ui,sans-serif;overscroll-behavior:none}
+body{user-select:none;-webkit-user-select:none;touch-action:manipulation}
+a{color:inherit;text-decoration:none}
+.mv svg,.room .ico svg{width:100%;height:100%;display:block}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0;touch-action:manipulation}
+
+/* achtergrond */
+#bg{position:fixed;inset:0;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 10%,#3B2716 0%,#1C130C 45%,#0A0705 100%)}
+#bg::before{content:"";position:absolute;inset:0;opacity:.35;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.012) 0 2px,transparent 2px 7px),repeating-linear-gradient(0deg,rgba(0,0,0,.08) 0 1px,transparent 1px 5px)}
+#bg::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.65))}
+.bgear{position:absolute;opacity:.13;animation:spin linear infinite}
+.bgear svg{width:100%;height:100%;display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes spinr{to{transform:rotate(-360deg)}}
+#bg.fast .bgear{animation-duration:3s!important;opacity:.28;transition:opacity .3s}
+
+#app{position:fixed;inset:0}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;padding:1rem 1.5rem 1.2rem;gap:1rem;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:scale(.985)}}
+.top{display:flex;align-items:center;gap:1rem;min-height:3.2rem;flex-wrap:wrap}
+.spacer{flex:1}
+.muted{color:var(--muted)}
+
+/* gegraveerde titels */
+.eng{font-family:var(--fd);text-transform:uppercase;letter-spacing:.14em;font-weight:700;
+  background:var(--brass);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .12rem 0 rgba(0,0,0,.7))}
+h1.eng{margin:0;font-size:2.1rem}
+h2.eng{margin:0;font-size:1.6rem}
+
+/* knoppen */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:3.1rem;padding:.5rem 1.3rem;border-radius:.7rem;
+  background:linear-gradient(180deg,#4A3424,#2A1D13);border:1px solid rgba(255,214,140,.25);box-shadow:inset 0 1px 0 rgba(255,230,180,.15),0 .25rem 0 #0B0704,0 .6rem 1rem rgba(0,0,0,.4);
+  font-weight:700;font-size:1rem;color:var(--ink);white-space:nowrap;transition:transform .08s}
+.btn:active{transform:translateY(.15rem);box-shadow:inset 0 1px 0 rgba(255,230,180,.15),0 .1rem 0 #0B0704}
+.btn.gold{background:var(--brass);color:#2A1706;border-color:#FFF0C0;text-shadow:0 1px 0 rgba(255,255,255,.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 .3rem 0 #5A3510,0 0 1.4rem rgba(255,190,80,.35)}
+.btn.big{min-height:4.4rem;font-size:1.5rem;padding:.7rem 2.4rem;border-radius:1rem}
+.btn:disabled{opacity:.4;pointer-events:none}
+.ibtn{width:3.1rem;padding:0}
+
+/* metalen platen */
+.plate{position:relative;background:var(--plate);border-radius:1.1rem;padding:1.1rem 1.3rem;
+  border:2px solid transparent;background-clip:padding-box;box-shadow:0 0 0 2px #6B4518,0 0 0 4px #C9923C,0 0 0 6px #4A2C0E,0 1rem 2rem rgba(0,0,0,.6),inset 0 0 2rem rgba(0,0,0,.6)}
+.rivets::before,.rivets::after{content:"";position:absolute;width:.7rem;height:.7rem;border-radius:50%;top:.55rem;left:.55rem;
+  background:radial-gradient(circle at 35% 35%,#FFF2C8,#C9923C 45%,#4A2C0E);box-shadow:0 1px 2px rgba(0,0,0,.8),calc(100% * 0) 0 0 transparent}
+.rivets::after{left:auto;right:.55rem}
+.rivb{position:absolute;width:.7rem;height:.7rem;border-radius:50%;bottom:.55rem;background:radial-gradient(circle at 35% 35%,#FFF2C8,#C9923C 45%,#4A2C0E);box-shadow:0 1px 2px rgba(0,0,0,.8)}
+.rivb.l{left:.55rem}.rivb.r{right:.55rem}
+
+/* kamerkeuze */
+.rooms{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(20rem,26rem));gap:2rem;align-content:center;justify-content:center;overflow:auto;padding:1rem}
+.room{display:flex;flex-direction:column;gap:.7rem;text-align:left;min-height:17rem;transition:transform .12s}
+.room:active{transform:scale(.98)}
+.room .rt,.room .rs{padding-right:5.5rem}
+.room .rt{font-family:var(--fd);font-size:2rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--brass1)}
+.room .rs{font-family:var(--fd);font-style:italic;font-size:1.2rem;color:var(--glow)}
+.room p{margin:0;color:var(--muted);line-height:1.4;flex:1}
+.room .tags{display:flex;gap:.5rem;flex-wrap:wrap}
+.tag{padding:.25rem .7rem;border-radius:2rem;background:rgba(255,200,97,.1);border:1px solid rgba(255,200,97,.3);font-size:.85rem;font-weight:700;color:var(--brass1)}
+.room .go{align-self:flex-end}
+.room .ico{position:absolute;right:1rem;top:1rem;width:5rem;height:5rem;opacity:.9}
+
+/* lobby */
+.lobby{flex:1;display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;min-height:0}
+.lobby .plate{overflow:auto}
+.lobby h3{margin:.2rem 0 .8rem;font-family:var(--fd);text-transform:uppercase;letter-spacing:.1em;color:var(--brass2);font-size:1.05rem}
+.rules{margin:0;padding-left:1.3rem;line-height:1.55;font-size:1.05rem}
+.rules li{margin-bottom:.35rem}
+.rules b{color:var(--glow)}
+.counter{display:flex;align-items:center;gap:1.2rem;margin:.5rem 0 1.2rem}
+.counter .num{font-family:var(--fm);font-size:3.6rem;font-weight:700;color:var(--glow);text-shadow:0 0 1rem rgba(255,190,80,.6);min-width:4.5rem;text-align:center}
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.2rem}
+.chip{padding:.35rem .8rem;border-radius:.5rem;background:rgba(0,0,0,.35);border-left:.3rem solid var(--c);font-weight:700;font-size:.95rem}
+.chip.off{opacity:.3}
+.lobby .row{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center;margin-top:.6rem}
+
+/* nixie-klok */
+.nixie{font-family:var(--fm);font-size:2rem;font-weight:700;color:#FFB347;letter-spacing:.08em;padding:.2rem .9rem;border-radius:.5rem;
+  background:linear-gradient(#120804,#241208);box-shadow:inset 0 0 .8rem rgba(0,0,0,.9),0 0 0 2px #6B4518;text-shadow:0 0 .5rem #FF8A1E,0 0 1.2rem rgba(255,120,20,.7)}
+
+/* overzicht */
+.hub{flex:1;min-height:0;display:grid;gap:1.4rem;padding:.6rem;align-content:center;overflow:auto}
+.team{display:flex;flex-direction:column;align-items:center;gap:.45rem;padding:1rem .8rem .9rem;text-align:center;transition:transform .12s}
+.team:active{transform:scale(.97)}
+.team .mv{width:min(9rem,70%);aspect-ratio:1}
+.team .nm{font-family:var(--fd);font-weight:700;font-size:1.25rem;text-transform:uppercase;letter-spacing:.06em;color:var(--brass1);line-height:1.1}
+.team .st{font-size:.9rem;font-weight:700;color:var(--c,var(--muted))}
+.team .sc{font-family:var(--fm);font-size:.95rem;color:var(--muted)}
+.lamps{display:flex;gap:.35rem}
+.lamp{width:.85rem;height:.85rem;border-radius:50%;background:radial-gradient(circle at 35% 35%,#555,#1B1B1B);box-shadow:inset 0 0 .2rem #000,0 0 0 1px #6B4518}
+.lamp.on{background:radial-gradient(circle at 35% 35%,#FFF6C8,#FFC04D 50%,#B36B00);box-shadow:0 0 .6rem #FFB800,0 0 0 1px #6B4518}
+.lamp.cur{animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{background:radial-gradient(circle at 35% 35%,#FFE8B0,#8A5A10)}}
+.team.done{box-shadow:0 0 0 2px #6B4518,0 0 0 4px #FFD36B,0 0 0 6px #4A2C0E,0 0 2.4rem rgba(255,200,80,.55),inset 0 0 2rem rgba(0,0,0,.6)}
+
+/* kluis */
+.vault{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(24rem,32rem);gap:1.6rem;align-items:center}
+.vbox{position:relative;height:100%;display:grid;place-items:center;min-height:0}
+.vbox svg.big{width:min(100%,78vh);height:auto;max-height:100%;filter:drop-shadow(0 1.5rem 2rem rgba(0,0,0,.7))}
+.panel{display:flex;flex-direction:column;gap:.9rem;max-height:100%;overflow:auto;padding:1.2rem 1.4rem 1.4rem}
+.cardinfo{display:flex;align-items:center;gap:.8rem;padding:.6rem .8rem;border-radius:.8rem;background:rgba(0,0,0,.35);border-left:.4rem solid var(--c)}
+.cardinfo .ci{font-size:2.2rem}
+.cardinfo b{display:block;font-size:1.25rem;color:var(--c)}
+.cardinfo span{color:var(--muted);font-size:.95rem}
+.tipline{font-size:.95rem;line-height:1.35;padding:.5rem .8rem;border-radius:.6rem;background:rgba(255,200,97,.08);border:1px dashed rgba(255,200,97,.35)}
+.tipline b{color:var(--glow)}
+
+.slots{display:flex;justify-content:center;gap:.7rem;perspective:30rem}
+.slot{width:4.6rem;height:5.6rem;border-radius:.6rem;display:grid;place-items:center;font-size:3rem;font-weight:800;font-family:"Segoe UI Symbol","Segoe UI",sans-serif;color:#2A1706;
+  background:linear-gradient(180deg,#8E8270 0%,#F3E9D2 22%,#FFF9EA 50%,#E6D9BC 78%,#7C705E 100%);box-shadow:inset 0 0 0 2px #3A2A18,inset 0 .3rem .6rem rgba(0,0,0,.35),0 0 0 3px #B88434,0 .4rem .8rem rgba(0,0,0,.6);transition:box-shadow .2s,color .2s}
+.slot.fill{animation:flip .28s ease}
+@keyframes flip{0%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.slot.ok{color:#0A5A2C;box-shadow:inset 0 0 0 2px #0A5A2C,0 0 0 3px var(--ok),0 0 1.4rem var(--ok)}
+.slot.bad{color:#8A1208;box-shadow:inset 0 0 0 2px #8A1208,0 0 0 3px var(--bad),0 0 1.4rem var(--bad)}
+.slots.shake{animation:shake .5s}
+@keyframes shake{20%,60%{transform:translateX(-.6rem)}40%,80%{transform:translateX(.6rem)}}
+.keys{display:grid;grid-template-columns:repeat(6,1fr);gap:.55rem}
+.key{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-size:1.65rem;font-weight:800;color:#F6E7C8;font-family:"Segoe UI Symbol","Segoe UI",sans-serif;
+  background:radial-gradient(circle at 50% 38%,#3E3833,#151210 70%);box-shadow:inset 0 0 0 .18rem #C9923C,inset 0 0 0 .32rem #3B2611,0 .3rem 0 #000,0 .5rem .8rem rgba(0,0,0,.5);transition:transform .06s}
+.key:active,.key.hit{transform:translateY(.2rem);box-shadow:inset 0 0 0 .18rem #FFD36B,inset 0 0 0 .32rem #3B2611,0 .1rem 0 #000}
+.keyrow{display:flex;gap:.7rem}
+.keyrow .btn{flex:1}
+.locked .keys,.locked .keyrow{opacity:.35;pointer-events:none}
+.cool{text-align:center;font-weight:700;color:var(--bad);min-height:1.4rem}
+
+/* ringen */
+.ring{transform-box:fill-box;transform-origin:center;transition:transform 1.6s cubic-bezier(.2,.8,.2,1),opacity 1.2s ease 0.4s}
+.ring.open{transform:rotate(220deg) scale(1.04);opacity:.2}
+.ring.cur .halo{animation:halo 1.6s ease-in-out infinite}
+@keyframes halo{50%{opacity:.25}}
+.ring.turn{animation:turn 1.7s cubic-bezier(.3,.1,.2,1) forwards}
+@keyframes turn{0%{transform:rotate(0)}30%{transform:rotate(-25deg)}100%{transform:rotate(220deg) scale(1.04);opacity:.2}}
+.core-glow{transform-box:fill-box;transform-origin:center;animation:corepulse 2.4s ease-in-out infinite}
+@keyframes corepulse{50%{opacity:.5}}
+.gearspin{transform-box:fill-box;transform-origin:center;animation:spin 14s linear infinite}
+.gearspin.r{animation-name:spinr}
+.vault.busy .gearspin{animation-duration:1.2s}
+
+/* overlay */
+#ov{position:fixed;inset:0;z-index:30;display:none;place-items:center;background:rgba(5,3,2,.72);backdrop-filter:blur(.25rem)}
+#ov.show{display:grid;animation:fade .25s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(46rem,92vw);max-height:90vh;overflow:auto;padding:1.8rem 2rem;animation:pop .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.7) translateY(2rem);opacity:0}}
+.modal h2{margin:0 0 .8rem}
+.modal p{font-size:1.15rem;line-height:1.45;margin:.5rem 0}
+.modal .row{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin-top:1.2rem}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.8rem;margin:.8rem 0}
+.choice{padding:1rem;border-radius:.8rem;background:rgba(0,0,0,.35);border:2px solid rgba(255,200,97,.3);font-weight:700;font-size:1.15rem;text-align:center}
+.choice small{display:block;font-weight:400;color:var(--muted);font-size:.85rem;margin-top:.2rem}
+.choice.have{border-color:var(--ok)}
+.scroll{position:relative;padding:1.3rem 1.6rem;border-radius:.4rem;color:#3A2410;font-size:1.3rem;line-height:1.45;font-family:var(--fd);
+  background:linear-gradient(90deg,#D9C094,#F4E6C4 8%,#FBF1D8 50%,#F4E6C4 92%,#D9C094);box-shadow:inset 0 0 1.5rem rgba(120,70,20,.35),0 .5rem 1rem rgba(0,0,0,.5)}
+.scroll .q{font-size:1rem;opacity:.75;margin-bottom:.6rem;font-family:"Segoe UI",sans-serif}
+.big-ok{font-family:var(--fd);font-size:3rem;text-align:center;margin:.2rem 0}
+.pts{font-family:var(--fm);font-size:2.4rem;font-weight:700;text-align:center;color:var(--ok);text-shadow:0 0 1rem rgba(107,240,160,.5)}
+.pts.neg{color:var(--bad);text-shadow:0 0 1rem rgba(255,90,76,.5)}
+.next{display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;border-radius:.9rem;background:rgba(0,0,0,.4);border:2px solid var(--c);margin-top:.8rem}
+.next .ni{font-size:3rem}
+.next b{display:block;font-size:1.5rem;color:var(--c)}
+.autoback{font-size:.85rem;color:var(--muted);text-align:center;margin-top:.6rem}
+
+/* schatkist */
+.finale{position:relative;text-align:center}
+.rays{position:absolute;left:50%;top:13rem;width:42rem;height:42rem;margin:-21rem 0 0 -21rem;border-radius:50%;pointer-events:none;opacity:0;
+  background:repeating-conic-gradient(rgba(255,214,110,.35) 0 8deg,transparent 8deg 22deg);mask:radial-gradient(circle,#000 10%,transparent 65%);-webkit-mask:radial-gradient(circle,#000 10%,transparent 65%)}
+.finale.open .rays{opacity:1;animation:spin 18s linear infinite;transition:opacity 1s}
+.chest{position:relative;width:17rem;margin:4.5rem auto .4rem}
+.chest svg{width:100%;display:block;overflow:visible}
+#lid{transform-box:fill-box;transform-origin:0% 100%;transition:transform 1.2s cubic-bezier(.3,1.5,.5,1) .3s}
+.finale.open #lid{transform:rotate(-24deg) translate(-.2rem,-.6rem)}
+#chestglow{opacity:0;transition:opacity 1s .6s}
+.finale.open #chestglow{opacity:1}
+.score-big{font-family:var(--fm);font-size:4.6rem;font-weight:800;color:var(--glow);text-shadow:0 0 1.5rem rgba(255,190,80,.8);line-height:1}
+.breakdown{display:grid;grid-template-columns:1fr auto;gap:.25rem 1.5rem;max-width:26rem;margin:1rem auto 0;text-align:left;font-size:1.05rem}
+.breakdown span:nth-child(even){font-family:var(--fm);text-align:right;font-weight:700}
+.coin{position:fixed;z-index:40;width:1.6rem;height:1.6rem;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 35% 30%,#FFF6C8,#FFC845 45%,#B07000);box-shadow:0 0 .6rem rgba(255,200,60,.8)}
+
+/* ranglijst */
+.rank{flex:1;min-height:0;display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:center}
+.podium{display:flex;align-items:flex-end;gap:1rem;height:30rem;max-height:100%;padding-bottom:1rem}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.5rem;width:11rem;height:100%}
+.pod .blk{width:100%;border-radius:.6rem .6rem 0 0;background:var(--brass);display:grid;place-items:start center;padding-top:.6rem;font-family:var(--fd);font-weight:800;font-size:2.6rem;color:#3A2208;box-shadow:inset 0 0 1rem rgba(0,0,0,.3)}
+.pod .pn{font-family:var(--fd);font-weight:700;font-size:1.2rem;text-transform:uppercase;text-align:center;color:var(--brass1)}
+.pod .ps{font-family:var(--fm);font-weight:700;font-size:1.5rem;color:var(--glow)}
+.rlist{max-height:100%;overflow:auto}
+.rlist table{width:100%;border-collapse:collapse;font-size:1.05rem}
+.rlist th{text-align:right;color:var(--muted);font-weight:600;font-size:.85rem;padding:.3rem .6rem;border-bottom:1px solid rgba(255,200,97,.25)}
+.rlist th:nth-child(2){text-align:left}
+.rlist td{padding:.5rem .6rem;text-align:right;font-family:var(--fm);border-bottom:1px solid rgba(255,200,97,.1)}
+.rlist td:nth-child(2){text-align:left;font-family:var(--fd);font-weight:700;color:var(--brass1)}
+.rlist td.tot{color:var(--glow);font-size:1.25rem;font-weight:800}
+
+/* overige */
+#toast{position:fixed;left:50%;bottom:1.4rem;transform:translateX(-50%) translateY(400%);z-index:60;padding:.8rem 1.4rem;border-radius:.8rem;
+  background:#120C08;border:1px solid #C9923C;font-weight:700;transition:transform .25s;max-width:80vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+.gearbtn{width:3.1rem;height:3.1rem;border-radius:50%;display:grid;place-items:center;font-size:1.5rem;background:rgba(0,0,0,.35);border:1px solid rgba(255,200,97,.3)}
+.gearbtn.pressing{animation:press 1.5s linear forwards}
+@keyframes press{to{box-shadow:0 0 0 .4rem var(--glow);transform:rotate(180deg)}}
+.hint{font-size:.7rem;color:var(--muted);text-align:center}
+.count3{font-family:var(--fd);font-size:14rem;font-weight:800;color:var(--glow);text-shadow:0 0 3rem rgba(255,180,60,.9);animation:cnt 1s ease forwards}
+@keyframes cnt{from{transform:scale(2);opacity:0}30%{opacity:1}to{transform:scale(.8);opacity:0}}
+.nixie.low{color:#FF5A4C;text-shadow:0 0 .5rem #FF2A1E,0 0 1.2rem rgba(255,40,20,.8);animation:blink2 1s steps(2) infinite}
+@keyframes blink2{50%{opacity:.6}}
+.seg{display:flex;flex-wrap:wrap;gap:.4rem}
+.seg button{min-width:3.4rem;min-height:3rem;padding:.4rem .8rem;border-radius:.6rem;background:rgba(0,0,0,.35);border:1px solid rgba(255,200,97,.3);font-weight:700;font-size:1.05rem}
+.seg button.on{background:var(--brass);color:#2A1706;border-color:#FFF0C0}
+.lobby h3{margin-top:0}
+.info{flex:1;min-height:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.4rem;align-items:stretch;align-content:center;padding:1.4rem .4rem .4rem;grid-auto-rows:minmax(0,30rem)}
+.istep{display:flex;flex-direction:column;gap:.6rem;padding-top:2.2rem}
+.istep .inum{position:absolute;top:-1.1rem;left:50%;transform:translateX(-50%);width:2.6rem;height:2.6rem;border-radius:50%;display:grid;place-items:center;background:var(--brass);color:#2A1706;font-family:var(--fd);font-weight:800;font-size:1.4rem;box-shadow:0 0 0 .2rem #4A2C0E}
+.istep .iico{font-size:3.6rem;text-align:center}
+.istep h3{margin:0;font-family:var(--fd);text-transform:uppercase;letter-spacing:.06em;color:var(--brass1);font-size:1.35rem;text-align:center}
+.istep p{margin:0;font-size:1.15rem;line-height:1.45}
+.istep b{color:var(--glow)}
+.ilv{display:flex;flex-direction:column;gap:.4rem}
+.ilv span{padding:.45rem .7rem;border-radius:.5rem;background:rgba(0,0,0,.35);font-size:1.05rem}
+.idec{border-collapse:collapse;width:100%;table-layout:fixed;font-size:1.15rem}
+.idec td{border:1px solid #C9923C;text-align:center;padding:.35rem 0;font-weight:700}
+.idec tr:first-child td{background:rgba(255,200,97,.15)}
+.idec td.hl{background:var(--brass);color:#2A1706;box-shadow:0 0 1rem rgba(255,200,80,.7)}
+.ipoints{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem}
+.ipoints span{padding:.5rem 1rem;border-radius:2rem;background:rgba(0,0,0,.4);border:1px solid rgba(255,200,97,.3);font-size:1.05rem}
+.ipoints b{color:var(--glow)}
+/* prijsuitreiking */
+.cer{text-align:center}
+.cer .place{font-family:var(--fd);font-size:8rem;font-weight:800;line-height:1;background:var(--brass);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .3rem 0 rgba(0,0,0,.6))}
+.cer .who{font-family:var(--fd);font-size:3.4rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--brass1);animation:pop .6s cubic-bezier(.2,1.6,.4,1)}
+.cer .drum{font-size:2rem;color:var(--muted);font-family:var(--fd);font-style:italic;animation:blink2 .4s steps(2) infinite}
+.err{margin:1rem;padding:1rem;border-radius:.6rem;background:#3A0E0A;border:1px solid var(--bad);font-family:var(--fm);font-size:.9rem;white-space:pre-wrap}
+@media (max-width:900px),(orientation:portrait){
+  .info{grid-template-columns:1fr 1fr;overflow:auto}
+  .vault{grid-template-columns:1fr;overflow:auto;align-items:start}.vbox{height:auto}.vbox svg.big{width:min(70vw,22rem)}
+  .lobby,.rank{grid-template-columns:1fr;overflow:auto}.screen{overflow:auto}.podium{height:16rem}}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="app"></div>
+<div id="ov"></div>
+<div id="toast"></div>
+<script src="kern.js"></script>
+<script src="kamers/_lijst.js"></script>
+<script>
+'use strict';
+const ER = window.EscapeRooms, esc = ER.esc;
+const $ = s => document.querySelector(s);
+const app = $('#app'), ov = $('#ov');
+
+/* ============ tandwielen ============ */
+function gearPath(teeth, R, r, hole, cx = 0, cy = 0) {
+  const ta = 2 * Math.PI / teeth, P = (rad, a) => (cx + rad * Math.cos(a)).toFixed(2) + ' ' + (cy + rad * Math.sin(a)).toFixed(2);
+  let d = '';
+  for (let i = 0; i < teeth; i++) { const a = i * ta; d += (i ? ' L' : 'M') + P(r, a) + ' L' + P(R, a + ta * .18) + ' L' + P(R, a + ta * .46) + ' L' + P(r, a + ta * .64); }
+  d += ' Z';
+  const h = c => `M${(cx + c[0] + c[2]).toFixed(2)} ${(cy + c[1]).toFixed(2)} a${c[2]} ${c[2]} 0 1 0 ${-2 * c[2]} 0 a${c[2]} ${c[2]} 0 1 0 ${2 * c[2]} 0 Z`;
+  d += ' ' + h([0, 0, hole]);
+  const sp = r * .55, sr = r * .17;
+  if (r > 30) for (let k = 0; k < 5; k++) { const a = k * 2 * Math.PI / 5; d += ' ' + h([sp * Math.cos(a), sp * Math.sin(a), sr]); }
+  return d;
+}
+function gearSVG(teeth, fill) { return `<svg viewBox="-110 -110 220 220"><path fill-rule="evenodd" fill="${fill}" d="${gearPath(teeth, 105, 88, 18)}"/></svg>`; }
+(function bgGears() {
+  const G = [[34, '-8vmin', '-10vmin', '46vmin', 90, 1], [22, '30vmin', '-6vmin', '24vmin', 60, -1], [40, 'auto', '-14vmin', '58vmin', 120, -1, '-14vmin'], [18, '62vmin', 'auto', '22vmin', 45, 1, null, '-4vmin'], [28, 'auto', 'auto', '38vmin', 80, 1, '-9vmin', '-12vmin']];
+  $('#bg').innerHTML = G.map(([t, left, top, size, dur, dir, right, bottom]) =>
+    `<div class="bgear" style="width:${size};height:${size};left:${left};top:${top};${right ? 'right:' + right + ';' : ''}${bottom ? 'bottom:' + bottom + ';' : ''}animation-duration:${dur}s;animation-name:${dir > 0 ? 'spin' : 'spinr'}">${gearSVG(t, '#E0A84A')}</div>`).join('');
+})();
+
+/* ============ geluid ============ */
+let AC = null, SOUND = true;
+try { SOUND = localStorage.getItem('er-geluid') !== 'uit'; } catch (e) {}
+function ac() { if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} } if (AC && AC.state === 'suspended') AC.resume(); return AC; }
+function tone(f, d, type = 'sine', vol = .15, when = 0, slide) {
+  if (!SOUND) return; const a = ac(); if (!a) return;
+  const o = a.createOscillator(), g = a.createGain(), t = a.currentTime + when;
+  o.type = type; o.frequency.setValueAtTime(f, t); if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + d);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + .02);
+}
+function noise(d, vol = .2, when = 0, hp = 800) {
+  if (!SOUND) return; const a = ac(); if (!a) return;
+  const b = a.createBuffer(1, a.sampleRate * d, a.sampleRate), x = b.getChannelData(0);
+  for (let i = 0; i < x.length; i++) x[i] = (Math.random() * 2 - 1) * (1 - i / x.length);
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain(); f.type = 'highpass'; f.frequency.value = hp; g.gain.value = vol;
+  s.buffer = b; s.connect(f).connect(g).connect(a.destination); s.start(a.currentTime + when);
+}
+const SND = {
+  key: () => { noise(.04, .25, 0, 2500); tone(1800, .03, 'square', .03); },
+  ok: () => { [0, .12, .24, .36].forEach((w, i) => { noise(.05, .3, w, 1500); tone(220 + i * 40, .08, 'square', .05, w); }); tone(90, .6, 'sawtooth', .12, .5, 45); noise(.5, .15, .5, 300); [523, 659, 784, 1047].forEach((f, i) => tone(f, .35, 'triangle', .12, 1.1 + i * .1)); },
+  bad: () => { tone(140, .45, 'sawtooth', .18); tone(147, .45, 'square', .08); },
+  coin: () => { tone(988, .08, 'square', .06); tone(1319, .25, 'square', .06, .08); },
+  fanfare: () => { [[523, 0], [659, .15], [784, .3], [1047, .45], [784, .7], [1047, .85]].forEach(([f, w]) => { tone(f, .4, 'triangle', .14, w); tone(f / 2, .4, 'sine', .08, w); }); }
+};
+
+/* ============ helpers ============ */
+const now = () => Date.now();
+function toast(m) { const t = $('#toast'); t.textContent = m; t.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 2600); }
+const mmss = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+function bindLong(el, ms, fn) {
+  if (!el) return; let t = null;
+  const clr = () => { clearTimeout(t); t = null; el.classList.remove('pressing'); };
+  el.addEventListener('pointerdown', () => { el.classList.add('pressing'); t = setTimeout(() => { t = null; el.classList.remove('pressing'); fn(); }, ms); });
+  el.addEventListener('pointerup', () => { if (t) toast('Spelleider: houd de knop even vast.'); clr(); });
+  el.addEventListener('pointerleave', clr); el.addEventListener('pointercancel', clr);
+}
+function fullscreen() { const d = document; if (!d.fullscreenElement) (d.documentElement.requestFullscreen || (() => {})).call(d.documentElement); else d.exitFullscreen(); }
+function plates() { return '<span class="rivb l"></span><span class="rivb r"></span>'; }
+
+/* ============ toestand ============ */
+let K = null, PLAN = null, S = null, ACTIVE = null, TICK = null, IDLE = null;
+const key = () => 'escaperoom-v1:' + K.id;
+function load() { try { return JSON.parse(localStorage.getItem(key())) || null; } catch (e) { return null; } }
+function save() { try { localStorage.setItem(key(), JSON.stringify(S)); } catch (e) {} }
+function routesIn() { return K.routes.slice(0, S.n); }
+function team(id) { return S.teams[id]; }
+function stationsOf(id) { return PLAN.byId[id].stations.slice(0, S.k || K.themas.length); }
+function startOf(id, i) { const t = team(id); return i === 0 ? S.t0 : t.solved[i - 1]; }
+
+function scoreOf(id) {
+  const P = K.punten, t = team(id), st = stationsOf(id);
+  let stations = 0, speed = 0;
+  t.solved.forEach((ts, i) => { stations += P.station; if (!(t.forced || []).includes(i)) speed += Math.max(0, Math.round(P.snelheidMax - P.snelheidPerMinuut * (ts - startOf(id, i)) / 60000)); });
+  const wrong = t.wrong * P.foutCode, hints = t.hints.length * P.hint;
+  let bonus = 0;
+  if (t.done) { const order = routesIn().map(r => team(r.id)).filter(x => x.done).map(x => x.done).sort((a, b) => a - b); const rk = order.indexOf(t.done); bonus = P.finishBonus[rk] || 0; }
+  return {stations, speed, wrong, hints, bonus, total: stations + speed + wrong + hints + bonus, solved: t.solved.length, of: st.length};
+}
+
+/* ============ schermen ============ */
+let screen = '';
+function stopTimers() { clearInterval(TICK); TICK = null; clearTimeout(IDLE); IDLE = null; }
+
+function showRooms() {
+  screen = 'rooms'; stopTimers(); K = null;
+  const fout = ER.fouten.length ? `<div class="err">Er zitten fouten in een escaperoom-bestand:\n${ER.fouten.map(f => '• ' + f.kamer + ': ' + f.fouten.join('\n   ')).join('\n')}</div>` : '';
+  app.innerHTML = `<section class="screen">
+    <header class="top"><a class="btn" href="../index.html">← Lesspellen</a><h1 class="eng">Escaperooms</h1><div class="spacer"></div>
+      <button class="btn ibtn" data-act="sound" aria-label="Geluid">${SOUND ? '🔊' : '🔇'}</button><button class="btn" data-act="fullscreen">⛶ Volledig scherm</button></header>${fout}
+    <div class="rooms">${ER.kamers.map(k => {
+      const s = (() => { try { return JSON.parse(localStorage.getItem('escaperoom-v1:' + k.id)); } catch (e) { return null; } })();
+      const bezig = s && s.phase === 'play';
+      return `<button class="room plate rivets" data-act="room" data-arg="${esc(k.id)}">${plates()}
+        <div class="ico">${vaultSVG(k.themas.map(t => ({c: t.kleur, i: t.icoon})), 0, {mini: true})}</div>
+        <div class="rs">${esc(k.ondertitel || '')}</div><div class="rt">${esc(k.titel)}</div>
+        <p>${esc(k.beschrijving || '')}</p>
+        <div class="tags"><span class="tag">${esc(k.doelgroep || '')}</span><span class="tag">${k.themas.length} thema's</span><span class="tag">tot ${k.routes.length} groepjes</span>${bezig ? '<span class="tag" style="color:var(--ok);border-color:var(--ok)">● spel bezig</span>' : ''}</div>
+        <span class="btn gold go">${bezig ? 'Verder spelen ▶' : 'Open ▶'}</span></button>`; }).join('')}</div></section>`;
+}
+
+function openRoom(id) {
+  K = ER.get(id); PLAN = ER.plan(K);
+  S = load();
+  if (!S || !S.n) S = {phase: 'lobby', n: Math.min(K.routes.length, 10), t0: null, teams: {}};
+  if (!S.min) S.min = K.speeltijd || 30;
+  if (!S.k) S.k = K.kaarten || K.themas.length;
+  if (S.phase === 'play') showHub(); else if (S.phase === 'end') showRank(); else showLobby();
+}
+
+function showLobby() {
+  screen = 'lobby'; stopTimers();
+  const seg = (act, vals, cur, fmtv) => `<div class="seg">${vals.map(v => `<button class="${v === cur ? 'on' : ''}" data-act="${act}" data-arg="${v}">${fmtv ? fmtv(v) : v}</button>`).join('')}</div>`;
+  const T = K.themas.length, ks = []; for (let k = Math.min(3, T); k <= T; k++) ks.push(k);
+  const perKaart = Math.floor(S.min / S.k * 10) / 10;
+  app.innerHTML = `<section class="screen">
+    <header class="top"><button class="btn" data-act="rooms">← Escaperooms</button><div><div class="muted" style="font-family:var(--fd);font-style:italic">${esc(K.ondertitel || '')}</div><h1 class="eng">${esc(K.titel)}</h1></div><div class="spacer"></div>
+      <button class="btn" data-act="info">ℹ Uitlegscherm</button><button class="btn ibtn" data-act="sound" aria-label="Geluid">${SOUND ? '🔊' : '🔇'}</button><button class="btn ibtn" data-act="fullscreen" aria-label="Volledig scherm">⛶</button></header>
+    <div class="lobby">
+      <div class="plate rivets">${plates()}
+        <h3>Aantal groepjes</h3>
+        <div class="counter"><button class="btn big ibtn" style="width:4.4rem" data-act="n" data-arg="-1">−</button><span class="num">${S.n}</span><button class="btn big ibtn" style="width:4.4rem" data-act="n" data-arg="1">+</button></div>
+        <div class="chips">${K.routes.map((r, i) => `<span class="chip ${i < S.n ? '' : 'off'}" style="--c:${K.themas.find(t => t.id === r.start).kleur}">${esc(r.naam)}</span>`).join('')}</div>
+        <h3>Speeltijd</h3>${seg('min', [15, 20, 25, 30, 35, 40, 45], S.min, v => v + ' min')}
+        <h3 style="margin-top:1.2rem">Kaarten per team</h3>${seg('k', ks, S.k)}
+        <p class="muted" style="margin:.6rem 0 0">Dat is ongeveer <b style="color:var(--glow)">${String(perKaart).replace('.', ',')} minuut</b> per kaart. Teams die niet alles halen, krijgen punten voor de sloten die wel open zijn.</p>
+      </div>
+      <div class="plate rivets" style="display:flex;flex-direction:column">${plates()}<h3>Klaar voor de start?</h3>
+        <ol class="rules">
+          <li>Print de kaarten voor deze <b>${S.n} groepjes</b> en <b>${S.k} kaarten</b>. Elke wiskundige heeft eigen codes.</li>
+          <li>Leg bij elk groepje de stapel van hun wiskundige, <b>kaart 1</b> bovenop.</li>
+          <li>Laat het <b>uitlegscherm</b> zien terwijl je de spelregels vertelt.</li>
+          <li>Druk op <b>Start de kluis</b>: de klok telt af van ${S.min}:00.</li></ol>
+        <div class="row"><a class="btn" href="kaarten.html?kamer=${encodeURIComponent(K.id)}" target="_blank">🖨 Kaarten printen</a><a class="btn" href="kaarten.html?kamer=${encodeURIComponent(K.id)}&docent=1" target="_blank">🗝 Docentoverzicht</a></div>
+        <div class="spacer"></div>
+        <button class="btn gold big" data-act="start" style="width:100%;margin-top:1rem">⚙ Start de kluis</button>
+      </div></div></section>`;
+}
+
+/* ============ uitlegscherm ============ */
+let INFO_BACK = null;
+function showInfo() {
+  INFO_BACK = screen === 'hub' ? showHub : showLobby;
+  screen = 'info'; clearInterval(TICK); TICK = null;
+  const P = K.punten, ex = PLAN.routes[0].stations[0], q = ex.strook.makkelijk[0];
+  app.innerHTML = `<section class="screen">
+    <header class="top"><button class="btn" data-act="infoBack">← Terug</button><h1 class="eng">Zo kraak je de kluis</h1><div class="spacer"></div>${S.phase === 'play' ? '<span class="nixie" id="clock">00:00</span>' : `<span class="nixie">${String(S.min).padStart(2, '0')}:00</span>`}</header>
+    <div class="info">
+      <div class="istep plate"><span class="inum">1</span><div class="iico">🃏</div><h3>Pak kaart 1</h3><p>Jullie team heeft de naam van een <b>wiskundige</b>. Lees samen de voorkant: wie was jullie wiskundige en over welke wiskunde gaat de kaart?</p></div>
+      <div class="istep plate"><span class="inum">2</span><div class="iico">⭐</div><h3>Kies een niveau</h3><p>Op de achterkant staan drie niveaus. Kies er <b>één</b>:</p>
+        <div class="ilv"><span>★ <b>4</b> makkelijke vragen</span><span>★★ <b>2</b> middelvragen</span><span>★★★ <b>1</b> moeilijke vraag</span></div><p class="muted">Allemaal geven ze dezelfde code.</p></div>
+      <div class="istep plate"><span class="inum">3</span><div class="iico">🔎</div><h3>Zoek je antwoord op</h3><p>Onder elke vraag staat een tabel. Is het antwoord <b>${esc(ER.fmt(ex.thema.opdrachten.makkelijk[0].antwoord))}</b>? Dan is het teken <b>${esc(q.find(o => o.goed).teken)}</b>.</p>
+        <table class="idec"><tr>${q.map(o => `<td>${esc(ER.fmt(o.waarde))}</td>`).join('')}</tr><tr>${q.map(o => `<td class="${o.goed ? 'hl' : ''}">${esc(o.teken)}</td>`).join('')}</tr></table>
+        <p class="muted">Staat jullie antwoord er niet bij? Dan klopt het nog niet!</p></div>
+      <div class="istep plate"><span class="inum">4</span><div class="iico">🔓</div><h3>Open het slot</h3><p>Code van <b>4 tekens</b> compleet? Kom naar het bord, tik op <b>jullie wiskundige</b> en voer de code in. Goed? Dan krijg je een tip en pak je de volgende kaart.</p></div>
+    </div>
+    <div class="ipoints">
+      <span>🔓 slot open <b>+${P.station}</b></span><span>⚡ snel <b>tot +${P.snelheidMax}</b></span><span>❌ foute code <b>${P.foutCode}</b></span><span>💡 hint kopen <b>${P.hint}</b></span><span>💰 als eerste bij de schat <b>+${P.finishBonus[0]}</b></span>
+    </div></section>`;
+  if (S.phase === 'play') { tick(); TICK = setInterval(tick, 500); }
+}
+
+function startGame() {
+  S.phase = 'play'; S.t0 = null; S.teams = {};
+  routesIn().forEach(r => { S.teams[r.id] = {solved: [], wrong: 0, hints: [], done: null, lockUntil: 0}; });
+  save();
+  let c = 3; ov.className = 'show'; ov.innerHTML = '';
+  const step = () => {
+    if (c === 0) { ov.className = ''; ov.innerHTML = ''; S.t0 = now(); save(); SND.ok(); spinBg(); showHub(); return; }
+    ov.innerHTML = `<div class="count3">${c}</div>`; tone(440, .15, 'square', .1); c--; setTimeout(step, 1000);
+  };
+  ac(); step();
+}
+
+function spinBg() { $('#bg').classList.add('fast'); setTimeout(() => $('#bg').classList.remove('fast'), 1800); }
+
+function hubCols(n) { return n <= 4 ? n : n <= 6 ? 3 : n <= 8 ? 4 : 5; }
+function showHub() {
+  screen = 'hub'; stopTimers(); ACTIVE = null;
+  const R = routesIn(), allDone = R.every(r => team(r.id).done);
+  app.innerHTML = `<section class="screen">
+    <header class="top"><div><div class="muted" style="font-family:var(--fd);font-style:italic">${esc(K.titel)}</div><h1 class="eng">${esc(K.ondertitel || K.titel)}</h1></div><div class="spacer"></div>
+      <span class="nixie" id="clock">00:00</span>
+      <button class="btn" data-act="info">ℹ Uitleg</button><button class="btn" data-act="rank">🏆 Stand</button><button class="btn ibtn" data-act="fullscreen" aria-label="Volledig scherm">⛶</button>
+      <div><button class="gearbtn" id="gm" aria-label="Spelleider">⚙</button><div class="hint">spelleider</div></div></header>
+    <div class="muted" style="text-align:center;font-size:1.1rem">${allDone ? '🏆 Alle teams hebben de schat gevonden!' : 'Code gekraakt? Tik op jullie wiskundige.'}</div>
+    <div class="hub" style="grid-template-columns:repeat(${hubCols(R.length)},minmax(0,1fr))">${R.map(r => {
+      const t = team(r.id), st = stationsOf(r.id), i = t.solved.length, cur = st[i], sc = scoreOf(r.id);
+      return `<button class="team plate ${t.done ? 'done' : ''}" data-act="team" data-arg="${r.id}" style="--c:${cur ? cur.thema.kleur : 'var(--glow)'}">
+        <div class="mv">${vaultSVG(st.map(s => ({c: s.thema.kleur, i: s.thema.icoon})), i, {mini: true})}</div>
+        <div class="nm">${esc(r.naam)}</div>
+        <div class="lamps">${st.map((_, j) => `<span class="lamp ${j < i ? 'on' : j === i ? 'cur' : ''}"></span>`).join('')}</div>
+        <div class="st">${t.done ? '🏆 Schat gevonden' : `Kaart ${i + 1}: ${esc(cur.thema.naam)}`}</div>
+        <div class="sc">${sc.total} punten</div></button>`; }).join('')}</div></section>`;
+  bindLong($('#gm'), 1500, gmMenu);
+  tick(); TICK = setInterval(tick, 500);
+}
+const endsAt = () => S.t0 + S.min * 60000;
+function tick() {
+  const c = $('#clock'); if (!c || !S || !S.t0) return;
+  const R = routesIn(), all = R.every(r => team(r.id).done), t = all ? Math.max(...R.map(r => team(r.id).done)) : now();
+  const left = endsAt() - t; c.textContent = mmss(left); c.classList.toggle('low', !all && left < 5 * 60000);
+}
+// tijd om? Wordt elke seconde gecontroleerd, op elk scherm.
+setInterval(() => {
+  if (!S || S.phase !== 'play' || !S.t0 || now() < endsAt()) return;
+  if (routesIn().every(r => team(r.id).done)) return;
+  timeUp();
+}, 1000);
+function timeUp() {
+  S.phase = 'end'; S.revealed = false; save(); stopTimers(); closeOv(); showRank();
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets" style="text-align:center">${plates()}<div style="font-size:5rem">⏰</div><div class="big-ok eng">De tijd is om!</div><p>Pennen neer. De kluis gaat dicht.</p><div class="row"><button class="btn gold big" data-act="close">Naar de eindstand ▶</button></div></div>`;
+  tone(880, .25, 'square', .12); tone(880, .25, 'square', .12, .35); tone(880, .6, 'square', .12, .7);
+}
+
+/* ============ kluis-plaatje ============ */
+function vaultSVG(rings, opened, o = {}) {
+  const T = rings.length, C = 300, Rout = 268, Rin = 92, w = (Rout - Rin) / T;
+  let s = `<svg class="${o.mini ? '' : 'big'}" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg"><defs>
+    <radialGradient id="steel" cx="50%" cy="40%"><stop offset="0" stop-color="#6A727C"/><stop offset=".6" stop-color="#363C44"/><stop offset="1" stop-color="#1A1D22"/></radialGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE8A8"/><stop offset=".45" stop-color="#D9A646"/><stop offset="1" stop-color="#6E4214"/></linearGradient>
+    <radialGradient id="core" cx="50%" cy="50%"><stop offset="0" stop-color="#FFE9A8"/><stop offset=".5" stop-color="#FFB72E"/><stop offset="1" stop-color="#7A4300" stop-opacity="0"/></radialGradient></defs>`;
+  // buitenrand met schaalverdeling
+  s += `<circle cx="${C}" cy="${C}" r="294" fill="#140D08" stroke="url(#brass)" stroke-width="10"/>`;
+  if (!o.mini) { for (let k = 0; k < 60; k++) { const a = k * Math.PI / 30, r1 = k % 5 ? 280 : 274; s += `<line x1="${C + Math.cos(a) * r1}" y1="${C + Math.sin(a) * r1}" x2="${C + Math.cos(a) * 287}" y2="${C + Math.sin(a) * 287}" stroke="#C9923C" stroke-width="${k % 5 ? 1.5 : 3}"/>`; } }
+  // kern
+  const all = opened >= T;
+  s += `<circle cx="${C}" cy="${C}" r="${Rin}" fill="${all ? 'url(#core)' : '#0E0906'}"/>`;
+  if (all) s += `<circle class="core-glow" cx="${C}" cy="${C}" r="${Rin + 20}" fill="url(#core)" opacity=".8"/><text x="${C}" y="${C + 30}" text-anchor="middle" font-size="90">💰</text>`;
+  else s += `<g class="gearspin"><path fill-rule="evenodd" fill="#4A3220" d="${gearPath(14, Rin - 6, Rin - 18, 26, C, C)}"/></g>
+    <circle cx="${C}" cy="${C - 14}" r="16" fill="#050302"/><path d="M${C - 9} ${C - 6} L${C + 9} ${C - 6} L${C + 14} ${C + 34} L${C - 14} ${C + 34} Z" fill="#050302"/>`;
+  // ringen van binnen naar buiten tekenen (buitenste ring = slot 1)
+  for (let i = T - 1; i >= 0; i--) {
+    const r = Rin + w * (T - i) - w / 2, cls = i < opened ? 'open' : i === opened ? 'cur' : 'lock', R = rings[i];
+    s += `<g class="ring ${cls}" id="ring${i}">`;
+    s += `<circle cx="${C}" cy="${C}" r="${r}" fill="none" stroke="url(#steel)" stroke-width="${w - 4}"/>`;
+    s += `<circle cx="${C}" cy="${C}" r="${r + w / 2 - 3}" fill="none" stroke="url(#brass)" stroke-width="2.5"/>`;
+    s += `<circle cx="${C}" cy="${C}" r="${r}" fill="none" stroke="${R.c}" stroke-width="3" stroke-dasharray="2 ${(2 * Math.PI * r / 36 - 2).toFixed(1)}" opacity=".9"/>`;
+    if (cls === 'cur') s += `<circle class="halo" cx="${C}" cy="${C}" r="${r}" fill="none" stroke="${R.c}" stroke-width="${w - 4}" opacity=".45"/>`;
+    // grendels
+    for (let k = 0; k < 3; k++) { const a = -Math.PI / 2 + k * 2 * Math.PI / 3 + i * .5; const x = C + Math.cos(a) * r, y = C + Math.sin(a) * r;
+      s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.min(w * .3, 11)}" fill="url(#brass)" stroke="#2A1706" stroke-width="1.5"/>`; }
+    if (!o.mini) { const a = -Math.PI / 2 + Math.PI / 3 + i * .5, x = C + Math.cos(a) * r, y = C + Math.sin(a) * r;
+      s += `<text x="${x.toFixed(1)}" y="${(y + w * .17).toFixed(1)}" text-anchor="middle" font-size="${(w * .48).toFixed(0)}">${R.i}</text>`; }
+    s += `</g>`;
+  }
+  return s + `</svg>`;
+}
+
+/* ============ kluis van één team ============ */
+let CODE = [];
+function showVault(id) {
+  if (team(id).done) { ACTIVE = id; finale(id, false); return; }
+  screen = 'vault'; stopTimers(); ACTIVE = id; CODE = [];
+  const r = K.routes.find(x => x.id === id), t = team(id), st = stationsOf(id), i = t.solved.length, cur = st[i], P = K.punten;
+  const prev = i > 0 ? cur.thema.tip : null;
+  const mine = t.hints.filter(h => h.s === i);
+  app.innerHTML = `<section class="screen">
+    <header class="top"><button class="btn" data-act="hub">← Overzicht</button><h1 class="eng">Team ${esc(r.naam)}</h1><div class="spacer"></div>
+      <span class="nixie" id="clock">00:00</span><span class="tag" style="font-size:1rem">${scoreOf(id).total} punten</span></header>
+    <div class="vault" id="vault">
+      <div class="vbox">${vaultSVG(st.map(s => ({c: s.thema.kleur, i: s.thema.icoon})), i)}</div>
+      <div class="panel plate rivets" id="panel">${plates()}
+        <div class="cardinfo" style="--c:${cur.thema.kleur}"><span class="ci">${cur.thema.icoon}</span><div><span>Kaart ${i + 1} van ${st.length} · slot ${i + 1}</span><b>${esc(cur.thema.naam)}</b></div></div>
+        ${prev ? `<div class="tipline"><b>Jullie tip:</b> ${esc(prev)}</div>` : ''}
+        <div class="slots" id="slots">${[0, 1, 2, 3].map(k => `<div class="slot" data-k="${k}"></div>`).join('')}</div>
+        <div class="cool" id="cool"></div>
+        <div class="keys">${K.tekens.map(c => `<button class="key" data-fast="key" data-arg="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+        <div class="keyrow"><button class="btn" data-fast="del">⌫ Wissen</button><button class="btn gold" data-fast="try" id="tryb">🔓 Ontgrendel</button></div>
+        <div class="keyrow"><button class="btn" data-act="shop">💡 Hint kopen (${P.hint})</button>${mine.length ? `<button class="btn" data-act="myhints">📜 Onze hints (${mine.length})</button>` : ''}</div>
+      </div></div></section>`;
+  tick(); TICK = setInterval(() => { tick(); cooldown(); }, 250); cooldown(); idle();
+}
+function idle() { clearTimeout(IDLE); IDLE = setTimeout(() => { if (screen === 'vault' && !ov.classList.contains('show')) showHub(); }, 75000); }
+function cooldown() {
+  const t = ACTIVE && team(ACTIVE), p = $('#panel'), c = $('#cool'); if (!t || !p) return;
+  const left = Math.ceil((t.lockUntil - now()) / 1000);
+  if (left > 0) { p.classList.add('locked'); c.textContent = `Het mechanisme herstelt zich… ${left}`; } else { p.classList.remove('locked'); c.textContent = ''; }
+}
+function drawSlots(fill) {
+  document.querySelectorAll('#slots .slot').forEach((el, k) => { const v = CODE[k] || ''; if (el.textContent !== v) { el.textContent = v; if (v && fill) { el.classList.remove('fill'); void el.offsetWidth; el.classList.add('fill'); } } el.classList.remove('ok', 'bad'); });
+}
+function press(c) { if (CODE.length >= ER.CODELENGTE) return; CODE.push(c); SND.key(); drawSlots(true); idle(); }
+function del() { CODE.pop(); SND.key(); drawSlots(false); idle(); }
+function tryCode() {
+  const id = ACTIVE, t = team(id), st = stationsOf(id), i = t.solved.length, cur = st[i];
+  if (CODE.length < ER.CODELENGTE) { toast('Vul eerst alle 4 tekens in.'); return; }
+  if (t.lockUntil > now()) return;
+  const slots = [...document.querySelectorAll('#slots .slot')];
+  if (CODE.join('') === cur.code) {
+    t.solved.push(now()); if (t.solved.length === st.length) t.done = now(); save();
+    slots.forEach((el, k) => setTimeout(() => el.classList.add('ok'), k * 120));
+    SND.ok(); spinBg(); $('#vault').classList.add('busy');
+    const ring = $('#ring' + i); if (ring) { ring.classList.remove('cur'); ring.classList.add('turn'); }
+    setTimeout(() => { if (t.done) finale(id, true); else reveal(id); }, 1900);
+  } else {
+    t.wrong++; t.lockUntil = now() + K.punten.wachtNaFout * 1000; save();
+    slots.forEach(el => el.classList.add('bad')); const sl = $('#slots'); sl.classList.remove('shake'); void sl.offsetWidth; sl.classList.add('shake');
+    SND.bad(); toast(`Die code klopt niet. ${K.punten.foutCode} punten`);
+    setTimeout(() => { CODE = []; drawSlots(false); }, 900); cooldown();
+  }
+}
+
+function reveal(id) {
+  const t = team(id), st = stationsOf(id), i = t.solved.length, prev = st[i - 1], nx = st[i];
+  const gain = K.punten.station + Math.max(0, Math.round(K.punten.snelheidMax - K.punten.snelheidPerMinuut * (t.solved[i - 1] - startOf(id, i - 1)) / 60000));
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets">${plates()}
+    <div class="big-ok eng">Slot ${i} gekraakt!</div>
+    <div class="pts">+${gain}</div>
+    <p style="text-align:center" class="muted">${esc(prev.thema.naam)} is opgelost.</p>
+    <div class="next" style="--c:${nx.thema.kleur}"><span class="ni">${nx.thema.icoon}</span><div><span class="muted">Pak nu</span><b>Kaart ${i + 1}: ${esc(nx.thema.naam)}</b></div></div>
+    <div class="scroll" style="margin-top:1rem"><div class="q">🔑 Jullie tip voor kaart ${i + 1}</div>${esc(nx.thema.tip)}</div>
+    <div class="row"><button class="btn gold big" data-act="closeHub">Naar kaart ${i + 1} ▶</button></div>
+    <div class="autoback" id="ab"></div></div>`;
+  autoBack(30);
+}
+function autoBack(sec) {
+  clearInterval(autoBack.t); let n = sec;
+  const f = () => { const el = $('#ab'); if (!el || !ov.classList.contains('show')) { clearInterval(autoBack.t); return; } if (n <= 0) { clearInterval(autoBack.t); closeOv(); showHub(); return; } el.textContent = `Terug naar het overzicht over ${n} s`; n--; };
+  f(); autoBack.t = setInterval(f, 1000);
+}
+function closeOv() { ov.className = ''; ov.innerHTML = ''; clearInterval(autoBack.t); }
+
+function finale(id, fresh) {
+  const r = K.routes.find(x => x.id === id), sc = scoreOf(id), P = K.punten;
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets finale" id="fin" style="width:min(52rem,94vw)">${plates()}<div class="rays"></div>
+    <div class="eng" style="font-size:2rem;position:relative">De schat van ${esc(r.naam)}</div>
+    <div class="chest">${chestSVG()}</div>
+    <div class="score-big" id="scr">0</div><div class="muted">punten</div>
+    <div class="breakdown">
+      <span>${sc.solved} sloten gekraakt</span><span>+${sc.stations}</span>
+      <span>Snelheidsbonus</span><span>+${sc.speed}</span>
+      <span>Foute codes (${team(id).wrong}×)</span><span>${sc.wrong}</span>
+      <span>Hints gekocht (${team(id).hints.length}×)</span><span>${sc.hints}</span>
+      <span>Bonus voor plek bij de finish</span><span>+${sc.bonus}</span></div>
+    <div class="row"><button class="btn gold big" data-act="closeHub">Klaar ▶</button></div><div class="autoback" id="ab"></div></div>`;
+  autoBack(45);
+  const fin = $('#fin');
+  setTimeout(() => { fin.classList.add('open'); if (fresh) { SND.fanfare(); coins(); } }, fresh ? 300 : 50);
+  let v = 0; const tgt = sc.total, t0 = performance.now(), dur = fresh ? 1800 : 400;
+  const step = ts => { const p = Math.min(1, (ts - t0) / dur); v = Math.round(tgt * (1 - Math.pow(1 - p, 3))); const el = $('#scr'); if (el) el.textContent = v; if (p < 1) requestAnimationFrame(step); };
+  setTimeout(() => requestAnimationFrame(step), fresh ? 1200 : 0);
+}
+function chestSVG() {
+  return `<svg viewBox="0 0 240 190" xmlns="http://www.w3.org/2000/svg"><defs>
+    <linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A4E22"/><stop offset="1" stop-color="#4A240C"/></linearGradient>
+    <linearGradient id="bb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCE8A8"/><stop offset=".5" stop-color="#D9A646"/><stop offset="1" stop-color="#6E4214"/></linearGradient>
+    <radialGradient id="gl"><stop offset="0" stop-color="#FFF4C0"/><stop offset=".5" stop-color="#FFC845" stop-opacity=".8"/><stop offset="1" stop-color="#FFB000" stop-opacity="0"/></radialGradient></defs>
+    <ellipse id="chestglow" cx="120" cy="92" rx="110" ry="60" fill="url(#gl)"/>
+    <g><circle cx="80" cy="96" r="13" fill="#FFC845" stroke="#A86E00"/><circle cx="104" cy="90" r="13" fill="#FFD866" stroke="#A86E00"/><circle cx="130" cy="92" r="13" fill="#FFC845" stroke="#A86E00"/><circle cx="156" cy="96" r="13" fill="#FFD866" stroke="#A86E00"/><path d="M114 70 l8 -14 l8 14 l-8 10 z" fill="#7FE3FF" stroke="#1C6B88"/></g>
+    <rect x="30" y="98" width="180" height="82" rx="8" fill="url(#wood)" stroke="#2A1206" stroke-width="3"/>
+    <rect x="30" y="98" width="180" height="12" fill="url(#bb)"/><rect x="30" y="166" width="180" height="12" fill="url(#bb)"/>
+    <rect x="58" y="98" width="14" height="82" fill="url(#bb)"/><rect x="168" y="98" width="14" height="82" fill="url(#bb)"/>
+    <rect x="106" y="112" width="28" height="34" rx="4" fill="url(#bb)" stroke="#5A3510"/><circle cx="120" cy="125" r="5" fill="#2A1206"/><rect x="118" y="126" width="4" height="12" fill="#2A1206"/>
+    <g id="lid"><path d="M30 100 V70 Q30 34 120 34 Q210 34 210 70 V100 Z" fill="url(#wood)" stroke="#2A1206" stroke-width="3"/>
+      <path d="M58 100 V44 h14 V100 Z M168 100 V44 h14 V100 Z" fill="url(#bb)"/><rect x="30" y="90" width="180" height="10" fill="url(#bb)"/></g></svg>`;
+}
+function coins() {
+  for (let k = 0; k < 40; k++) {
+    const c = document.createElement('div'); c.className = 'coin'; document.body.appendChild(c);
+    const x0 = innerWidth / 2, y0 = innerHeight * .42, a = -Math.PI / 2 + (Math.random() - .5) * 2.2, v = 9 + Math.random() * 10;
+    let x = x0, y = y0, vx = Math.cos(a) * v, vy = Math.sin(a) * v, life = 0;
+    setTimeout(() => SND.coin(), 900 + k * 25);
+    const f = () => { life++; vy += .45; x += vx; y += vy; c.style.transform = `translate(${x}px,${y}px) rotateY(${life * 20}deg)`; if (y < innerHeight + 50 && life < 220) requestAnimationFrame(f); else c.remove(); };
+    setTimeout(() => requestAnimationFrame(f), 800 + k * 18);
+  }
+}
+
+/* ============ hints ============ */
+function shop(step = 'lvl', lvl = null) {
+  const id = ACTIVE, t = team(id), i = t.solved.length, cur = stationsOf(id)[i], P = K.punten;
+  ov.className = 'show';
+  if (step === 'lvl') {
+    ov.innerHTML = `<div class="modal plate rivets">${plates()}<h2 class="eng">Hint kopen</h2>
+      <p>Bij welk niveau van <b>${esc(cur.thema.naam)}</b> willen jullie hulp? Een hint kost <b style="color:var(--bad)">${-P.hint} punten</b>.</p>
+      <div class="choices">${ER.NIVEAUS.map(n => `<button class="choice" data-act="shopLvl" data-arg="${n.id}">${n.naam}<small>${n.aantal} vra${n.aantal > 1 ? 'gen' : 'ag'}</small></button>`).join('')}</div>
+      <div class="row"><button class="btn" data-act="close">Annuleren</button></div></div>`;
+  } else if (step === 'q') {
+    const n = ER.NIVEAUS.find(x => x.id === lvl);
+    ov.innerHTML = `<div class="modal plate rivets">${plates()}<h2 class="eng">Hint · ${n.naam}</h2><p>Voor welke vraag?</p>
+      <div class="choices">${cur.thema.opdrachten[lvl].map((q, k) => { const have = t.hints.some(h => h.s === i && h.l === lvl && h.q === k);
+        return `<button class="choice ${have ? 'have' : ''}" data-act="shopQ" data-arg="${lvl}:${k}">Vraag ${k + 1}<small>${have ? 'al gekocht · gratis' : P.hint + ' punten'}</small></button>`; }).join('')}</div>
+      <div class="row"><button class="btn" data-act="shop">← Terug</button><button class="btn" data-act="close">Annuleren</button></div></div>`;
+  }
+}
+function buyHint(lvl, k) {
+  const id = ACTIVE, t = team(id), i = t.solved.length, cur = stationsOf(id)[i];
+  const have = t.hints.some(h => h.s === i && h.l === lvl && h.q === k);
+  if (!have) { t.hints.push({s: i, l: lvl, q: k, t: now()}); save(); tone(660, .15, 'triangle', .1); tone(440, .3, 'triangle', .08, .12); }
+  const q = cur.thema.opdrachten[lvl][k], n = ER.NIVEAUS.find(x => x.id === lvl);
+  ov.innerHTML = `<div class="modal plate rivets">${plates()}<h2 class="eng">${have ? 'Jullie hint' : `Hint gekocht · ${K.punten.hint}`}</h2>
+    <div class="scroll"><div class="q">${n.naam} · vraag ${k + 1}: ${esc(q.vraag)}</div>${esc(q.hint || 'Lees de vraag nog eens rustig samen.')}</div>
+    <div class="row"><button class="btn gold" data-act="closeVault">Terug naar de kluis</button></div></div>`;
+}
+function myHints() {
+  const id = ACTIVE, t = team(id), i = t.solved.length, cur = stationsOf(id)[i];
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets">${plates()}<h2 class="eng">Onze hints</h2>
+    ${t.hints.filter(h => h.s === i).map(h => { const q = cur.thema.opdrachten[h.l][h.q]; return `<div class="scroll" style="margin-bottom:.8rem"><div class="q">${ER.NIVEAUS.find(n => n.id === h.l).naam} · vraag ${h.q + 1}</div>${esc(q.hint)}</div>`; }).join('')}
+    <div class="row"><button class="btn gold" data-act="close">Sluiten</button></div></div>`;
+}
+
+/* ============ spelleider ============ */
+function gmMenu() {
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets">${plates()}<h2 class="eng">Spelleider</h2>
+    <div class="choices">
+      <button class="choice" data-act="gmOpen">🔓 Slot openen<small>voor een team dat vastzit</small></button>
+      <button class="choice" data-act="end">🏁 Spel afsluiten<small>naar de eindstand</small></button>
+      <a class="choice" href="kaarten.html?kamer=${encodeURIComponent(K.id)}&docent=1" target="_blank">🗝 Codes bekijken<small>docentoverzicht</small></a>
+      <button class="choice" data-act="sound">${SOUND ? '🔇 Geluid uit' : '🔊 Geluid aan'}<small>&nbsp;</small></button>
+      <button class="choice" data-act="reset" style="border-color:var(--bad)">♻ Nieuw spel<small>alle scores wissen</small></button>
+    </div><div class="row"><button class="btn" data-act="close">Sluiten</button></div></div>`;
+}
+function gmOpen() {
+  ov.innerHTML = `<div class="modal plate rivets">${plates()}<h2 class="eng">Slot openen</h2><p>Het team krijgt de punten voor het slot, zonder snelheidsbonus.</p>
+    <div class="choices">${routesIn().filter(r => !team(r.id).done).map(r => `<button class="choice" data-act="gmOpenTeam" data-arg="${r.id}">${esc(r.naam)}<small>slot ${team(r.id).solved.length + 1}</small></button>`).join('') || '<p>Alle teams zijn klaar.</p>'}</div>
+    <div class="row"><button class="btn" data-act="close">Sluiten</button></div></div>`;
+}
+function confirmBox(msg, ok, fn) {
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets">${plates()}<p style="text-align:center">${msg}</p><div class="row"><button class="btn" data-act="close">Annuleren</button><button class="btn gold" id="cfy">${ok}</button></div></div>`;
+  $('#cfy').onclick = fn;
+}
+
+/* ============ eindstand ============ */
+function ranking() { return routesIn().map(r => ({r, s: scoreOf(r.id), t: team(r.id)})).sort((a, b) => b.s.total - a.s.total || b.s.solved - a.s.solved || (a.t.done || 9e15) - (b.t.done || 9e15)); }
+function showRank() {
+  screen = 'rank'; stopTimers();
+  const end = S.phase === 'end';
+  const head = `<header class="top"><button class="btn" data-act="${end ? 'lobby' : 'hub'}">← ${end ? 'Nieuw spel' : 'Overzicht'}</button><h1 class="eng">${end ? 'Eindstand' : 'Tussenstand'}</h1><div class="spacer"></div>
+      ${end ? `<button class="btn" data-act="ceremony">🎺 Prijsuitreiking</button><button class="btn" data-act="rooms">Escaperooms</button>` : ''}</header>`;
+  if (end && !S.revealed) {
+    app.innerHTML = `<section class="screen">${head}<div style="flex:1;display:grid;place-items:center;text-align:center;gap:1.4rem">
+      <div><div style="width:min(22rem,40vh);margin:0 auto">${vaultSVG(K.themas.map(t => ({c: t.kleur, i: t.icoon})), 0, {mini: true})}</div>
+      <h2 class="eng" style="font-size:2.4rem;margin:1.4rem 0 .4rem">Welk team wint de schat?</h2><p class="muted" style="font-size:1.2rem">De punten zijn geteld…</p>
+      <button class="btn gold big" data-act="ceremony">🎺 Start de prijsuitreiking</button></div></div></section>`;
+    return;
+  }
+  const L = ranking(), pod = [L[1], L[0], L[2]], H = [13, 18, 9];
+  app.innerHTML = `<section class="screen">${head}
+    <div class="rank"><div class="podium">${pod.map((x, k) => x ? `<div class="pod"><div class="pn">${esc(x.r.naam)}</div><div class="ps">${x.s.total}</div><div class="blk" style="height:${H[k]}rem">${[2, 1, 3][k]}</div></div>` : '<div class="pod"></div>').join('')}</div>
+      <div class="rlist plate">
+        <table><tr><th>#</th><th>Team</th><th>Sloten</th><th>Snelheid</th><th>Fout</th><th>Hints</th><th>Bonus</th><th>Totaal</th></tr>
+        ${L.map((x, k) => `<tr><td>${k + 1}</td><td>${esc(x.r.naam)}${x.t.done ? ' 🏆' : ''}</td><td>${x.s.solved}/${x.s.of}</td><td>+${x.s.speed}</td><td>${x.s.wrong}</td><td>${x.s.hints}</td><td>+${x.s.bonus}</td><td class="tot">${x.s.total}</td></tr>`).join('')}</table></div></div></section>`;
+}
+function drumroll(sec) { if (!SOUND) return; for (let t = 0; t < sec; t += .06) noise(.05, .12 + .25 * t / sec, t, 120); }
+// prijsuitreiking: plek 3, dan 2, dan de winnaar
+function ceremony(step) {
+  const L = ranking(), places = Math.min(3, L.length), place = places - step;
+  if (place < 1) { S.revealed = true; save(); closeOv(); showRank(); return; }
+  const x = L[place - 1], win = place === 1;
+  ov.className = 'show';
+  ov.innerHTML = `<div class="modal plate rivets cer ${win ? 'finale' : ''}" id="cer" style="width:min(52rem,94vw)">${plates()}${win ? '<div class="rays"></div>' : ''}
+    <div class="place">${place}</div><div class="muted" style="font-size:1.4rem;font-family:var(--fd)">${win ? 'De winnaar van de schat is…' : place + 'e plaats'}</div>
+    <div id="who" style="min-height:${win ? 22 : 9}rem;display:grid;place-items:center"><div class="drum">🥁 tromgeroffel…</div></div>
+    <div class="row"><button class="btn gold big" id="cnext" data-act="cerNext" data-arg="${step + 1}" style="visibility:hidden">${win ? 'Naar de eindstand ▶' : 'Volgende ▶'}</button></div></div>`;
+  const d = win ? 3 : 1.8; drumroll(d);
+  setTimeout(() => {
+    const w = $('#who'); if (!w) return;
+    w.innerHTML = `<div>${win ? `<div class="chest" style="margin:0 auto .6rem;width:13rem">${chestSVG()}</div>` : ''}<div class="who">${esc(x.r.naam)}</div><div class="score-big" style="font-size:3rem">${x.s.total} punten</div></div>`;
+    $('#cnext').style.visibility = 'visible';
+    if (win) { setTimeout(() => $('#cer') && $('#cer').classList.add('open'), 100); SND.fanfare(); coins(); } else { tone(523, .3, 'triangle', .14); tone(784, .5, 'triangle', .14, .15); }
+  }, d * 1000);
+}
+
+/* ============ acties ============ */
+const ACT = {
+  rooms: showRooms, room: openRoom, lobby: () => { S.phase = 'lobby'; save(); showLobby(); },
+  fullscreen, sound: () => { SOUND = !SOUND; try { localStorage.setItem('er-geluid', SOUND ? 'aan' : 'uit'); } catch (e) {} closeOv(); if (screen === 'rooms') showRooms(); else if (screen === 'lobby') showLobby(); else toast(SOUND ? 'Geluid aan' : 'Geluid uit'); },
+  n: d => { S.n = Math.max(1, Math.min(K.routes.length, S.n + Number(d))); save(); showLobby(); },
+  min: v => { S.min = Number(v); save(); showLobby(); }, k: v => { S.k = Number(v); save(); showLobby(); },
+  info: showInfo, infoBack: () => (INFO_BACK || showLobby)(), ceremony: () => ceremony(0), cerNext: v => ceremony(Number(v)),
+  start: startGame, hub: showHub, team: showVault, rank: showRank,
+  shop: () => shop('lvl'), shopLvl: l => shop('q', l), shopQ: a => { const [l, k] = a.split(':'); buyHint(l, Number(k)); }, myhints: myHints,
+  close: closeOv, closeHub: () => { closeOv(); showHub(); }, closeVault: () => { closeOv(); showVault(ACTIVE); },
+  gmOpen, gmOpenTeam: id => { const t = team(id), st = stationsOf(id); t.forced = (t.forced || []).concat(t.solved.length); t.solved.push(now()); if (t.solved.length === st.length) t.done = now(); save(); toast('Slot geopend voor ' + K.routes.find(r => r.id === id).naam); closeOv(); showHub(); },
+  end: () => confirmBox('Het spel afsluiten en de eindstand tonen?', 'Afsluiten', () => { closeOv(); S.phase = 'end'; S.revealed = false; save(); showRank(); }),
+  reset: () => confirmBox('Alle scores van dit spel wissen en opnieuw beginnen?', 'Wissen', () => { closeOv(); S = {phase: 'lobby', n: S.n, min: S.min, k: S.k, t0: null, teams: {}}; save(); showLobby(); })
+};
+
+document.addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b && ACT[b.dataset.act] && !b.disabled) { e.preventDefault(); ACT[b.dataset.act](b.dataset.arg, b); } });
+// snelle knoppen op pointerdown (voor het touchscherm)
+document.addEventListener('pointerdown', e => {
+  const b = e.target.closest('[data-fast]'); if (!b || b.disabled) return; e.preventDefault();
+  b.classList.add('hit'); setTimeout(() => b.classList.remove('hit'), 120);
+  if (b.dataset.fast === 'key') press(b.dataset.arg); else if (b.dataset.fast === 'del') del(); else if (b.dataset.fast === 'try') tryCode();
+});
+document.addEventListener('keydown', e => {
+  if (screen !== 'vault' || ov.classList.contains('show')) return;
+  const c = e.key.toUpperCase();
+  if (K.tekens.includes(c)) press(c); else if (e.key === 'Backspace') del(); else if (e.key === 'Enter') tryCode();
+});
+
+showRooms();
+</script>
+</body>
+</html>

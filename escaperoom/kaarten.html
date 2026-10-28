@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escaperoom-kaarten</title>
+<style>
+@page{size:A4 portrait;margin:0}
+:root{--ink:#2A1D12;--soft:#6E5A44;--line:#CDB792;--paper:#FFFDF7;--gold:#B8862E;--gold2:#E8C46A}
+*{box-sizing:border-box}
+html,body{margin:0;background:#3B2C20;color:var(--ink);font-family:"Segoe UI",Roboto,system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.bar{position:sticky;top:0;z-index:5;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:.8rem 1.2rem;background:#1A120C;color:#F6E7C8;box-shadow:0 .3rem 1rem rgba(0,0,0,.5);font-size:15px}
+.bar h1{margin:0;font-family:Georgia,serif;font-size:1.3rem;letter-spacing:.08em;text-transform:uppercase;color:#E8C46A}
+.bar label{display:flex;gap:.4rem;align-items:center}
+.bar select,.bar input[type=number]{font:inherit;padding:.3rem .5rem;border-radius:.4rem;border:1px solid #6B4518;background:#2A1D13;color:#F6E7C8}
+.bar input[type=number]{width:4rem}
+.bar button,.bar a{font:inherit;font-weight:700;padding:.5rem 1rem;border-radius:.5rem;border:0;cursor:pointer;text-decoration:none;background:linear-gradient(#FBE6A6,#D9A646 45%,#8C5A1E);color:#2A1706}
+.bar a.alt,.bar button.alt{background:#3A281A;color:#F6E7C8;border:1px solid #6B4518}
+.bar .info{flex-basis:100%;font-size:13px;color:#B49C7A}
+.pages{display:flex;flex-direction:column;align-items:center;gap:8mm;padding:8mm 0}
+.page{width:210mm;height:297mm;padding:11mm 12mm;background:var(--paper);position:relative;overflow:hidden;box-shadow:0 .5rem 2rem rgba(0,0,0,.5);display:flex;flex-direction:column}
+@media print{html,body{background:#fff}.bar{display:none}.pages{padding:0;gap:0}.page{box-shadow:none;page-break-after:always;break-after:page}}
+
+/* kaders */
+.frame{position:absolute;inset:6mm;border:1.2mm solid var(--c);border-radius:5mm;pointer-events:none}
+.frame::after{content:"";position:absolute;inset:1.6mm;border:.35mm solid var(--gold);border-radius:3.5mm}
+.cornergear{position:absolute;width:30mm;height:30mm;opacity:.12}
+.head{display:flex;align-items:center;gap:4mm;margin:2mm 2mm 0}
+.team{font-family:Georgia,serif;text-transform:uppercase;letter-spacing:.12em;font-weight:700;font-size:13pt;color:var(--soft)}
+.team b{color:var(--ink)}
+.badge{margin-left:auto;padding:1.5mm 4mm;border-radius:10mm;background:var(--ink);color:#FFF6DE;font-weight:800;font-size:12pt;letter-spacing:.06em}
+.spacer{flex:1}
+
+/* voorkant */
+.front .theme{display:flex;align-items:center;gap:6mm;margin:10mm 4mm 6mm}
+.front .ico{width:34mm;height:34mm;border-radius:50%;display:grid;place-items:center;font-size:52pt;background:radial-gradient(circle at 40% 35%,#fff,color-mix(in srgb,var(--c) 30%,#fff));border:1.2mm solid var(--c);box-shadow:0 0 0 1mm var(--gold2)}
+.front .slot{font-size:12pt;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.15em}
+.front h1{margin:1mm 0 0;font-family:Georgia,serif;font-size:32pt;line-height:1.05;color:var(--c);-webkit-text-stroke:.15mm var(--ink)}
+.box{margin:0 4mm 6mm;padding:5mm 6mm;border-radius:4mm;border:.5mm solid var(--line);background:#FFF7E6}
+.box h2{margin:0 0 2.5mm;font-family:Georgia,serif;font-size:13pt;text-transform:uppercase;letter-spacing:.1em;color:var(--soft)}
+.box p{margin:0;font-size:15pt;line-height:1.45}
+.bio{display:grid;grid-template-columns:auto 1fr;gap:5mm;align-items:start;background:linear-gradient(135deg,#FFF3D6,#FBE6B8);border-color:var(--gold)}
+.bio .portrait{width:30mm;height:30mm;border-radius:50%;display:grid;place-items:center;font-family:Georgia,serif;font-size:30pt;font-weight:700;color:#FFF6DE;background:radial-gradient(circle at 40% 35%,#8A6236,#3A2412);border:1mm solid var(--gold2);box-shadow:0 0 0 .6mm var(--ink)}
+.bio .nm{font-family:Georgia,serif;font-size:19pt;font-weight:700;margin:0}
+.bio .meta{font-size:11pt;color:var(--soft);margin:.5mm 0 2.5mm}
+.bio p{font-size:13.5pt}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:4mm;margin:0 4mm 6mm}
+.lv{padding:4mm;border-radius:4mm;border:.5mm solid var(--line);text-align:center}
+.lv b{display:block;font-size:14pt;margin-bottom:1mm}
+.lv span{font-size:11pt;color:var(--soft)}
+.lv .stars{font-size:16pt;letter-spacing:1mm;color:var(--gold)}
+.foot{margin:auto 4mm 3mm;padding:4mm 5mm;border-radius:4mm;background:var(--ink);color:#FFF6DE;font-size:13pt;display:flex;gap:4mm;align-items:center}
+.foot b{color:var(--gold2)}
+
+/* achterkant */
+.back .head{margin-bottom:3mm}
+.lvl{margin:0 2mm 3mm;border-radius:3.5mm;border:.5mm solid var(--line);padding:2.5mm 3.5mm 3mm;break-inside:avoid}
+.lvl h2{display:flex;align-items:baseline;gap:3mm;margin:0 0 2mm;font-family:Georgia,serif;font-size:14pt}
+.lvl h2 small{font-family:"Segoe UI",sans-serif;font-size:9.5pt;font-weight:400;color:var(--soft)}
+.lvl h2 .stars{color:var(--gold);letter-spacing:.6mm}
+.qs{display:grid;gap:3mm}
+.qs.n4{grid-template-columns:1fr 1fr}
+.qs.n2{grid-template-columns:1fr 1fr}
+.q{display:flex;flex-direction:column;gap:1.5mm;padding:2.5mm 3mm;border-radius:2.5mm;background:#FFF7E6}
+.q .t{font-size:12.5pt;line-height:1.35}
+.q .t b{display:inline-grid;place-items:center;width:5.5mm;height:5.5mm;margin-right:1.5mm;border-radius:50%;background:var(--ink);color:#fff;font-size:8.5pt}
+.q .fig{display:flex;justify-content:center}
+.q .fig svg{max-height:30mm;max-width:100%;height:auto}
+.n1 .q{display:grid;grid-template-columns:1fr auto;column-gap:5mm;align-items:center}
+.n1 .q .fig{grid-row:1/3;grid-column:2}
+.n1 .q .fig svg{max-height:34mm;width:52mm}
+.page.t1 .q .t{font-size:11.5pt}.page.t1 .q .fig svg{max-height:24mm}.page.t1 .n1 .q .fig svg{max-height:28mm}
+.page.t2 .q .t{font-size:10.5pt}.page.t2 .dec td{font-size:10.5pt;padding:.5mm .3mm}.page.t2 .q .fig svg{max-height:20mm}.page.t2 .lvl{margin-bottom:2mm}
+.page.t3 .q .t{font-size:9.5pt}.page.t3 .q .fig svg{max-height:16mm}
+.dec{display:flex;align-items:stretch;gap:0;margin-top:auto}
+.dec .lab{font-size:8pt;color:var(--soft);writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;padding:0 .8mm}
+.dec table{border-collapse:collapse;flex:1;table-layout:fixed}
+.dec td{border:.35mm solid var(--ink);text-align:center;padding:1mm .3mm;font-size:12pt}
+.dec tr:first-child td{background:#F1E3C4;font-weight:700}
+.dec tr:last-child td{font-family:"Segoe UI Symbol","Segoe UI",sans-serif;font-weight:800;font-size:14pt;letter-spacing:.6mm}
+.codebox{display:flex;align-items:center;gap:4mm;margin:auto 2mm 1mm;padding:3mm 5mm;border-radius:3.5mm;background:var(--ink);color:#FFF6DE}
+.codebox .cells{display:flex;gap:2.5mm}
+.codebox .cell{width:14mm;height:15mm;border-radius:2mm;background:#FFFDF7;border:.6mm solid var(--gold2)}
+.codebox p{margin:0;font-size:10.5pt;line-height:1.35;flex:1}
+.codebox b{color:var(--gold2)}
+
+/* teamblad */
+.rules h1{font-family:Georgia,serif;font-size:30pt;margin:8mm 4mm 2mm;color:var(--c);-webkit-text-stroke:.15mm var(--ink)}
+.rules ol{margin:2mm 4mm 6mm 12mm;padding:0;font-size:14pt;line-height:1.5}
+.rules li{margin-bottom:2mm}
+.route{display:flex;gap:2mm;margin:0 4mm 6mm;flex-wrap:wrap}
+.route span{padding:2mm 4mm;border-radius:2mm;border:.5mm solid var(--line);font-weight:700;font-size:12pt}
+.grid{flex:1;margin:4mm 4mm 2mm;border-radius:3mm;border:.4mm solid var(--line);
+  background-image:linear-gradient(#E7D9BD .25mm,transparent .25mm),linear-gradient(90deg,#E7D9BD .25mm,transparent .25mm);background-size:5mm 5mm}
+
+/* docent */
+.doc{padding:12mm 14mm}
+.doc h1{font-family:Georgia,serif;font-size:22pt;margin:0 0 1mm}
+.doc h2{font-family:Georgia,serif;font-size:14pt;margin:5mm 0 2mm;text-transform:uppercase;letter-spacing:.08em;color:var(--soft)}
+.doc p,.doc li{font-size:10.5pt;line-height:1.45;margin:0 0 1.5mm}
+.doc ul{margin:0;padding-left:5mm}
+.doc table{width:100%;border-collapse:collapse;font-size:10pt}
+.doc th,.doc td{border:.3mm solid var(--line);padding:1.4mm 2mm;text-align:left;vertical-align:top}
+.doc th{background:#F1E3C4}
+.doc td.code{font-family:"Segoe UI Symbol","Segoe UI",sans-serif;font-weight:800;font-size:13pt;letter-spacing:1mm;white-space:nowrap}
+.doc td.code small{display:block;font-size:7.5pt;letter-spacing:0;font-weight:400;color:var(--soft)}
+.doc .ans{font-weight:800;white-space:nowrap}
+.doc .dot{display:inline-block;width:3mm;height:3mm;border-radius:50%;background:var(--c);margin-right:1.5mm}
+.err{margin:1rem;padding:1rem;background:#3A0E0A;color:#FFD0C8;border-radius:.5rem;font-family:monospace;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<div class="pages" id="pages"></div>
+<script src="kern.js"></script>
+<script src="kamers/_lijst.js"></script>
+<script>
+'use strict';
+const ER = window.EscapeRooms, esc = ER.esc, fmt = ER.fmt;
+const qs = new URLSearchParams(location.search);
+let K = ER.get(qs.get('kamer')) || ER.kamers[0];
+let DOCENT = qs.get('docent') === '1';
+let N = (() => { try { const s = JSON.parse(localStorage.getItem('escaperoom-v1:' + K.id)); return (s && s.n) || K.routes.length; } catch (e) { return K.routes.length; } })();
+let KN = (() => { try { const s = JSON.parse(localStorage.getItem('escaperoom-v1:' + K.id)); return (s && s.k) || K.kaarten || K.themas.length; } catch (e) { return K.themas.length; } })();
+let RULES = true;
+const st = r => r.stations.slice(0, KN);
+const STARS = {makkelijk: '★', middel: '★★', moeilijk: '★★★'};
+
+function gear(teeth, R, r, hole) {
+  const ta = 2 * Math.PI / teeth, P = (rad, a) => (rad * Math.cos(a)).toFixed(2) + ' ' + (rad * Math.sin(a)).toFixed(2);
+  let d = ''; for (let i = 0; i < teeth; i++) { const a = i * ta; d += (i ? ' L' : 'M') + P(r, a) + ' L' + P(R, a + ta * .18) + ' L' + P(R, a + ta * .46) + ' L' + P(r, a + ta * .64); }
+  return `<svg viewBox="-110 -110 220 220"><path fill-rule="evenodd" fill="#8C5A1E" d="${d} Z M${hole} 0 a${hole} ${hole} 0 1 0 ${-2 * hole} 0 a${hole} ${hole} 0 1 0 ${2 * hole} 0 Z"/></svg>`;
+}
+const deco = `<div class="cornergear" style="right:-8mm;bottom:-8mm">${gear(18, 105, 86, 30)}</div><div class="cornergear" style="right:16mm;bottom:-14mm;width:20mm;height:20mm">${gear(12, 105, 84, 30)}</div>`;
+const initials = n => n.split(/[\s-]+/).filter(w => /^[A-Z]/.test(w)).slice(0, 2).map(w => w[0]).join('');
+
+function front(route, st, total) {
+  const t = st.thema, first = st.nr === 1;
+  return `<section class="page front" style="--c:${t.kleur}"><div class="frame"></div>${deco}
+    <div class="head"><span class="team">Team <b>${esc(route.naam)}</b></span><span class="badge">KAART ${st.nr} / ${total}</span></div>
+    <div class="theme"><div class="ico">${t.icoon}</div><div><div class="slot">Slot ${st.nr} van de kluis</div><h1>${esc(t.naam)}</h1></div></div>
+    ${first ? `<div class="box bio"><div class="portrait">${esc(initials(route.voluit || route.naam))}</div><div><h2>Jullie wiskundige</h2><p class="nm">${esc(route.voluit || route.naam)}</p><div class="meta">${esc(route.jaren || '')}${route.land ? ' · ' + esc(route.land) : ''}</div><p>${esc(route.bio || '')}</p></div></div>` : ''}
+    <div class="box"><h2>Wat voor wiskunde is dit?</h2><p>${esc(t.uitleg)}</p></div>
+    <div class="levels">${ER.NIVEAUS.map(n => `<div class="lv"><div class="stars">${STARS[n.id]}</div><b>${n.naam}</b><span>${n.kort}</span></div>`).join('')}</div>
+    <div class="foot"><span style="font-size:22pt">🔑</span><div>Draai de kaart om en kies samen <b>één niveau</b>. Code gevonden? Ga naar het bord en tik op <b>${esc(route.naam)}</b>.</div></div>
+  </section>`;
+}
+function back(route, st, total) {
+  const t = st.thema;
+  return `<section class="page back" style="--c:${t.kleur}"><div class="frame"></div>
+    <div class="head"><span class="team">Team <b>${esc(route.naam)}</b> · ${t.icoon} ${esc(t.naam)}</span><span class="badge">KAART ${st.nr} / ${total}</span></div>
+    ${ER.NIVEAUS.map(n => `<div class="lvl"><h2><span class="stars">${STARS[n.id]}</span>${n.naam}<small>${n.kort}</small></h2>
+      <div class="qs n${n.aantal}">${t.opdrachten[n.id].map((q, i) => `<div class="q">
+        <div class="t"><b>${i + 1}</b>${esc(q.vraag)}</div>
+        ${q.svg ? `<div class="fig">${q.svg}</div>` : ''}
+        <div class="dec"><div class="lab">zoek op</div><table><tr>${st.strook[n.id][i].map(o => `<td>${esc(fmt(o.waarde))}</td>`).join('')}</tr><tr>${st.strook[n.id][i].map(o => `<td>${esc(o.teken)}</td>`).join('')}</tr></table></div>
+      </div>`).join('')}</div></div>`).join('')}
+    <div class="codebox"><p><b>Jullie code</b><br>Zet de tekens op volgorde: vraag 1 eerst. Staat jullie antwoord niet in de tabel? Dan klopt het nog niet!</p><div class="cells"><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span></div></div>
+  </section>`;
+}
+function rulesPages(route, stations) {
+  const c = stations[0].thema.kleur;
+  return `<section class="page rules" style="--c:${c}"><div class="frame"></div>${deco}
+    <div class="head"><span class="team">${esc(K.titel)} · ${esc(K.ondertitel || '')}</span><span class="badge">TEAMBLAD</span></div>
+    <h1>Team ${esc(route.naam)}</h1>
+    <ol>
+      <li>Jullie kluis heeft <b>${stations.length} sloten</b>. Elk slot hoort bij een kaart. Begin met <b>kaart 1</b> en werk ze op volgorde af.</li>
+      <li>Kies per kaart samen een niveau: <b>4 makkelijke</b> vragen, <b>2 middelvragen</b> of <b>1 moeilijke</b> vraag. Moeilijk is het snelst, als het lukt!</li>
+      <li>Zoek elk antwoord op in de tabel onder de vraag. Daar staat het teken voor de code.</li>
+      <li>Code compleet? Ga naar het bord, tik op <b>${esc(route.naam)}</b> en voer de code in.</li>
+      <li>Snel = extra punten. Een foute code kost ${-K.punten.foutCode} punten. Vast? Op het bord kun je een hint kopen voor ${-K.punten.hint} punten.</li>
+    </ol>
+    <div class="route">${stations.map(s => `<span style="border-color:${s.thema.kleur}">${s.nr}. ${s.thema.icoon} ${esc(s.thema.naam)}</span>`).join('')}</div>
+    <div class="foot" style="margin-top:auto"><span style="font-size:22pt">💰</span><div>Achter het laatste slot ligt de <b>schat</b>. Welk team vindt hem als eerste?</div></div>
+  </section>
+  <section class="page rules" style="--c:${c}"><div class="frame"></div>
+    <div class="head"><span class="team">Team <b>${esc(route.naam)}</b></span><span class="badge">KLADPAPIER</span></div><div class="grid"></div></section>`;
+}
+
+function docent() {
+  const p = ER.plan(K), routes = p.routes.slice(0, N), T = KN;
+  const codes = `<table><tr><th>Team</th>${Array.from({length: T}, (_, i) => `<th>Kaart ${i + 1}</th>`).join('')}</tr>
+    ${routes.map(r => `<tr><td><b>${esc(r.route.naam)}</b></td>${st(r).map(s => `<td class="code"><span class="dot" style="--c:${s.thema.kleur}"></span>${esc(s.code)}<small>${esc(s.thema.naam)}</small></td>`).join('')}</tr>`).join('')}</table>`;
+  const ans = K.themas.map(t => `<h2 style="color:${t.kleur}">${t.icoon} ${esc(t.naam)}</h2><table><tr><th style="width:18%">Niveau</th><th>Vraag</th><th style="width:12%">Antwoord</th></tr>
+    ${ER.NIVEAUS.map(n => t.opdrachten[n.id].map((q, i) => `<tr><td>${i ? '' : n.naam}</td><td>${i + 1}. ${esc(q.vraag)}</td><td class="ans">${esc(fmt(q.antwoord))}</td></tr>`).join('')).join('')}</table>`).join('');
+  return `<section class="page doc" style="height:auto;min-height:297mm">
+    <h1>🗝 Docentoverzicht · ${esc(K.titel)}</h1><p class="muted">${esc(K.ondertitel || '')} · ${routes.length} groepjes · codeset “${esc(K.seed || '')}”</p>
+    <h2>Voorbereiding</h2><ul>
+      <li>Print de kaarten <b>dubbelzijdig, omslaan langs de lange kant</b>. Elke kaart is één A4: voorkant uitleg, achterkant opdrachten.</li>
+      <li>Leg per tafel de stapel van één wiskundige, met kaart 1 bovenop. Codes verschillen per team, dus kaarten mogen niet gewisseld worden.</li>
+      <li>Twee teams beginnen bij hetzelfde thema maar lopen de route in tegengestelde richting. Zet die twee teams niet naast elkaar.</li>
+      <li>Op het bord: Escaperooms → ${esc(K.titel)} → aantal groepjes instellen → <b>Start de kluis</b>.</li>
+      <li>Spelleider-menu: houd ⚙ rechtsboven 1,5 seconde vast (slot openen voor een team dat vastzit, spel afsluiten, nieuw spel).</li></ul>
+    <h2>Codes per team</h2>${codes}
+    <h2>Punten</h2><p>Per slot +${K.punten.station}, snelheidsbonus max +${K.punten.snelheidMax} (−${K.punten.snelheidPerMinuut} per minuut aan dat slot), foute code ${K.punten.foutCode}, hint ${K.punten.hint}, finishbonus ${K.punten.finishBonus.map(x => '+' + x).join(' / ')} voor de eerste ${K.punten.finishBonus.length} teams. Na een foute code is de kluis ${K.punten.wachtNaFout} s op slot.</p>
+    ${ans}</section>`;
+}
+
+function render() {
+  const bar = document.getElementById('bar');
+  bar.innerHTML = `<h1>${DOCENT ? 'Docentoverzicht' : 'Kaarten'}</h1>
+    ${ER.kamers.length > 1 ? `<label>Escaperoom <select id="kamer">${ER.kamers.map(k => `<option value="${esc(k.id)}" ${k === K ? 'selected' : ''}>${esc(k.titel)}</option>`).join('')}</select></label>` : `<b>${esc(K.titel)}</b>`}
+    <label>Groepjes <input type="number" id="n" min="1" max="${K.routes.length}" value="${N}"></label>
+    <label>Kaarten per team <input type="number" id="kn" min="1" max="${K.themas.length}" value="${KN}"></label>
+    ${DOCENT ? '' : `<label><input type="checkbox" id="rules" ${RULES ? 'checked' : ''}> Teamblad + kladpapier</label>`}
+    <span class="spacer" style="flex:1"></span>
+    <button class="alt" id="mode">${DOCENT ? '🖨 Naar de kaarten' : '🗝 Docentoverzicht'}</button>
+    <button id="print">🖨 Printen</button>
+    <span class="info">${DOCENT ? 'Bewaar dit overzicht bij je: de codes van alle teams en de antwoorden.' : `Print dubbelzijdig (lange kant). ${countPages()} pagina's = ${countPages() / 2} vellen A4. In het printvenster: geen marges/kop- en voetteksten, achtergrondafbeeldingen aan.`}</span>`;
+  document.getElementById('n').onchange = e => { N = Math.max(1, Math.min(K.routes.length, +e.target.value || 1)); render(); };
+  document.getElementById('kn').onchange = e => { KN = Math.max(1, Math.min(K.themas.length, +e.target.value || 1)); render(); };
+  const r = document.getElementById('rules'); if (r) r.onchange = e => { RULES = e.target.checked; render(); };
+  const km = document.getElementById('kamer'); if (km) km.onchange = e => { K = ER.get(e.target.value); N = K.routes.length; KN = K.themas.length; render(); };
+  document.getElementById('mode').onclick = () => { DOCENT = !DOCENT; render(); };
+  document.getElementById('print').onclick = () => print();
+  const pages = document.getElementById('pages');
+  if (ER.fouten.length) { pages.innerHTML = `<div class="err">${esc(ER.fouten.map(f => f.kamer + ': ' + f.fouten.join('; ')).join('\n'))}</div>`; return; }
+  if (DOCENT) { pages.innerHTML = docent(); document.title = 'Docentoverzicht ' + K.titel; return; }
+  const p = ER.plan(K);
+  pages.innerHTML = p.routes.slice(0, N).map(r => (RULES ? rulesPages(r.route, st(r)) : '') + st(r).map(s => front(r.route, s, KN) + back(r.route, s, KN)).join('')).join('');
+  document.title = 'Kaarten ' + K.titel;
+  fit();
+}
+// past een achterkant niet op A4? Dan stap voor stap kleiner zetten.
+function fit() {
+  document.querySelectorAll('.page.back').forEach(pg => {
+    const over = () => { const c = pg.querySelector('.codebox').getBoundingClientRect(), b = pg.getBoundingClientRect(); return c.bottom > b.bottom - 22 || pg.querySelector('.codebox').getBoundingClientRect().top < [...pg.querySelectorAll('.lvl')].pop().getBoundingClientRect().bottom; };
+    for (const t of ['t1', 't2', 't3']) { if (!over()) break; pg.classList.remove('t1', 't2'); pg.classList.add(t); }
+  });
+}
+function countPages() { return N * (KN * 2 + (RULES ? 2 : 0)); }
+render();
+</script>
+</body>
+</html>
