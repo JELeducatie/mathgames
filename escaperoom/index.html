@@ -263,7 +263,7 @@ h2.eng{margin:0;font-size:1.6rem}
 <div id="ov"></div>
 <div id="toast"></div>
 <script src="kern.js"></script>
-<script src="kamers/_lijst.js"></script>
+<script src="kamers/lijst.js"></script>
 <script>
 'use strict';
 const ER = window.EscapeRooms, esc = ER.esc;
@@ -356,7 +356,8 @@ function stopTimers() { clearInterval(TICK); TICK = null; clearTimeout(IDLE); ID
 
 function showRooms() {
   screen = 'rooms'; stopTimers(); K = null;
-  const fout = ER.fouten.length ? `<div class="err">Er zitten fouten in een escaperoom-bestand:\n${ER.fouten.map(f => '• ' + f.kamer + ': ' + f.fouten.join('\n   ')).join('\n')}</div>` : '';
+  const leeg = ER.kamers.length ? '' : `<div class="err">Er is geen escaperoom geladen. Controleer of kamers/lijst.js en de kamer-bestanden in de map escaperoom/kamers staan.</div>`;
+  const fout = leeg + (ER.fouten.length ? `<div class="err">Er zitten fouten in een escaperoom-bestand:\n${ER.fouten.map(f => '• ' + f.kamer + ': ' + f.fouten.join('\n   ')).join('\n')}</div>` : '');
   app.innerHTML = `<section class="screen">
     <header class="top"><a class="btn" href="../index.html">← Lesspellen</a><h1 class="eng">Escaperooms</h1><div class="spacer"></div>
       <button class="btn ibtn" data-act="sound" aria-label="Geluid">${SOUND ? '🔊' : '🔇'}</button><button class="btn" data-act="fullscreen">⛶ Volledig scherm</button></header>${fout}

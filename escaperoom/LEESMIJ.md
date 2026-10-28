@@ -5,7 +5,7 @@ Escaperoom voor het digibord (CTOUCH) met printbare opdrachtkaarten.
 - `index.html`: het bord. Kies een escaperoom, stel groepjes, speeltijd en kaarten in, en start de kluis.
 - `kaarten.html`: printkaarten (A4, dubbelzijdig, lange kant) en het docentoverzicht met alle codes en antwoorden.
 - `kern.js`: maakt uit een kamer-bestand de routes, codes en decodeerstroken. Hoef je niet aan te passen.
-- `kamers/`: één bestand per escaperoom, plus `_lijst.js` met de namen van alle kamers.
+- `kamers/`: één bestand per escaperoom, plus `lijst.js` met de namen van alle kamers.
 
 ## Spelverloop
 
@@ -27,7 +27,7 @@ Per slot +100, snelheidsbonus tot +100 per slot (minder naarmate het langer duur
 2. Pas `id`, `titel`, `ondertitel`, `doelgroep` en `beschrijving` aan.
 3. Vul per thema precies 4 makkelijke, 2 middel- en 1 moeilijke vraag in. Per vraag: `vraag`, `antwoord`, `fout` (veelgemaakte foute antwoorden, die komen ook op de strook) en `hint`. Een plaatje kan als `svg`.
 4. Vul de routes in (één per groepje). `start` is het eerste thema, `richting` is `1` of `-1`.
-5. Zet de bestandsnaam in `kamers/_lijst.js`.
+5. Zet de bestandsnaam in `kamers/lijst.js`.
 
 Klopt er iets niet (bijvoorbeeld 3 makkelijke vragen in plaats van 4)? Dan toont het bord een foutmelding met wat er mis is.
 
