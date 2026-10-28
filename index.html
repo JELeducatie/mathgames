@@ -3218,7 +3218,7 @@ function wiaErrQ(cfg, prev) {
 }
 /* --- spel: Begrippen --- */
 function wbNext() {
-  G.wq = wiaBegripQ(G.cfg, G.wq); G.locked = false; G.qStart = performance.now(); flash('');
+  G.wq = wiaBegripQ(G.cfg, G.wq); G.after = null; G.locked = false; G.qStart = performance.now(); flash('');
   $('#wdesc').textContent = G.wq.t.d; $('#wexp').innerHTML = '';
   $('#wopts').innerHTML = G.wq.opts.map((o, i) => `<button class="ans wopt" data-fast="wb" data-arg="${i}">${esc(o.t)}</button>`).join('');
 }
@@ -3236,7 +3236,8 @@ function wbAnswer(i) {
 }
 /* --- spel: Foutje zoeken --- */
 function weNext() {
-  const q = G.wq = wiaErrQ(G.cfg, G.wq); q.step = 1; G.locked = false; G.qStart = performance.now(); flash('');
+  const q = G.wq = wiaErrQ(G.cfg, G.wq); q.step = 1; q.miss = null; G.after = null; G.locked = false; G.qStart = performance.now(); flash('');
+  $('#wexp').innerHTML = '';
   weRender();
 }
 function weRender() {
