@@ -3061,22 +3061,22 @@ const WIA_TERMS = [
   {t: 'Continu', h: 'H2', g: 'soort', p: ['contin'], d: 'Getallen die je meet; elke waarde binnen een interval is mogelijk.'},
   // --- centrummaten ---
   {t: 'Centrummaten', h: 'H2', g: 'centrum', p: ['centrum', 'maten'], d: 'Getallen die aangeven waar het midden van de gegevens ligt.'},
-  {t: 'Modus', h: 'H2', g: 'centrum', p: ['modus', 'modale'], d: 'De waarde die het vaakst voorkomt.'},
-  {t: 'Mediaan', h: 'H2', g: 'centrum', p: ['media'], d: 'De middelste waarneming als de waarnemingen op volgorde van grootte staan.'},
-  {t: 'Gemiddelde', h: 'H2', g: 'centrum', p: ['gemiddel'], d: 'De som van alle waarnemingen gedeeld door het aantal waarnemingen.'},
+  {t: 'Modus', h: 'H2', g: 'centrum', p: ['modus', 'modale'], d: 'Centrummaat bij elke soort variabele: de waarde die het vaakst voorkomt.'},
+  {t: 'Mediaan', h: 'H2', g: 'centrum', p: ['media'], d: 'Centrummaat bij een kwantitatieve of ordinale variabele: de middelste waarneming als de waarnemingen op volgorde van grootte staan.'},
+  {t: 'Gemiddelde', h: 'H2', g: 'centrum', p: ['gemiddel'], d: 'Centrummaat bij een kwantitatieve variabele: de som van alle waarnemingen gedeeld door het aantal waarnemingen.'},
   // --- spreiding ---
   {t: 'Spreidingsmaten', h: 'H2', g: 'spreiding', p: ['spreid', 'maten'], d: 'Getallen die aangeven hoe ver de waarnemingen uit elkaar liggen.'},
-  {t: 'Spreidingsbreedte', h: 'H2', g: 'spreiding', p: ['spreid', 'breedte'], d: 'Grootste waarneming min kleinste waarneming.'},
-  {t: 'Kwartielafstand', h: 'H2', g: 'spreiding', p: ['kwartiel', 'afstand'], d: 'Q3 − Q1: de breedte van de middelste 50% van de waarnemingen.'},
+  {t: 'Spreidingsbreedte', h: 'H2', g: 'spreiding', p: ['spreid', 'breedte'], d: 'Bij een kwantitatieve variabele: grootste waarneming min kleinste waarneming.'},
+  {t: 'Kwartielafstand', h: 'H2', g: 'spreiding', p: ['kwartiel', 'afstand'], d: 'Spreidingsmaat bij een kwantitatieve variabele: Q3 − Q1, de breedte van de middelste 50% van de waarnemingen.'},
   {t: '1ste kwartiel', h: 'H2', g: 'spreiding', p: ['kwartiel', 'eerste', '1ste'], d: 'De waarde waaronder 25% van de waarnemingen ligt.'},
   {t: '3de kwartiel', h: 'H2', g: 'spreiding', p: ['kwartiel', 'derde', '3de'], d: 'De waarde waaronder 75% van de waarnemingen ligt.'},
-  {t: 'Standaardafwijking', h: 'H2', g: 'spreiding', p: ['standaard', 'afwijk'], d: 'Maat voor hoe ver de waarnemingen gemiddeld van het gemiddelde af liggen.'},
-  {t: 'Boxplot', h: 'H2', g: 'spreiding', p: ['box', 'plot'], d: 'Diagram van vijf getallen: minimum, Q1, mediaan, Q3 en maximum.'},
+  {t: 'Standaardafwijking', h: 'H2', g: 'spreiding', p: ['standaard', 'afwijk'], d: 'Spreidingsmaat bij een kwantitatieve variabele: hoe ver de waarnemingen gemiddeld van het gemiddelde af liggen.'},
+  {t: 'Boxplot', h: 'H2', g: 'spreiding', p: ['box', 'plot'], d: 'Diagram bij een kwantitatieve variabele, getekend met vijf getallen: minimum, Q1, mediaan, Q3 en maximum.'},
   // --- tabellen en diagrammen ---
-  {t: 'Relatieve frequentie', h: 'H2', g: 'tabel', p: ['relatie', 'frequent'], d: 'Het aantal keer dat een waarde voorkomt, als percentage van het totaal.'},
-  {t: 'Cumulatief percentage', h: 'H2', g: 'tabel', p: ['cumulat', 'percentage'], d: 'Het deel van de waarnemingen (in %) dat kleiner dan of gelijk aan een bepaalde grens is.'},
-  {t: 'Histogram', h: 'H2', g: 'tabel', p: ['histogr'], d: 'Diagram met staven die tegen elkaar aan staan, één staaf per klasse.'},
-  {t: 'Klassenmidden', h: 'H2', g: 'tabel', p: ['klasse', 'midden'], d: 'Het getal halverwege de ondergrens en de bovengrens van een interval in een frequentietabel.'},
+  {t: 'Relatieve frequentie', h: 'H2', g: 'tabel', p: ['relatie', 'frequent'], d: 'Bij elke soort variabele: het aantal keer dat een waarde voorkomt, als percentage van het totaal.'},
+  {t: 'Cumulatief percentage', h: 'H2', g: 'tabel', p: ['cumulat', 'percentage'], d: 'Bij een kwantitatieve of ordinale variabele: het deel van de waarnemingen (in %) dat kleiner dan of gelijk aan een bepaalde grens is.'},
+  {t: 'Histogram', h: 'H2', g: 'tabel', p: ['histogr'], d: 'Diagram bij een kwantitatieve variabele in klassen, met staven die tegen elkaar aan staan.'},
+  {t: 'Klassenmidden', h: 'H2', g: 'tabel', p: ['klasse', 'midden'], d: 'Bij een in intervallen ingedeelde kwantitatieve variabele: het getal halverwege de ondergrens en de bovengrens van een interval.'},
   // --- vorm van de verdeling ---
   {t: 'Symmetrische verdeling', h: 'H2', g: 'vorm', p: ['symmetr', 'verdel'], d: 'Histogram waarvan de linker- en rechterhelft elkaars spiegelbeeld zijn.'},
   {t: 'Links scheve verdeling', h: 'H2', g: 'vorm', p: ['links', 'scheef', 'scheve', 'verdel'], d: 'Histogram met een lange staart naar de kleine waarden.'},
@@ -3084,7 +3084,7 @@ const WIA_TERMS = [
   {t: 'Uniforme verdeling', h: 'H2', g: 'vorm', p: ['uniform', 'verdel'], d: 'Histogram waarin alle staven ongeveer even hoog zijn.'},
   {t: 'Meertoppige verdeling', h: 'H2', g: 'vorm', p: ['toppig', 'meer', 'verdel'], d: 'Histogram met twee of drie duidelijke pieken.'},
   // --- verschillen en samenhang ---
-  {t: 'Kruistabel', h: 'H7', g: 'verschil', p: ['kruis', 'tabel'], d: 'Overzicht in rijen en kolommen met de aantallen voor twee kwalitatieve kenmerken tegelijk.'},
+  {t: 'Kruistabel', h: 'H7', g: 'verschil', p: ['kruis', 'tabel'], d: 'Overzicht in rijen en kolommen met de aantallen bij twee kwalitatieve variabelen tegelijk.'},
   {t: 'Associatiematen', h: 'H7', g: 'verschil', p: ['associat', 'maten'], d: 'Getallen waarmee je beoordeelt of het verschil tussen twee groepen gering, middelmatig of groot is.'},
   {t: 'Effectgrootte', h: 'H7', g: 'verschil', p: ['effect', 'grootte'], d: 'Associatiemaat bij een kwantitatieve variabele: het verschil tussen twee gemiddelden, uitgedrukt in standaardafwijkingen.'},
   {t: 'Phi-coëfficiënt', h: 'H7', g: 'verschil', p: ['phi', 'coëffic', 'coeffic'], d: 'Associatiemaat bij een kwalitatieve variabele met twee categorieën, berekend uit een 2×2-kruistabel; ligt tussen −1 en 1.'},
@@ -3095,8 +3095,8 @@ const WIA_TERMS = [
   {t: 'Steekproef', h: 'H11', g: 'steekproef', p: ['steekproef'], d: 'Het deel van de groep dat je echt onderzoekt.'},
   {t: 'Aselect', h: 'H11', g: 'steekproef', p: ['select'], d: 'Elk element heeft evenveel kans om gekozen te worden.'},
   {t: 'Representatief', h: 'H11', g: 'steekproef', p: ['represent'], d: 'Het onderzochte deel is een goede afspiegeling van de hele groep.'},
-  {t: 'Steekproefproportie', h: 'H11', g: 'steekproef', p: ['steekproef', 'proportie'], d: 'Het deel van de onderzochte groep met een bepaald kenmerk.'},
-  {t: 'Populatieproportie', h: 'H11', g: 'steekproef', p: ['populat', 'proportie'], d: 'Het deel van de hele groep met een bepaald kenmerk.'},
+  {t: 'Steekproefproportie', h: 'H11', g: 'steekproef', p: ['steekproef', 'proportie'], d: 'Bij een kwalitatieve variabele: het deel van de onderzochte groep met een bepaald kenmerk.'},
+  {t: 'Populatieproportie', h: 'H11', g: 'steekproef', p: ['populat', 'proportie'], d: 'Bij een kwalitatieve variabele: het deel van de hele groep met een bepaald kenmerk.'},
   {t: 'Betrouwbaarheidsinterval', h: 'H11', g: 'steekproef', p: ['betrouwbaar', 'interval'], d: 'De grenzen waartussen de echte waarde voor de populatie met bijvoorbeeld 95% zekerheid ligt.'},
   {t: 'Normale verdeling', h: 'H11', g: 'vorm', p: ['normaal', 'normale', 'verdel'], d: 'Symmetrisch, klokvormig histogram; ongeveer 95% ligt binnen twee standaardafwijkingen van het gemiddelde.'}
 ];
