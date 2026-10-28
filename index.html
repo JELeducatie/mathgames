@@ -621,6 +621,35 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .gnpad .key.wrong{background:linear-gradient(180deg,#FF8095,var(--bad));color:#fff}
 .mini-gon{height:4.6rem;display:flex;align-items:center;justify-content:center;background:#0E1430;border-radius:1rem}
 .mini-gon svg{height:100%;width:auto}
+/* havo 5 wiA */
+.mini-w{height:4.6rem;display:flex;flex-direction:column;justify-content:center;gap:.3rem;padding:0 1rem;background:#0E1430;border-radius:1rem;font-size:.95rem;color:#C9CFEA}
+.mini-w b{font-family:var(--fd);color:var(--good)}.mini-w b.bad{color:var(--bad)}
+.qcard.wq{min-width:0;width:100%;text-align:left;padding:1.2rem 1.8rem}
+.wlab{font-family:var(--fd);font-style:italic;text-transform:uppercase;font-size:1rem;color:var(--muted);letter-spacing:.04em;margin-bottom:.5rem}
+.wdesc{font-size:clamp(1.5rem,3.6vmin,2.4rem);font-weight:700;line-height:1.45}
+.weq{font-size:clamp(1.25rem,2.8vmin,1.8rem);font-weight:600;line-height:1.5}
+.wa{padding:1.2rem 1.8rem}
+.wea{font-size:clamp(1.35rem,3vmin,2rem);line-height:1.9}
+.wseg{font:inherit;color:inherit;background:rgba(255,255,255,.06);border:2px dashed rgba(255,255,255,.22);border-radius:.6rem;padding:.1rem .5rem;margin:.15rem 0;text-align:left;cursor:pointer}
+.wseg:not(:disabled):active{background:rgba(255,210,63,.18)}
+.wseg.hit{background:rgba(255,210,63,.22);border:2px solid var(--gold)}
+.wseg.bad{background:rgba(255,77,109,.18);border-color:var(--bad);text-decoration:line-through}
+.wmissing{display:inline-block;padding:.1rem .6rem;border:2px dashed var(--gold);border-radius:.6rem;color:var(--gold);font-weight:700}
+.wehint{font-size:1.3rem;font-weight:700;color:#C9CFEA;text-align:center;min-height:1.6rem}
+.wopts{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:0 0 auto}
+.wopt{font-size:clamp(1.2rem,2.8vmin,1.9rem);min-height:4.6rem;padding:.4rem 1rem;line-height:1.2}
+.wopt.wmiss{grid-column:1 / -1;max-width:30rem;justify-self:center;width:100%}
+.wexp{font-size:1.3rem;line-height:1.55;text-align:left}
+.wexp:empty{display:none}
+.wexp .wgood{color:var(--good);font-family:var(--fd);font-size:1.5rem}.wexp .wbad{color:var(--bad);font-weight:700}
+.wexp .wwhy{margin:.4rem 0}
+.wfix{background:rgba(46,229,157,.1);border:1px solid rgba(46,229,157,.35);border-radius:.8rem;padding:.8rem 1.1rem;margin-top:.5rem}
+.wfix.bad{background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.35)}.wfix.bad span{color:#FF97AA}
+.wfix span{display:block;font-family:var(--fd);font-style:italic;font-size:.9rem;color:var(--good);margin-bottom:.2rem}
+.wnx{margin-top:.8rem;min-height:3rem;padding:.4rem 1.8rem}
+.ddesc{font-size:1.25rem;line-height:1.5;text-align:left;color:#E3E7FA}
+.lopts:has(.dans:not(:empty)) .dans{font-size:clamp(1rem,2.4vmin,1.5rem)}
+.ddesc.small{font-size:1.1rem}.ddesc.ans{font-size:1.35rem;font-weight:700;background:rgba(255,255,255,.06);border-radius:.6rem;padding:.4rem .7rem}
 </style>
 </head>
 <body>
@@ -645,7 +674,9 @@ const LEVELS = [
 const timeLabel = t => t < 60 ? t + ' sec' : (t / 60) + ' min';
 const OPTDEFS = {
   ops: {label: 'Sommen', multi: true, allName: 'Alles door elkaar', choices: OP_ORDER.map(o => ({v: o, name: o, sub: OPS[o].name, long: OPS[o].name, cls: OPS[o].cls}))},
-gt: {label: 'Soort', multi: true, allName: 'alle soorten', choices: [
+  hst: {label: 'Hoofdstukken', multi: true, allName: 'alle hoofdstukken', choices: [{v: 'H2', name: 'H2'}, {v: 'H7', name: 'H7'}, {v: 'H11', name: 'H11'}]},
+  bdist: {label: 'Niveau', choices: [{v: 'mix', name: 'Basis', sub: 'keuzes uit verschillende onderwerpen'}, {v: 'lijk', name: 'Lastig', sub: 'keuzes die op elkaar lijken'}]},
+  gt: {label: 'Soort', multi: true, allName: 'alle soorten', choices: [
     {v: 'z1', name: 'Zijde: keer', sub: 'x = 8 · tan 35°', long: 'zijde (keer)'}, {v: 'z2', name: 'Zijde: delen', sub: 'x = 8 : tan 35°', long: 'zijde (delen)'},
     {v: 'h', name: 'Hoek', sub: 'x = tan⁻¹(6 : 8)', long: 'hoek'}]},
   hnot: {label: 'Hoeknotatie', choices: [{v: 'een', name: '∠G', sub: 'één letter'}, {v: 'drie', name: '∠HGI', sub: 'drie letters'}, {v: 'mix', name: 'Afwisselend', sub: 'extra uitdaging'}]},
@@ -1208,6 +1239,26 @@ const GAMES = {
     setup: () => {},
     begin: () => gnNext()
   },
+  begrip: {
+    section: 'wia', title: 'Begrippen', sub: 'Welk begrip hoort bij de omschrijving?',
+    opts: ['hst', 'bdist', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {hst: ['H2', 'H7', 'H11'], bdist: 'mix', time: 180},
+    example: c => `Voorbeeld: <b>${esc(wiaBegripQ(c).t.d.slice(0, 70))}…</b>`,
+    tile: () => `<div class="mini-w"><span>‘De middelste waarneming als…’</span><b>Mediaan ✓</b></div>`,
+    frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Welk begrip wordt hier omschreven?</div><div class="wdesc" id="wdesc"></div></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
+    setup: () => {}, begin: () => wbNext()
+  },
+  fout: {
+    section: 'wia', title: 'Foutje zoeken', sub: 'Vind de fout in het antwoord op een examenvraag',
+    opts: ['hst', 'time'], choices: {time: [120, 180, 300, 480].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {hst: ['H2', 'H7', 'H11'], time: 300}, scoreLabel: 'goed',
+    example: c => `Voorbeeld: <b>${esc(wiaErrQ(c).q.slice(0, 70))}…</b>`,
+    tile: () => `<div class="mini-w"><span>‘…dus het verschil is groot.’</span><b class="bad">✗ criterium?</b></div>`,
+    frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Examenvraag</div><div class="weq" id="weq"></div></div>
+      <div class="card wa"><div class="wlab">Antwoord van een leerling</div><div class="wea" id="wea"></div></div>
+      <div class="wehint" id="wehint"></div><div class="wexp" id="wexp"></div><div class="wopts" id="weopts"></div>`,
+    setup: () => {}, begin: () => weNext()
+  },
   voorrang: {
     section: 'vr', title: 'Voorrangsregels', sub: 'Werk onder elkaar, stap voor stap naar het antwoord',
     opts: ['vt', 'time'], choices: {time: [30, 60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
@@ -1241,8 +1292,8 @@ const GAMES = {
   }
 };
 // Jaarlagen en hoofdstukken. Nieuw hoofdstuk: voeg een regel toe aan SECTIONS met de jaarlaag erbij.
-const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D']];
-const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3]];
+const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D'], [5, 'Havo 5', '#FF9F1C']];
+const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5]];
 const gamesIn = sid => Object.entries(GAMES).filter(([, g]) => g.section === sid);
 const gradeOf = gid => { const sc = SECTIONS.find(x => x[0] === (GAMES[gid] || {}).section); return sc ? sc[2] : null; };
 let GRADE = null;
@@ -2066,6 +2117,12 @@ const VR_ERR = {
   reken: {name: 'Rekenfout', desc: 'Volgorde goed, uitkomst fout', tip: 'Oefen de tafels en het hoofdrekenen.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
 };
+const WIA_ERRT = {
+  begrip: {name: 'Verkeerd begrip gekozen', desc: 'Omschrijving niet herkend', tip: 'Laat leerlingen de omschrijving hardop lezen en de kernwoorden onderstrepen.'},
+  plek: {name: 'Fout niet gevonden', desc: 'Verkeerd deel van het antwoord aangewezen', tip: 'Laat leerlingen het antwoord zin voor zin controleren tegen de vraag.'},
+  soort: {name: 'Soort fout niet herkend', desc: 'Verkeerde soort fout gekozen', tip: 'Bespreek het verschil tussen een wiskundige fout en een formuleringsfout.'},
+  anders: {name: 'Andere fout', desc: '', tip: ''}
+};
 const STAT_TOPICS = {
   neg: {name: 'Negatieve getallen', g: ['r', 'b'], unit: 'sommen', fast: 6000, errs: ERR,
     cats: OP_ORDER.map(o => ({id: o, name: OPS[o].name, short: o, color: `var(--${OPS[o].cls})`}))},
@@ -2076,6 +2133,8 @@ const STAT_TOPICS = {
     cats: [{id: 'kies', name: 'Verhouding kiezen', short: 'Kiezen', color: 'var(--gold)'}, {id: 'gegv', name: 'Gegeven en gevraagd', short: 'Gegeven', color: 'var(--add)'},
       {id: 'z1', name: 'Zijde (keer)', short: 'Zijde ×', color: 'var(--sub)'}, {id: 'z2', name: 'Zijde (delen)', short: 'Zijde :', color: 'var(--div)'},
       {id: 'h', name: 'Hoek', short: 'Hoek', color: 'var(--mul)'}]},
+  wia: {name: 'Begrippen & formuleren', g: ['w', 'e'], unit: 'vragen', fast: 15000, errs: WIA_ERRT, noLevel: true,
+    cats: [{id: 'begrip', name: 'Begrip herkennen', short: 'Begrip', color: 'var(--sub)'}, {id: 'plek', name: 'Fout vinden', short: 'Fout vinden', color: 'var(--mul)'}, {id: 'soort', name: 'Soort fout', short: 'Soort', color: 'var(--div)'}]},
   bal: {name: 'Balansmethode', g: ['l'], unit: 'stappen', fast: 8000, errs: BAL_ERR, noLevel: true,
     cats: [{id: 'haakjes', name: 'Haakjes wegwerken', short: 'Haakjes', color: 'var(--gold)'}, {id: 'xweg', name: 'x naar links', short: 'x links', color: 'var(--div)'},
       {id: 'getalweg', name: 'Getallen naar rechts', short: 'Getal rechts', color: 'var(--sub)'}, {id: 'breukweg', name: 'Breuken wegwerken', short: 'Breuk', color: 'var(--add)'}, {id: 'delen', name: 'Delen', short: 'Delen', color: 'var(--mul)'}]},
@@ -2244,7 +2303,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -2960,6 +3019,232 @@ function gnSubmit() {
   }
 }
 
+/* ===================== Havo 5 wiskunde A: begrippen en formuleren ===================== */
+// Indeling per hoofdstuk: pas hier aan als een begrip in een ander hoofdstuk hoort.
+// p = woorddelen die NIET in de omschrijving mogen staan (wordt automatisch gecontroleerd).
+const WIA_TERMS = [
+  // --- soorten gegevens ---
+  {t: 'Kwalitatief', h: 'H2', g: 'soort', p: ['kwalit'], d: 'Gegevens die geen getalswaarde hebben maar een categorie of eigenschap aangeven, zoals haarkleur of het merk van een telefoon. Rekenen met deze waarden heeft geen betekenis.'},
+  {t: 'Kwantitatief', h: 'H2', g: 'soort', p: ['kwantit'], d: 'Gegevens die bestaan uit getallen waarmee je zinvol kunt rekenen, zoals lengte, leeftijd of het aantal broers en zussen.'},
+  {t: 'Nominaal', h: 'H2', g: 'soort', p: ['nomin'], d: 'Kenmerk waarvan de categorieën alleen namen zijn en geen logische volgorde hebben, zoals woonplaats of favoriete sport.'},
+  {t: 'Ordinaal', h: 'H2', g: 'soort', p: ['ordin'], d: 'Kenmerk waarvan de categorieën een natuurlijke rangorde hebben, terwijl de afstand tussen de categorieën geen vaste betekenis heeft, zoals de antwoorden ‘slecht – matig – goed’.'},
+  {t: 'Discreet', h: 'H2', g: 'soort', p: ['discre'], d: 'Getalsmatig kenmerk dat alleen losse waarden kan aannemen, meestal gehele getallen die je telt, zoals het aantal kinderen in een gezin.'},
+  {t: 'Continu', h: 'H2', g: 'soort', p: ['contin'], d: 'Getalsmatig kenmerk dat binnen een interval elke waarde kan aannemen; de waarden worden gemeten en alleen door de meetnauwkeurigheid afgerond, zoals lengte of tijd.'},
+  // --- centrummaten ---
+  {t: 'Centrummaten', h: 'H2', g: 'centrum', p: ['centrum', 'maten'], d: 'Verzamelnaam voor de getallen die aangeven waar het midden of zwaartepunt van een verdeling ligt, zoals het gemiddelde, de mediaan en de modus.'},
+  {t: 'Modus', h: 'H2', g: 'centrum', p: ['modus', 'modale'], d: 'De waarde die in een dataset het vaakst voorkomt.'},
+  {t: 'Mediaan', h: 'H2', g: 'centrum', p: ['media'], d: 'De middelste waarneming als alle waarnemingen op volgorde van grootte staan; bij een even aantal waarnemingen het gemiddelde van de twee middelste.'},
+  {t: 'Gemiddelde', h: 'H2', g: 'centrum', p: ['gemiddel'], d: 'De som van alle waarnemingen gedeeld door het aantal waarnemingen.'},
+  // --- spreiding ---
+  {t: 'Spreidingsmaten', h: 'H2', g: 'spreiding', p: ['spreid', 'maten'], d: 'Verzamelnaam voor de getallen die aangeven hoe ver de waarnemingen uit elkaar liggen, zoals de kwartielafstand en de standaardafwijking.'},
+  {t: 'Spreidingsbreedte', h: 'H2', g: 'spreiding', p: ['spreid', 'breedte'], d: 'Het verschil tussen de grootste en de kleinste waarneming.'},
+  {t: 'Kwartielafstand', h: 'H2', g: 'spreiding', p: ['kwartiel', 'afstand'], d: 'Het verschil tussen de waarde waaronder 75% van de waarnemingen ligt en de waarde waaronder 25% ligt: de breedte van het middelste deel waarin de helft van de waarnemingen zit.'},
+  {t: '1ste kwartiel', h: 'H2', g: 'spreiding', p: ['kwartiel', 'eerste', '1ste'], d: 'De mediaan van de onderste helft van de geordende waarnemingen; ongeveer 25% van de waarnemingen is kleiner dan of gelijk aan deze waarde.'},
+  {t: '3de kwartiel', h: 'H2', g: 'spreiding', p: ['kwartiel', 'derde', '3de'], d: 'De mediaan van de bovenste helft van de geordende waarnemingen; ongeveer 75% van de waarnemingen is kleiner dan of gelijk aan deze waarde.'},
+  {t: 'Standaardafwijking', h: 'H2', g: 'spreiding', p: ['standaard', 'afwijk'], d: 'Maat voor de gemiddelde afstand van de waarnemingen tot het gemiddelde; bij een klokvormige verdeling ligt ongeveer 68% van de waarnemingen binnen één keer deze maat van het gemiddelde.'},
+  {t: 'Boxplot', h: 'H2', g: 'spreiding', p: ['box', 'plot'], d: 'Diagram dat met vijf getallen – kleinste waarneming, eerste kwartiel, mediaan, derde kwartiel en grootste waarneming – een rechthoek met twee ‘snorharen’ tekent.'},
+  // --- tabellen en diagrammen ---
+  {t: 'Relatieve frequentie', h: 'H2', g: 'tabel', p: ['relatie', 'frequent'], d: 'Het aantal keer dat een waarde of klasse voorkomt, uitgedrukt als percentage of als fractie van het totale aantal waarnemingen.'},
+  {t: 'Cumulatief percentage', h: 'H2', g: 'tabel', p: ['cumulat', 'percentage'], d: 'Het deel (in procenten) van de waarnemingen dat kleiner dan of gelijk aan een bepaalde klassengrens is: je telt de relatieve frequenties van alle voorgaande klassen bij elkaar op.'},
+  {t: 'Histogram', h: 'H2', g: 'tabel', p: ['histogr'], d: 'Diagram waarin de waarnemingen in klassen zijn ingedeeld en elke klasse wordt weergegeven door een staaf die zonder tussenruimte tegen de volgende staaf staat.'},
+  {t: 'Klassenmidden', h: 'H2', g: 'tabel', p: ['klasse', 'midden'], d: 'Het getal precies halverwege de ondergrens en de bovengrens van een interval in een frequentietabel; je gebruikt het om bij ingedeelde gegevens het gemiddelde te benaderen.'},
+  // --- vorm van de verdeling ---
+  {t: 'Symmetrische verdeling', h: 'H2', g: 'vorm', p: ['symmetr', 'verdel'], d: 'Vorm van een histogram waarbij de linker- en de rechterhelft elkaars spiegelbeeld zijn; gemiddelde en mediaan liggen dan ongeveer op dezelfde plaats.'},
+  {t: 'Links scheve verdeling', h: 'H2', g: 'vorm', p: ['links', 'scheef', 'scheve', 'verdel'], d: 'Vorm van een histogram met een lange staart naar de kleine waarden; het gemiddelde is dan meestal kleiner dan de mediaan.'},
+  {t: 'Rechts scheve verdeling', h: 'H2', g: 'vorm', p: ['rechts', 'scheef', 'scheve', 'verdel'], d: 'Vorm van een histogram met een lange staart naar de grote waarden; het gemiddelde is dan meestal groter dan de mediaan.'},
+  {t: 'Uniforme verdeling', h: 'H2', g: 'vorm', p: ['uniform', 'verdel'], d: 'Vorm van een histogram waarbij alle staven ongeveer even hoog zijn: elke waarde of klasse komt ongeveer even vaak voor.'},
+  {t: 'Meertoppige verdeling', h: 'H2', g: 'vorm', p: ['toppig', 'meer', 'verdel'], d: 'Vorm van een histogram met minstens twee duidelijke pieken; dit wijst er vaak op dat de gegevens uit verschillende groepen bestaan.'},
+  // --- verschillen en samenhang ---
+  {t: 'Kruistabel', h: 'H7', g: 'verschil', p: ['kruis', 'tabel'], d: 'Overzicht in rijen en kolommen met de aantallen voor twee kwalitatieve kenmerken tegelijk: in de rijen de categorieën van het ene kenmerk, in de kolommen die van het andere.'},
+  {t: 'Associatiematen', h: 'H7', g: 'verschil', p: ['associat', 'maten'], d: 'Verzamelnaam voor de getallen waarmee je beoordeelt of het verschil tussen twee groepen gering, middelmatig of groot is, zoals de effectgrootte en de phi-coëfficiënt.'},
+  {t: 'Effectgrootte', h: 'H7', g: 'verschil', p: ['effect', 'grootte'], d: 'Maat voor het verschil tussen de gemiddelden van twee groepen, uitgedrukt in standaardafwijkingen; bij een absolute waarde van 0,8 of meer spreek je van een groot verschil.'},
+  {t: 'Phi-coëfficiënt', h: 'H7', g: 'verschil', p: ['phi', 'coëffic', 'coeffic'], d: 'Maat voor de samenhang tussen twee kenmerken met elk twee categorieën, berekend uit de vier aantallen van een 2×2-kruistabel; de waarde ligt tussen −1 en 1.'},
+  {t: 'Max VCP', h: 'H7', g: 'verschil', p: ['vcp', 'maxim', 'max ', 'verschil'], d: 'Het grootste onderscheid tussen de cumulatieve percentages van twee groepen, bepaald over alle klassen of categorieën; vanaf 40 noem je het onderscheid tussen de groepen middelmatig.'},
+  {t: 'Formuleblad', h: 'H7', g: 'verschil', p: ['formule', 'blad'], d: 'Het overzicht dat je bij het centraal examen krijgt, met onder andere de criteria om te beoordelen of een verschil gering, middelmatig of groot is.'},
+  // --- steekproeven en normale verdeling ---
+  {t: 'Populatie', h: 'H11', g: 'steekproef', p: ['populat'], d: 'De volledige groep personen of objecten waarover je een uitspraak wilt doen.'},
+  {t: 'Steekproef', h: 'H11', g: 'steekproef', p: ['steekproef'], d: 'Het deel van de groep waarover je een uitspraak wilt doen dat je werkelijk onderzoekt.'},
+  {t: 'Aselect', h: 'H11', g: 'steekproef', p: ['select'], d: 'Manier van kiezen waarbij elk element van de onderzochte groep evenveel kans heeft om gekozen te worden, zodat er geen vertekening ontstaat.'},
+  {t: 'Representatief', h: 'H11', g: 'steekproef', p: ['represent'], d: 'Een gekozen deel van de groep heeft deze eigenschap als het op de belangrijke kenmerken een goede afspiegeling is van de hele groep.'},
+  {t: 'Steekproefproportie', h: 'H11', g: 'steekproef', p: ['steekproef', 'proportie'], d: 'Het deel (als fractie of percentage) van de onderzochte deelgroep dat een bepaald kenmerk heeft; dit getal gebruik je als schatting voor de hele groep.'},
+  {t: 'Populatieproportie', h: 'H11', g: 'steekproef', p: ['populat', 'proportie'], d: 'Het deel van de hele groep dat een bepaald kenmerk heeft; meestal onbekend en geschat met behulp van een onderzocht deel van de groep.'},
+  {t: 'Betrouwbaarheidsinterval', h: 'H11', g: 'steekproef', p: ['betrouwbaar', 'interval'], d: 'Grenzen rond een uitkomst uit een onderzocht deel van de groep, waartussen de echte waarde voor de hele groep met een vooraf gekozen zekerheid (bijvoorbeeld 95%) ligt.'},
+  {t: 'Normale verdeling', h: 'H11', g: 'vorm', p: ['normaal', 'normale', 'verdel'], d: 'Symmetrische, klokvormige vorm van een histogram waarbij gemiddelde, mediaan en modus samenvallen en ongeveer 95% van de waarnemingen binnen twee standaardafwijkingen van het gemiddelde ligt.'}
+];
+// Foutje zoeken. e = index van het foute deel, of -1 als er iets ontbreekt.
+const WIA_FTYPE = {
+  begrip: 'Wiskundig onjuist of verkeerd begrip',
+  reken: 'Reken- of afleesfout',
+  toelichting: 'Toelichting of berekening ontbreekt',
+  criterium: 'Verkeerd criterium of vuistregel',
+  sluitend: 'Niet sluitend: een belangrijk deel ontbreekt',
+  vraag: 'Geen duidelijk antwoord op de vraag',
+  context: 'Geen eenheid of conclusie in de context'
+};
+const WIA_ERRS = [
+  {h: 'H2', q: 'In een klas zijn de lengtes gemeten. Het gemiddelde is 172 cm en de mediaan is 168 cm. Is de verdeling links scheef of rechts scheef? Licht je antwoord toe.',
+    a: ['Het gemiddelde (172 cm) is groter dan de mediaan (168 cm).', 'Er zijn dus een paar uitschieters naar beneden.', 'De verdeling is rechts scheef.'], e: 1, type: 'begrip',
+    fix: 'Het gemiddelde (172 cm) is groter dan de mediaan (168 cm). Een paar grote lengtes trekken het gemiddelde omhoog: er is een lange staart naar de grote waarden. De verdeling is dus rechts scheef.',
+    why: 'Een gemiddelde dat groter is dan de mediaan komt door uitschieters naar boven, niet naar beneden.'},
+  {h: 'H2', q: 'Leg uit of ‘aantal broers en zussen’ een discrete of een continue variabele is.',
+    a: ['Het aantal broers en zussen is een continue variabele,', 'want je kunt het tellen.'], e: 0, type: 'begrip',
+    fix: 'Het aantal broers en zussen is een discrete variabele, want je telt het en het kan alleen gehele waarden aannemen.',
+    why: 'Wat je telt en alleen losse (gehele) waarden kan hebben, is discreet. Continu is iets dat je meet.'},
+  {h: 'H2', q: 'Van een boxplot is gegeven: kleinste waarneming 5, Q1 = 12, mediaan 16, Q3 = 20 en grootste waarneming 31. Bereken de kwartielafstand.',
+    a: ['Uit de boxplot lees je af: Q1 = 12 en de mediaan is 16.', 'De kwartielafstand is 16 − 12 = 4.'], e: 0, type: 'begrip',
+    fix: 'Uit de boxplot lees je af: Q1 = 12 en Q3 = 20. De kwartielafstand is 20 − 12 = 8.',
+    why: 'De kwartielafstand is Q3 − Q1, niet mediaan − Q1.'},
+  {h: 'H2', q: 'In een dorp wonen een paar miljonairs. Welke centrummaat kun je het beste gebruiken om het inkomen van een ‘gewone’ inwoner te beschrijven? Licht je antwoord toe.',
+    a: ['De mediaan.'], e: -1, type: 'toelichting',
+    fix: 'De mediaan, want het gemiddelde wordt door de paar zeer hoge inkomens van de miljonairs sterk omhooggetrokken. De mediaan heeft daar geen last van.',
+    why: 'De vraag zegt ‘licht toe’: alleen het antwoord geven levert geen volledige score op.'},
+  {h: 'H2', q: 'Is ‘favoriete schoolvak’ een kwalitatief of een kwantitatief kenmerk? En is het nominaal of ordinaal?',
+    a: ['Het is een kwalitatief kenmerk,', 'want je kunt er niet mee rekenen.', 'Het is ordinaal, want de vakken staan in alfabetische volgorde.'], e: 2, type: 'begrip',
+    fix: 'Het is een kwalitatief kenmerk, want je kunt er niet mee rekenen. Het is nominaal, want er is geen natuurlijke volgorde tussen de vakken.',
+    why: 'Een alfabetische volgorde is geen natuurlijke rangorde. Zonder natuurlijke volgorde is een kenmerk nominaal.'},
+  {h: 'H2', q: 'Van 20 leerlingen is het gemiddelde cijfer 6,4. Er komt een leerling bij met een 9,0. Bereken het nieuwe gemiddelde.',
+    a: ['Het totaal was 20 · 6,4 = 128.', 'Het nieuwe totaal is 128 + 9,0 = 137.', 'Het nieuwe gemiddelde is 137 : 20 ≈ 6,9.'], e: 2, type: 'reken',
+    fix: 'Het totaal was 20 · 6,4 = 128. Het nieuwe totaal is 128 + 9,0 = 137. Er zijn nu 21 leerlingen, dus het nieuwe gemiddelde is 137 : 21 ≈ 6,5.',
+    why: 'Na het toevoegen zijn er 21 leerlingen, dus je deelt door 21.'},
+  {h: 'H2', q: 'Bij toets A is de standaardafwijking van de cijfers 0,8 en bij toets B 1,6. Bij welke toets liggen de cijfers dichter bij elkaar? Licht je antwoord toe.',
+    a: ['Bij toets A liggen de cijfers dichter bij elkaar,', 'want daar is het gemiddelde kleiner.'], e: 1, type: 'begrip',
+    fix: 'Bij toets A liggen de cijfers dichter bij elkaar, want daar is de standaardafwijking kleiner (0,8 tegen 1,6).',
+    why: 'Het gemiddelde zegt niets over hoe ver de cijfers uit elkaar liggen; de standaardafwijking wel.'},
+  {h: 'H2', q: 'Uit een cumulatieve frequentiepolygoon lees je af dat bij 18 °C het cumulatief percentage 70% is. Bij hoeveel procent van de dagen was de temperatuur hoger dan 18 °C?',
+    a: ['Bij 18 °C lees je af: 70%.', 'Dus bij 70% van de dagen was het warmer dan 18 °C.'], e: 1, type: 'begrip',
+    fix: 'Bij 18 °C lees je af: 70%. Dat is het percentage dagen met 18 °C of minder. Dus bij 100 − 70 = 30% van de dagen was het warmer dan 18 °C.',
+    why: 'Een cumulatief percentage geeft het deel kleiner dan of gelijk aan de grens, niet het deel erboven.'},
+  {h: 'H2', q: 'Bij 5,5 is het cumulatief percentage 35%. Hoeveel procent van de leerlingen heeft een cijfer van 5,5 of hoger?',
+    a: ['Bij 5,5 is het cumulatief percentage 35%.', '100 − 35 = 65'], e: -1, type: 'context',
+    fix: 'Bij 5,5 is het cumulatief percentage 35%. 100 − 35 = 65, dus 65% van de leerlingen heeft een cijfer van 5,5 of hoger.',
+    why: 'Het antwoord eindigt met een kaal getal: het procentteken en de conclusie in de context ontbreken.'},
+  {h: 'H2', q: 'De verdeling van de reistijden is rechts scheef. Welke is groter: het gemiddelde of de mediaan? Licht je antwoord toe.',
+    a: ['De verdeling is rechts scheef,', 'dus die is het grootst.'], e: 1, type: 'vraag',
+    fix: 'De verdeling is rechts scheef: een paar lange reistijden trekken het gemiddelde omhoog. Dus het gemiddelde is groter dan de mediaan.',
+    why: '‘Die is het grootst’ zegt niet welke van de twee je bedoelt: herhaal de vraag in je antwoord.'},
+  {h: 'H2', q: 'Vergelijk de cijfers van klas A (mediaan 6,8; Q1 = 6,2; Q3 = 7,4) en klas B (mediaan 6,1; Q1 = 5,0; Q3 = 7,0).',
+    a: ['Klas A heeft een mediaan van 6,8 en klas B een mediaan van 6,1.', 'Klas A heeft dus hogere cijfers.'], e: -1, type: 'sluitend',
+    fix: 'Klas A heeft een hogere mediaan (6,8) dan klas B (6,1), dus klas A scoort gemiddeld hoger. De kwartielafstand van klas A (7,4 − 6,2 = 1,2) is kleiner dan die van klas B (7,0 − 5,0 = 2,0), dus de cijfers van klas A liggen dichter bij elkaar.',
+    why: 'Bij ‘vergelijk’ hoort naast een centrummaat ook een spreidingsmaat.'},
+  {h: 'H7', q: 'Bij een onderzoek is φ ≈ 0,32. Is het verschil tussen de twee groepen gering, middelmatig of groot?',
+    a: ['φ ≈ 0,32.', 'Het verschil is groot.'], e: 1, type: 'criterium',
+    fix: 'φ ≈ 0,32. Omdat 0,2 ≤ φ < 0,4 is het verschil middelmatig.',
+    why: 'Volgens het formuleblad is het verschil pas groot bij φ ≥ 0,4 (of φ ≤ −0,4).'},
+  {h: 'H7', q: 'Onderzoek met de effectgrootte of het verschil in reactietijd tussen jongens en meisjes groot is.',
+    a: ['E = 0,9.', 'Het verschil is groot.'], e: -1, type: 'toelichting',
+    fix: 'Vul de gemiddelden en standaardafwijkingen van beide groepen in de formule van het formuleblad in: E ≈ 0,9. Omdat E ≥ 0,8 is het verschil groot.',
+    why: 'Er staat geen berekening en het criterium (E ≥ 0,8) wordt niet genoemd.'},
+  {h: 'H7', q: 'Van twee groepen zijn boxplots getekend. De box van groep A loopt van 10 tot 18, de box van groep B van 20 tot 28. Is het verschil tussen de groepen groot?',
+    a: ['De boxen overlappen elkaar niet.', 'Ja.'], e: 1, type: 'vraag',
+    fix: 'De boxen overlappen elkaar niet, dus het verschil tussen groep A en groep B is groot.',
+    why: '‘Ja.’ is geen volledige conclusie: herhaal de vraag in je antwoord.'},
+  {h: 'H7', q: 'Bereken de max VCP van de twee groepen en beoordeel het verschil.',
+    a: ['Het grootste verschil in cumulatieve percentages is 46 − 12 = 34.', 'Max VCP = 34, dus het verschil is middelmatig.'], e: 1, type: 'criterium',
+    fix: 'Het grootste verschil in cumulatieve percentages is 46 − 12 = 34. Omdat max VCP < 40 is het verschil gering.',
+    why: 'Volgens het formuleblad is het verschil pas middelmatig vanaf een max VCP van 40.'},
+  {h: 'H7', q: 'Leg uit waarom een effectgrootte negatief kan zijn.',
+    a: ['Omdat de standaardafwijking negatief kan zijn.'], e: 0, type: 'begrip',
+    fix: 'In de teller trek je het gemiddelde van de ene groep af van dat van de andere groep. Is het eerste gemiddelde kleiner, dan is het verschil en dus E negatief.',
+    why: 'Een standaardafwijking is nooit negatief; het teken komt van het verschil tussen de gemiddelden.'},
+  {h: 'H7', q: 'Er zijn 120 jongens en 80 meisjes ondervraagd. Van hen sporten 30 jongens en 32 meisjes niet. Bereken het percentage meisjes dat niet sport.',
+    a: ['32 : 200 · 100% = 16%.'], e: 0, type: 'reken',
+    fix: '32 : 80 · 100% = 40%, dus 40% van de meisjes sport niet.',
+    why: 'Het gaat om het percentage van de meisjes: je deelt door 80, niet door het totaal van 200.'},
+  {h: 'H7', q: 'Leg uit waarom je bij een onderzoek naar ‘wel of niet roken’ bij jongens en meisjes de phi-coëfficiënt gebruikt en niet de effectgrootte.',
+    a: ['Omdat de phi-coëfficiënt nauwkeuriger is.'], e: 0, type: 'begrip',
+    fix: 'Beide kenmerken zijn kwalitatief met elk twee categorieën, zodat je een 2×2-kruistabel hebt. De effectgrootte gebruik je alleen bij kwantitatieve gegevens waarvan je de gemiddelden en standaardafwijkingen kent.',
+    why: 'De keuze hangt af van het soort gegevens, niet van nauwkeurigheid.'},
+  {h: 'H11', q: 'Een onderzoeker ondervraagt de eerste 50 bezoekers van een sportschool over hun gezondheid. Is deze steekproef representatief voor alle Nederlanders?',
+    a: ['Ja, want 50 personen is genoeg.'], e: 0, type: 'begrip',
+    fix: 'Nee. Bezoekers van een sportschool sporten waarschijnlijk meer dan gemiddeld, en de steekproef is niet aselect gekozen. Hij is dus geen goede afspiegeling van alle Nederlanders.',
+    why: 'Of een steekproef representatief is, hangt vooral af van hoe hij gekozen is, niet alleen van de grootte.'},
+  {h: 'H11', q: 'In een steekproef van 400 kiezers stemt 22% op partij X. Is de populatieproportie dan ook 22%?',
+    a: ['Ja, de populatieproportie is 22%.'], e: 0, type: 'begrip',
+    fix: 'Nee, 22% is de steekproefproportie. Dat is een schatting: de populatieproportie kan daarvan afwijken. Met een betrouwbaarheidsinterval geef je aan tussen welke grenzen de populatieproportie (met 95% zekerheid) ligt.',
+    why: 'Steekproefproportie en populatieproportie zijn niet hetzelfde.'},
+  {h: 'H11', q: 'De lengte van volwassen mannen is normaal verdeeld met gemiddelde 181 cm en standaardafwijking 7 cm. Hoeveel procent is langer dan 195 cm? Gebruik de vuistregels.',
+    a: ['195 = 181 + 2 · 7.', 'Tussen 167 en 195 cm ligt ongeveer 95%.', 'Dus ongeveer 5% is langer dan 195 cm.'], e: 2, type: 'begrip',
+    fix: '195 = 181 + 2 · 7. Tussen 167 en 195 cm ligt ongeveer 95%, dus buiten dat gebied 5%. Door de symmetrie is de helft daarvan langer dan 195 cm: ongeveer 2,5%.',
+    why: 'De 5% buiten het gebied is verdeeld over beide kanten; aan één kant ligt maar 2,5%.'},
+  {h: 'H11', q: 'De inhoud van pakken melk is normaal verdeeld met gemiddelde 1000 ml en standaardafwijking 10 ml. Hoeveel procent van de pakken bevat minder dan 990 ml?',
+    a: ['990 = 1000 − 10: dat is één standaardafwijking onder het gemiddelde.', 'Binnen één standaardafwijking ligt 68%, dus (100 − 68) : 2 = 16'], e: -1, type: 'context',
+    fix: '990 = 1000 − 10: dat is één standaardafwijking onder het gemiddelde. Binnen één standaardafwijking ligt 68%, dus (100 − 68) : 2 = 16. Ongeveer 16% van de pakken bevat minder dan 990 ml.',
+    why: 'Het antwoord eindigt met een kaal getal zonder procentteken en zonder conclusie.'}
+];
+const WIA_CH = ['H2', 'H7', 'H11'];
+function wiaTerms(cfg) { const L = WIA_TERMS.filter(x => cfg.hst.includes(x.h)); return L.length >= 4 ? L : WIA_TERMS; }
+function wiaBegripQ(cfg, prev) {
+  const L = wiaTerms(cfg); let t, g = 0;
+  do { t = L[rnd(0, L.length - 1)]; } while (prev && prev.t === t.t && g++ < 10);
+  const same = shuffle(WIA_TERMS.filter(x => x.g === t.g && x.t !== t.t)), other = shuffle(WIA_TERMS.filter(x => x.g !== t.g && x.t !== t.t));
+  const pool = cfg.bdist === 'lijk' ? same.concat(other) : shuffle(same.slice(0, 2).concat(other)).concat(same.slice(2));
+  const opts = [t]; for (const x of pool) if (opts.length < 4 && !opts.includes(x)) opts.push(x);
+  return {t, opts: shuffle(opts)};
+}
+function wiaErrQ(cfg, prev) {
+  let L = WIA_ERRS.filter(x => cfg.hst.includes(x.h)); if (!L.length) L = WIA_ERRS;
+  let q, g = 0; do { q = L[rnd(0, L.length - 1)]; } while (prev && prev === q && L.length > 1 && g++ < 10);
+  const kinds = shuffle(Object.keys(WIA_FTYPE).filter(k => k !== q.type)).slice(0, 3);
+  return Object.assign({}, q, {kinds: shuffle([q.type, ...kinds])});
+}
+/* --- spel: Begrippen --- */
+function wbNext() {
+  G.wq = wiaBegripQ(G.cfg, G.wq); G.locked = false; G.qStart = performance.now(); flash('');
+  $('#wdesc').textContent = G.wq.t.d; $('#wexp').innerHTML = '';
+  $('#wopts').innerHTML = G.wq.opts.map((o, i) => `<button class="ans wopt" data-fast="wb" data-arg="${i}">${esc(o.t)}</button>`).join('');
+}
+function wbAnswer(i) {
+  if (!G || !G.running || G.locked) return;
+  const o = G.wq.opts[+i]; if (!o) return; G.locked = true;
+  const ok = o === G.wq.t, btns = document.querySelectorAll('#wopts .wopt');
+  recordGen('w', 'begrip', ok, 'begrip', G.wq.t.d.slice(0, 90) + '…', G.wq.t.t, o.t);
+  btns.forEach((b, k) => { if (G.wq.opts[k] === G.wq.t) b.classList.add('right'); });
+  if (ok) { award(10); beep(true); flash('good', 400); G.timers.push(setTimeout(() => { if (G && G.running) wbNext(); }, 700)); return; }
+  btns[+i].classList.add('wrong'); penalty(); beep(false); flash('bad', 600);
+  G.mistakes.push({q: G.wq.t.t, given: o.t});
+  $('#wexp').innerHTML = `<div class="wfix bad"><span>Jij koos: ${esc(o.t)}</span>${esc(o.d)}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
+  G.after = wbNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === wbNext) { G.after = null; wbNext(); } }, 9000));
+}
+/* --- spel: Foutje zoeken --- */
+function weNext() {
+  const q = G.wq = wiaErrQ(G.cfg, G.wq); q.step = 1; G.locked = false; G.qStart = performance.now(); flash('');
+  weRender();
+}
+function weRender() {
+  const q = G.wq;
+  $('#weq').textContent = q.q;
+  $('#wea').innerHTML = q.a.map((s, i) => `<button class="wseg ${q.step > 1 && i === q.e ? 'hit' : ''} ${q.miss === i ? 'bad' : ''}" data-fast="wseg" data-arg="${i}" ${q.step > 1 ? 'disabled' : ''}>${esc(s)}</button>`).join(' ') +
+    (q.step > 1 && q.e === -1 ? ' <span class="wmissing">… hier ontbreekt iets</span>' : '');
+  $('#wehint').textContent = q.step === 1 ? 'Tik op het deel van het antwoord waar het misgaat, of op ‘Er ontbreekt iets’.' : q.step === 2 ? 'Wat voor fout is het?' : '';
+  const pad = $('#weopts');
+  if (q.step === 1) pad.innerHTML = `<button class="ans wopt wmiss" data-fast="wseg" data-arg="-1">Er ontbreekt iets</button>`;
+  else if (q.step === 2) pad.innerHTML = q.kinds.map((k, i) => `<button class="ans wopt" data-fast="wkind" data-arg="${i}">${esc(WIA_FTYPE[k])}</button>`).join('');
+  else pad.innerHTML = '';
+}
+function weFinish(okKind, chosen) {
+  const q = G.wq; q.step = 3; weRender();
+  $('#weopts').innerHTML = '';
+  $('#wexp').innerHTML = `${okKind ? '<div class="wgood">✓ Goed gezien!</div>' : `<div class="wbad">Het was: <b>${esc(WIA_FTYPE[q.type])}</b></div>`}<div class="wwhy">${esc(q.why)}</div><div class="wfix"><span>Zo had het moeten staan</span>${esc(q.fix)}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
+  G.after = weNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === weNext) { G.after = null; weNext(); } }, 20000));
+}
+function weSeg(i) {
+  const q = G && G.wq; if (!G || !G.running || G.locked || !q || q.step !== 1) return;
+  i = +i; const ok = i === q.e;
+  recordGen('e', 'plek', ok, 'plek', q.q.slice(0, 90) + '…', q.e === -1 ? 'er ontbreekt iets' : q.a[q.e], i === -1 ? 'er ontbreekt iets' : q.a[i]);
+  G.qStart = performance.now();
+  if (ok) { award(5); beep(true); flash('good', 300); q.step = 2; weRender(); return; }
+  penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.q, given: i === -1 ? 'er ontbreekt iets' : q.a[i]});
+  q.miss = i; q.step = 2; weRender();
+  $('#wehint').textContent = q.e === -1 ? 'Niet goed: er ontbreekt juist iets (zie de stippellijn). Wat voor fout is het?' : 'Niet goed: de fout zit in het gele deel. Wat voor fout is het?';
+}
+function weKind(i) {
+  const q = G && G.wq; if (!G || !G.running || G.locked || !q || q.step !== 2) return;
+  const k = q.kinds[+i], ok = k === q.type; G.locked = true;
+  recordGen('e', 'soort', ok, 'soort', q.q.slice(0, 90) + '…', WIA_FTYPE[q.type], WIA_FTYPE[k]);
+  if (ok) { award(10); beep(true); flash('good', 400); } else { penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.q, given: WIA_FTYPE[k]}); }
+  weFinish(ok, k);
+}
+
 /* ===================== Voorrangsregels ===================== */
 // Tokens: {t:'n', v} | {t:'op', v:'+'|'−'|'×'|':'} | {t:'('} | {t:')'}
 const VR_LEVELS = [['×', ':'], ['+', '−']];
@@ -3172,6 +3457,18 @@ function duoQuestion(gid, cfg) {
     const eq = stHTML(st, v);
     return {prompt: `<div class="dq small">${eq}</div><div class="dsub">${ask}</div>`, opts, explain,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'l', cat, o.ok ? 1 : 0, o.ok ? '' : o.err, Math.round(performance.now() - ms0), 0, plainTxt(eq), plainTxt(explain), plainTxt(o.html)])};
+  }
+  if (gid === 'begrip') {
+    const q = wiaBegripQ(cfg);
+    return {prompt: `<div class="dsub">Welk begrip wordt omschreven?</div><div class="ddesc">${esc(q.t.d)}</div>`, opts: q.opts.map(o => ({html: esc(o.t), ok: o === q.t, err: 'begrip'})),
+      explain: `Het juiste begrip is <b>${esc(q.t.t)}</b>.`,
+      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'w', 'begrip', o.ok ? 1 : 0, o.ok ? '' : 'begrip', Math.round(performance.now() - ms0), 0, q.t.d.slice(0, 90) + '…', q.t.t, o.html])};
+  }
+  if (gid === 'fout') {
+    const q = wiaErrQ(cfg);
+    return {prompt: `<div class="ddesc small"><b>Vraag:</b> ${esc(q.q)}</div><div class="ddesc ans"><b>Antwoord:</b> ${esc(q.a.join(' '))}</div><div class="dsub">Wat is er mis?</div>`,
+      opts: q.kinds.map(k => ({html: esc(WIA_FTYPE[k]), ok: k === q.type, err: 'soort'})), explain: esc(q.why),
+      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'e', 'soort', o.ok ? 1 : 0, o.ok ? '' : 'soort', Math.round(performance.now() - ms0), 0, q.q.slice(0, 90) + '…', WIA_FTYPE[q.type], o.html])};
   }
   if (gid === 'gonio') {
     const q = genGon(cfg, null), hulp = cfg.hulp === 'ja', u = q.kind === 'z' ? ' cm' : '°', cand = [];
@@ -3417,6 +3714,7 @@ function findStudent(id) { for (const c of D.classes) { const s = c.students.fin
 
 /* ===================== Acties ===================== */
 const ACT = {
+  wNext: () => { if (G && G.running && G.after) { const f = G.after; G.after = null; f(); } },
   gnNext: () => { if (G && G.running && G.locked && G.gq) gnAfter(G.gq); },
   duo: () => { DUO.sel = DUO.sel.filter(p => p.guest || (curClass() && curClass().students.some(s => s.id === p.id))); showDuoPick(); },
   duoTog: id => { const i = DUO.sel.findIndex(p => p.id === id); if (i >= 0) DUO.sel.splice(i, 1); else { if (DUO.sel.length >= 3) { toast('Maximaal 3 spelers.'); return; } const st = curClass().students.find(s => s.id === id); if (st) DUO.sel.push(st); } showDuoPick(); },
@@ -3576,6 +3874,9 @@ app.addEventListener('pointerdown', e => {
   else if (f === 'vop') vrOp(b.dataset.arg);
   else if (f === 'dans') duoAnswer(b.dataset.arg);
   else if (f === 'gkey') gnKey(b.dataset.arg);
+  else if (f === 'wb') wbAnswer(b.dataset.arg);
+  else if (f === 'wseg') weSeg(b.dataset.arg);
+  else if (f === 'wkind') weKind(b.dataset.arg);
   else if (f === 'gpick') gnPick(b.dataset.arg);
   else if (f === 'gsel') gnSel(b.dataset.arg);
   else if (f === 'vans') vrAns(b.dataset.arg);
