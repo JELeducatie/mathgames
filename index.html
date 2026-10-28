@@ -2178,7 +2178,7 @@ const WIA_ERRT = {
   begrip: {name: 'Verkeerd begrip gekozen', desc: 'Omschrijving niet herkend', tip: 'Laat leerlingen de omschrijving hardop lezen en de kernwoorden onderstrepen.'},
   plek: {name: 'Fout niet gevonden', desc: 'Verkeerd deel van het antwoord aangewezen', tip: 'Laat leerlingen het antwoord zin voor zin controleren tegen de vraag.'},
   soortvar: {name: 'Soort variabele niet herkend', desc: 'Kwalitatief, ordinaal of kwantitatief verward', tip: 'Laat leerlingen eerst bepalen: kun je ermee rekenen? Is er een volgorde?'},
-  maat: {name: 'Verkeerde associatiemaat', desc: 'φ, max VCP, E of boxplots verkeerd gekozen', tip: 'Koppel de maat aan wat er gegeven is: kruistabel, cumulatieve percentages, gemiddelde + sd of vijfgetallensamenvatting.'},
+  maat: {name: 'Verkeerde associatiemaat', desc: 'φ, max VCP, E of boxplots verkeerd gekozen', tip: 'Koppel de maat aan wat er gegeven is: kruistabel, cumulatieve percentages, gemiddelde + sd of min, Q1, mediaan, Q3 en max.'},
   grens: {name: 'Vuistregel verkeerd toegepast', desc: 'Gering, middelmatig of groot verkeerd beoordeeld', tip: 'Oefen de grenzen van het formuleblad, ook bij negatieve φ en E.'},
   soort: {name: 'Soort fout niet herkend', desc: 'Verkeerde soort fout gekozen', tip: 'Bespreek het verschil tussen een wiskundige fout en een formuleringsfout.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
@@ -3311,7 +3311,7 @@ function weKind(i) {
 /* ===================== Havo 5: Welke maat? en Gering/middelmatig/groot ===================== */
 const MK_VAR = {k2: 'Kwalitatief, twee categorieën', ord: 'Kwalitatief, ordinaal', kw: 'Kwantitatief'};
 const MK_MAAT = {phi: 'Phi-coëfficiënt (φ)', vcp: 'Max VCP', e: 'Effectgrootte (E)', box: 'Twee boxplots'};
-const MK_GIVEN = {phi: 'een 2×2-kruistabel', vcp: 'cumulatieve percentages', e: 'gemiddelden en standaardafwijkingen', box: 'twee vijfgetallensamenvattingen'};
+const MK_GIVEN = {phi: 'een 2×2-kruistabel', vcp: 'cumulatieve percentages', e: 'gemiddelden en standaardafwijkingen', box: 'per groep het minimum, Q1, de mediaan, Q3 en het maximum'};
 // v = soort variabele, m = maat. De situatie noemt steeds wat er gegeven is.
 const MK_SIT = [
   {s: 'Onderzoek of jongens en meisjes verschillen in het wel of niet hebben van een bijbaan. Van beide groepen is het aantal met en zonder bijbaan bekend.', v: 'k2', m: 'phi'},
@@ -3327,7 +3327,7 @@ const MK_SIT = [
   {s: 'Bij een reactietest zijn van jongens en meisjes de gemiddelde reactietijd en de standaardafwijking berekend.', v: 'kw', m: 'e'},
   {s: 'Van twee klassen zijn het gemiddelde cijfer voor een toets en de standaardafwijking gegeven.', v: 'kw', m: 'e'},
   {s: 'Van de zakgeldbedragen in twee groepen zijn het minimum, Q1, de mediaan, Q3 en het maximum gegeven.', v: 'kw', m: 'box'},
-  {s: 'De wachttijden bij twee huisartsenposten zijn met een vijfgetallensamenvatting weergegeven.', v: 'kw', m: 'box'},
+  {s: 'De wachttijden bij twee huisartsenposten zijn samengevat met minimum, Q1, mediaan, Q3 en maximum.', v: 'kw', m: 'box'},
   {s: 'Van de hardlooptijden op de 5 km van twee atletiekverenigingen zijn boxplots getekend.', v: 'kw', m: 'box'}
 ];
 function mkNext() {
@@ -3347,7 +3347,7 @@ function mkWhy(q) {
   if (q.m === 'phi') return 'Een kwalitatieve variabele met twee categorieën bij twee groepen geeft een 2×2-kruistabel: daar hoort de phi-coëfficiënt bij.';
   if (q.m === 'vcp') return q.v === 'ord' ? 'Bij een ordinale variabele kun je cumulatieve percentages berekenen: daar hoort de max VCP bij.' : 'De kwantitatieve gegevens zijn in klassen ingedeeld, dus je hebt cumulatieve percentages: daar hoort de max VCP bij.';
   if (q.m === 'e') return 'Bij een kwantitatieve variabele waarvan de gemiddelden en standaardafwijkingen bekend zijn, gebruik je de effectgrootte.';
-  return 'Bij een kwantitatieve variabele met een vijfgetallensamenvatting vergelijk je twee boxplots.';
+  return 'Bij een kwantitatieve variabele waarvan minimum, kwartielen, mediaan en maximum bekend zijn, vergelijk je twee boxplots.';
 }
 function mkPick(k) {
   const q = G && G.mq; if (!G || !G.running || G.locked || !q) return;
