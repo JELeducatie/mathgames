@@ -97,7 +97,8 @@
     seed: '2026',
     tekens: '23456789AEKMRX★●▲♦',
     speeltijd: 30,   // minuten; is op het bord nog aan te passen
-    punten: {station: 100, snelheidMax: 100, snelheidPerMinuut: 12, foutCode: -25, hint: -40, finishBonus: [100, 75, 50], wachtNaFout: 5},
+    punten: {station: 100, snelheidMax: 100, snelheidPerMinuut: 12, foutCode: -25, hint: -40, finishBonus: [100, 75, 50], wachtNaFout: 5,
+      niveauBonus: {makkelijk: 0, middel: 20, moeilijk: 40}},  // extra punten per slot voor het gekozen niveau
 
     themas: [
       {

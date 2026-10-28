@@ -19,7 +19,7 @@ Alle teams krijgen dezelfde vragen, maar elke wiskundige heeft eigen decodeerstr
 
 ## Punten
 
-Per slot +100, snelheidsbonus tot +100 per slot (minder naarmate het langer duurt), foute code −25 (en wachten: 5 s, bij elke volgende foute poging op dezelfde kaart 5 s langer), hint −40, en een bonus voor de eerste drie teams bij de schat. Alles is per kamer in te stellen bij `punten`.
+Per slot +100, snelheidsbonus tot +100 per slot (minder naarmate het langer duurt), niveaubonus per slot (middel +20, moeilijk +40), foute code −25 (en wachten: 5 s, bij elke volgende foute poging op dezelfde kaart 5 s langer), hint −40, en een bonus voor de eerste drie teams bij de schat. Alles is per kamer in te stellen bij `punten`.
 
 ## Een nieuwe escaperoom maken
 

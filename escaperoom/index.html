@@ -344,9 +344,10 @@ function scoreOf(id) {
   let stations = 0, speed = 0;
   t.solved.forEach((ts, i) => { stations += P.station; if (!(t.forced || []).includes(i)) speed += Math.max(0, Math.round(P.snelheidMax - P.snelheidPerMinuut * (ts - startOf(id, i)) / 60000)); });
   const wrong = t.wrong * P.foutCode, hints = t.hints.length * P.hint;
+  const level = (t.levels || []).reduce((a, l) => a + (P.niveauBonus[l] || 0), 0);
   let bonus = 0;
   if (t.done) { const order = routesIn().map(r => team(r.id)).filter(x => x.done).map(x => x.done).sort((a, b) => a - b); const rk = order.indexOf(t.done); bonus = P.finishBonus[rk] || 0; }
-  return {stations, speed, wrong, hints, bonus, total: stations + speed + wrong + hints + bonus, solved: t.solved.length, of: st.length};
+  return {stations, speed, level, wrong, hints, bonus, total: stations + speed + level + wrong + hints + bonus, solved: t.solved.length, of: st.length};
 }
 
 /* ============ schermen ============ */
@@ -419,14 +420,14 @@ function showInfo() {
     <div class="info">
       <div class="istep plate"><span class="inum">1</span><div class="iico">🃏</div><h3>Pak kaart 1</h3><p>Jullie team heeft de naam van een <b>wiskundige</b>. Lees samen de voorkant: wie was jullie wiskundige en over welke wiskunde gaat de kaart?</p></div>
       <div class="istep plate"><span class="inum">2</span><div class="iico">⭐</div><h3>Kies een niveau</h3><p>Op de achterkant staan drie niveaus. Kies er <b>één</b>:</p>
-        <div class="ilv"><span>★ <b>4</b> makkelijke vragen</span><span>★★ <b>2</b> middelvragen</span><span>★★★ <b>1</b> moeilijke vraag</span></div><p class="muted">Elk niveau heeft een eigen code. Niveaus mengen werkt dus niet!</p></div>
+        <div class="ilv"><span>★ <b>4</b> makkelijke vragen</span><span>★★ <b>2</b> middelvragen</span><span>★★★ <b>1</b> moeilijke vraag</span></div><p class="muted">Elk niveau heeft een eigen code, dus niet mengen! Moeilijker = meer punten.</p></div>
       <div class="istep plate"><span class="inum">3</span><div class="iico">🔎</div><h3>Zoek je antwoord op</h3><p>Onder elke vraag staat een tabel. Is het antwoord <b>${esc(ER.fmt(ex.thema.opdrachten.makkelijk[0].antwoord))}</b>? Dan is het teken <b>${esc(q.find(o => o.goed).teken)}</b>.</p>
         <table class="idec"><tr>${q.map(o => `<td>${esc(ER.fmt(o.waarde))}</td>`).join('')}</tr><tr>${q.map(o => `<td class="${o.goed ? 'hl' : ''}">${esc(o.teken)}</td>`).join('')}</tr></table>
         <p class="muted">Staat jullie antwoord er niet bij? Dan klopt het nog niet!</p></div>
       <div class="istep plate"><span class="inum">4</span><div class="iico">🔓</div><h3>Open het slot</h3><p>Code van <b>4 tekens</b> compleet? Kom naar het bord, tik op <b>jullie wiskundige</b> en voer de code in. Goed? Dan krijg je een tip en pak je de volgende kaart.</p></div>
     </div>
     <div class="ipoints">
-      <span>🔓 slot open <b>+${P.station}</b></span><span>⚡ snel <b>tot +${P.snelheidMax}</b></span><span>❌ foute code <b>${P.foutCode}</b></span><span>💡 hint kopen <b>${P.hint}</b></span><span>💰 als eerste bij de schat <b>+${P.finishBonus[0]}</b></span>
+      <span>🔓 slot open <b>+${P.station}</b></span><span>⚡ snel <b>tot +${P.snelheidMax}</b></span><span>🎯 niveau <b>★★ +${P.niveauBonus.middel} · ★★★ +${P.niveauBonus.moeilijk}</b></span><span>❌ foute code <b>${P.foutCode}</b></span><span>💡 hint kopen <b>${P.hint}</b></span><span>💰 als eerste bij de schat <b>+${P.finishBonus[0]}</b></span>
     </div></section>`;
   if (S.phase === 'play') { tick(); TICK = setInterval(tick, 500); }
 }
@@ -561,7 +562,7 @@ function tryCode() {
   const slots = [...document.querySelectorAll('#slots .slot')];
   const lvl = ER.NIVEAUS.find(n => cur.codes[n.id] === CODE.join(''));
   if (lvl) {
-    t.levels = (t.levels || []).concat(lvl.id);
+    t.levels = (t.levels || []).concat(lvl.id); t.lastLevel = lvl.id;
     t.solved.push(now()); if (t.solved.length === st.length) t.done = now(); save();
     slots.forEach((el, k) => setTimeout(() => el.classList.add('ok'), k * 120));
     SND.ok(); spinBg(); $('#vault').classList.add('busy');
@@ -579,11 +580,12 @@ function tryCode() {
 
 function reveal(id) {
   const t = team(id), st = stationsOf(id), i = t.solved.length, prev = st[i - 1], nx = st[i];
-  const gain = K.punten.station + Math.max(0, Math.round(K.punten.snelheidMax - K.punten.snelheidPerMinuut * (t.solved[i - 1] - startOf(id, i - 1)) / 60000));
+  const lb = K.punten.niveauBonus[t.lastLevel] || 0, nv = ER.NIVEAUS.find(n => n.id === t.lastLevel);
+  const gain = K.punten.station + lb + Math.max(0, Math.round(K.punten.snelheidMax - K.punten.snelheidPerMinuut * (t.solved[i - 1] - startOf(id, i - 1)) / 60000));
   ov.className = 'show';
   ov.innerHTML = `<div class="modal plate rivets">${plates()}
     <div class="big-ok eng">Slot ${i} gekraakt!</div>
-    <div class="pts">+${gain}</div>
+    <div class="pts">+${gain}</div>${nv ? `<p style="text-align:center;margin:0;color:var(--glow)">${'★'.repeat(ER.NIVEAUS.indexOf(nv) + 1)} ${nv.naam}${lb ? ` · +${lb} niveaubonus` : ''}</p>` : ''}
     <p style="text-align:center" class="muted">${esc(prev.thema.naam)} is opgelost.</p>
     <div class="next" style="--c:${nx.thema.kleur}"><span class="ni">${nx.thema.icoon}</span><div><span class="muted">Pak nu</span><b>Kaart ${i + 1}: ${esc(nx.thema.naam)}</b></div></div>
     <div class="scroll" style="margin-top:1rem"><div class="q">🔑 Jullie tip voor kaart ${i + 1}</div>${esc(nx.thema.tip)}</div>
@@ -610,6 +612,7 @@ function finale(id, fresh) {
       <span>Snelheidsbonus</span><span>+${sc.speed}</span>
       <span>Foute codes (${team(id).wrong}×)</span><span>${sc.wrong}</span>
       <span>Hints gekocht (${team(id).hints.length}×)</span><span>${sc.hints}</span>
+      <span>Niveaubonus</span><span>+${sc.level}</span>
       <span>Bonus voor plek bij de finish</span><span>+${sc.bonus}</span></div>
     <div class="row"><button class="btn gold big" data-act="closeHub">Klaar ▶</button></div><div class="autoback" id="ab"></div></div>`;
   autoBack(45);
@@ -719,8 +722,8 @@ function showRank() {
   app.innerHTML = `<section class="screen">${head}
     <div class="rank"><div class="podium">${pod.map((x, k) => x ? `<div class="pod"><div class="pn">${esc(x.r.naam)}</div><div class="ps">${x.s.total}</div><div class="blk" style="height:${H[k]}rem">${[2, 1, 3][k]}</div></div>` : '<div class="pod"></div>').join('')}</div>
       <div class="rlist plate">
-        <table><tr><th>#</th><th>Team</th><th>Sloten</th><th>Snelheid</th><th>Fout</th><th>Hints</th><th>Bonus</th><th>Totaal</th></tr>
-        ${L.map((x, k) => `<tr><td>${k + 1}</td><td>${esc(x.r.naam)}${x.t.done ? ' 🏆' : ''}</td><td>${x.s.solved}/${x.s.of}</td><td>+${x.s.speed}</td><td>${x.s.wrong}</td><td>${x.s.hints}</td><td>+${x.s.bonus}</td><td class="tot">${x.s.total}</td></tr>`).join('')}</table></div></div></section>`;
+        <table><tr><th>#</th><th>Team</th><th>Sloten</th><th>Snelheid</th><th>Niveau</th><th>Fout</th><th>Hints</th><th>Bonus</th><th>Totaal</th></tr>
+        ${L.map((x, k) => `<tr><td>${k + 1}</td><td>${esc(x.r.naam)}${x.t.done ? ' 🏆' : ''}</td><td>${x.s.solved}/${x.s.of}</td><td>+${x.s.speed}</td><td>+${x.s.level}</td><td>${x.s.wrong}</td><td>${x.s.hints}</td><td>+${x.s.bonus}</td><td class="tot">${x.s.total}</td></tr>`).join('')}</table></div></div></section>`;
 }
 function drumroll(sec) { if (!SOUND) return; for (let t = 0; t < sec; t += .06) noise(.05, .12 + .25 * t / sec, t, 120); }
 // prijsuitreiking: plek 3, dan 2, dan de winnaar
@@ -752,7 +755,7 @@ const ACT = {
   start: startGame, hub: showHub, team: showVault, rank: showRank,
   shop: () => shop('lvl'), shopLvl: l => shop('q', l), shopQ: a => { const [l, k] = a.split(':'); buyHint(l, Number(k)); }, myhints: myHints,
   close: closeOv, closeHub: () => { closeOv(); showHub(); }, closeVault: () => { closeOv(); showVault(ACTIVE); },
-  gmOpen, gmOpenTeam: id => { const t = team(id), st = stationsOf(id); t.forced = (t.forced || []).concat(t.solved.length); t.solved.push(now()); if (t.solved.length === st.length) t.done = now(); save(); toast('Slot geopend voor ' + K.routes.find(r => r.id === id).naam); closeOv(); showHub(); },
+  gmOpen, gmOpenTeam: id => { const t = team(id), st = stationsOf(id); t.forced = (t.forced || []).concat(t.solved.length); t.levels = (t.levels || []).concat(null); t.solved.push(now()); if (t.solved.length === st.length) t.done = now(); save(); toast('Slot geopend voor ' + K.routes.find(r => r.id === id).naam); closeOv(); showHub(); },
   end: () => confirmBox('Het spel afsluiten en de eindstand tonen?', 'Afsluiten', () => { closeOv(); S.phase = 'end'; S.revealed = false; save(); showRank(); }),
   reset: () => confirmBox('Alle scores van dit spel wissen en opnieuw beginnen?', 'Wissen', () => { closeOv(); S = {phase: 'lobby', n: S.n, min: S.min, k: S.k, t0: null, teams: {}}; save(); showLobby(); })
 };

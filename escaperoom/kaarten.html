@@ -168,7 +168,7 @@ function rulesPages(route, stations) {
     <h1>Team ${esc(route.naam)}</h1>
     <ol>
       <li>Jullie kluis heeft <b>${stations.length} sloten</b>. Elk slot hoort bij een kaart. Begin met <b>kaart 1</b> en werk ze op volgorde af.</li>
-      <li>Kies per kaart samen een niveau: <b>4 makkelijke</b> vragen, <b>2 middelvragen</b> of <b>1 moeilijke</b> vraag. Moeilijk is het snelst, als het lukt!</li>
+      <li>Kies per kaart samen een niveau: <b>4 makkelijke</b> vragen, <b>2 middelvragen</b> of <b>1 moeilijke</b> vraag. Moeilijk is het snelst als het lukt, én levert extra punten op: middel +${K.punten.niveauBonus.middel}, moeilijk +${K.punten.niveauBonus.moeilijk} per slot.</li>
       <li>Zoek elk antwoord op in de tabel onder de vraag. Daar staat het teken voor de code.</li>
       <li>Code compleet? Ga naar het bord, tik op <b>${esc(route.naam)}</b> en voer de code in.</li>
       <li>Snel = extra punten. Een foute code kost ${-K.punten.foutCode} punten. Vast? Op het bord kun je een hint kopen voor ${-K.punten.hint} punten.</li>
@@ -195,7 +195,7 @@ function docent() {
       <li>Op het bord: Escaperooms → ${esc(K.titel)} → aantal groepjes instellen → <b>Start de kluis</b>.</li>
       <li>Spelleider-menu: houd ⚙ rechtsboven 1,5 seconde vast (slot openen voor een team dat vastzit, spel afsluiten, nieuw spel).</li></ul>
     <h2>Codes per team</h2>${codes}
-    <h2>Punten</h2><p>Per slot +${K.punten.station}, snelheidsbonus max +${K.punten.snelheidMax} (−${K.punten.snelheidPerMinuut} per minuut aan dat slot), foute code ${K.punten.foutCode}, hint ${K.punten.hint}, finishbonus ${K.punten.finishBonus.map(x => '+' + x).join(' / ')} voor de eerste ${K.punten.finishBonus.length} teams. Na een foute code is de kluis op slot: ${K.punten.wachtNaFout} s, en bij elke volgende foute poging op dezelfde kaart ${K.punten.wachtNaFout} s langer. Elk niveau heeft een eigen code; het bord accepteert alle drie.</p>
+    <h2>Punten</h2><p>Per slot +${K.punten.station}, snelheidsbonus max +${K.punten.snelheidMax} (−${K.punten.snelheidPerMinuut} per minuut aan dat slot), niveaubonus per slot ★★ +${K.punten.niveauBonus.middel} en ★★★ +${K.punten.niveauBonus.moeilijk}, foute code ${K.punten.foutCode}, hint ${K.punten.hint}, finishbonus ${K.punten.finishBonus.map(x => '+' + x).join(' / ')} voor de eerste ${K.punten.finishBonus.length} teams. Na een foute code is de kluis op slot: ${K.punten.wachtNaFout} s, en bij elke volgende foute poging op dezelfde kaart ${K.punten.wachtNaFout} s langer. Elk niveau heeft een eigen code; het bord accepteert alle drie.</p>
     ${ans}</section>`;
 }
 

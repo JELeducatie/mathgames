@@ -11,7 +11,7 @@
     {id: 'moeilijk', naam: 'Moeilijk', aantal: 1, kort: '1 vraag · meteen de hele code'}
   ];
   const CODELENGTE = 4;
-  const STANDAARDPUNTEN = {station: 100, snelheidMax: 100, snelheidPerMinuut: 8, foutCode: -25, hint: -40, finishBonus: [100, 75, 50], wachtNaFout: 5};
+  const STANDAARDPUNTEN = {station: 100, snelheidMax: 100, snelheidPerMinuut: 8, foutCode: -25, hint: -40, finishBonus: [100, 75, 50], wachtNaFout: 5, niveauBonus: {makkelijk: 0, middel: 20, moeilijk: 40}};
 
   function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; }
   function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -42,6 +42,7 @@
     const f = controleer(k);
     if (f.length) { fouten.push({kamer: k.id || '?', fouten: f}); console.error('Escaperoom ' + k.id + ':', f); }
     k.punten = Object.assign({}, STANDAARDPUNTEN, k.punten || {});
+    k.punten.niveauBonus = Object.assign({}, STANDAARDPUNTEN.niveauBonus, k.punten.niveauBonus || {});
     k.tekens = Array.from(k.tekens || '23456789AEKMRX★●▲♦');
     kamers.push(k);
   }
