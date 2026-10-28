@@ -67,7 +67,8 @@ html,body{margin:0;background:#3B2C20;color:var(--ink);font-family:"Segoe UI",Ro
 .q .fig{display:flex;justify-content:center}
 .q .fig svg{max-height:30mm;max-width:100%;height:auto}
 .n1 .q{display:grid;grid-template-columns:1fr auto;column-gap:5mm;align-items:center}
-.n1 .q .fig{grid-row:1/3;grid-column:2}
+.n1 .q .fig{grid-row:1;grid-column:2}
+.n1 .q .dec{grid-column:1/3}
 .n1 .q .fig svg{max-height:34mm;width:52mm}
 .page.t1 .q .t{font-size:11.5pt}.page.t1 .q .fig svg{max-height:24mm}.page.t1 .n1 .q .fig svg{max-height:28mm}
 .page.t2 .q .t{font-size:10.5pt}.page.t2 .dec td{font-size:10.5pt;padding:.5mm .3mm}.page.t2 .q .fig svg{max-height:20mm}.page.t2 .lvl{margin-bottom:2mm}
@@ -103,6 +104,8 @@ html,body{margin:0;background:#3B2C20;color:var(--ink);font-family:"Segoe UI",Ro
 .doc th,.doc td{border:.3mm solid var(--line);padding:1.4mm 2mm;text-align:left;vertical-align:top}
 .doc th{background:#F1E3C4}
 .doc td.code{font-family:"Segoe UI Symbol","Segoe UI",sans-serif;font-weight:800;font-size:13pt;letter-spacing:1mm;white-space:nowrap}
+.doc td.code .lvs{display:inline-block;width:8mm;font-size:7pt;letter-spacing:0;color:var(--gold);font-weight:400}
+.doc td.code{font-size:11pt!important;line-height:1.45}
 .doc td.code small{display:block;font-size:7.5pt;letter-spacing:0;font-weight:400;color:var(--soft)}
 .doc .ans{font-weight:800;white-space:nowrap}
 .doc .dot{display:inline-block;width:3mm;height:3mm;border-radius:50%;background:var(--c);margin-right:1.5mm}
@@ -155,7 +158,7 @@ function back(route, st, total) {
         ${q.svg ? `<div class="fig">${q.svg}</div>` : ''}
         <div class="dec"><div class="lab">zoek op</div><table><tr>${st.strook[n.id][i].map(o => `<td>${esc(fmt(o.waarde))}</td>`).join('')}</tr><tr>${st.strook[n.id][i].map(o => `<td>${esc(o.teken)}</td>`).join('')}</tr></table></div>
       </div>`).join('')}</div></div>`).join('')}
-    <div class="codebox"><p><b>Jullie code</b><br>Zet de tekens op volgorde: vraag 1 eerst. Staat jullie antwoord niet in de tabel? Dan klopt het nog niet!</p><div class="cells"><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span></div></div>
+    <div class="codebox"><p><b>Jullie code</b><br>Gebruik alleen de vragen van <b>één niveau</b> en zet de tekens op volgorde: vraag 1 eerst. Staat jullie antwoord niet in de tabel? Dan klopt het nog niet!</p><div class="cells"><span class="cell"></span><span class="cell"></span><span class="cell"></span><span class="cell"></span></div></div>
   </section>`;
 }
 function rulesPages(route, stations) {
@@ -180,7 +183,7 @@ function rulesPages(route, stations) {
 function docent() {
   const p = ER.plan(K), routes = p.routes.slice(0, N), T = KN;
   const codes = `<table><tr><th>Team</th>${Array.from({length: T}, (_, i) => `<th>Kaart ${i + 1}</th>`).join('')}</tr>
-    ${routes.map(r => `<tr><td><b>${esc(r.route.naam)}</b></td>${st(r).map(s => `<td class="code"><span class="dot" style="--c:${s.thema.kleur}"></span>${esc(s.code)}<small>${esc(s.thema.naam)}</small></td>`).join('')}</tr>`).join('')}</table>`;
+    ${routes.map(r => `<tr><td><b>${esc(r.route.naam)}</b></td>${st(r).map(s => `<td class="code"><span class="dot" style="--c:${s.thema.kleur}"></span><small>${esc(s.thema.naam)}</small>${ER.NIVEAUS.map(n => `<div><span class="lvs">${STARS[n.id]}</span> ${esc(s.codes[n.id])}</div>`).join('')}</td>`).join('')}</tr>`).join('')}</table>`;
   const ans = K.themas.map(t => `<h2 style="color:${t.kleur}">${t.icoon} ${esc(t.naam)}</h2><table><tr><th style="width:18%">Niveau</th><th>Vraag</th><th style="width:12%">Antwoord</th></tr>
     ${ER.NIVEAUS.map(n => t.opdrachten[n.id].map((q, i) => `<tr><td>${i ? '' : n.naam}</td><td>${i + 1}. ${esc(q.vraag)}</td><td class="ans">${esc(fmt(q.antwoord))}</td></tr>`).join('')).join('')}</table>`).join('');
   return `<section class="page doc" style="height:auto;min-height:297mm">
@@ -192,7 +195,7 @@ function docent() {
       <li>Op het bord: Escaperooms → ${esc(K.titel)} → aantal groepjes instellen → <b>Start de kluis</b>.</li>
       <li>Spelleider-menu: houd ⚙ rechtsboven 1,5 seconde vast (slot openen voor een team dat vastzit, spel afsluiten, nieuw spel).</li></ul>
     <h2>Codes per team</h2>${codes}
-    <h2>Punten</h2><p>Per slot +${K.punten.station}, snelheidsbonus max +${K.punten.snelheidMax} (−${K.punten.snelheidPerMinuut} per minuut aan dat slot), foute code ${K.punten.foutCode}, hint ${K.punten.hint}, finishbonus ${K.punten.finishBonus.map(x => '+' + x).join(' / ')} voor de eerste ${K.punten.finishBonus.length} teams. Na een foute code is de kluis ${K.punten.wachtNaFout} s op slot.</p>
+    <h2>Punten</h2><p>Per slot +${K.punten.station}, snelheidsbonus max +${K.punten.snelheidMax} (−${K.punten.snelheidPerMinuut} per minuut aan dat slot), foute code ${K.punten.foutCode}, hint ${K.punten.hint}, finishbonus ${K.punten.finishBonus.map(x => '+' + x).join(' / ')} voor de eerste ${K.punten.finishBonus.length} teams. Na een foute code is de kluis op slot: ${K.punten.wachtNaFout} s, en bij elke volgende foute poging op dezelfde kaart ${K.punten.wachtNaFout} s langer. Elk niveau heeft een eigen code; het bord accepteert alle drie.</p>
     ${ans}</section>`;
 }
 

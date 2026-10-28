@@ -52,13 +52,14 @@
     return Array.from({length: T}, (_, i) => k.themas[((s + d * i) % T + T) % T]);
   }
 
-  // Opties voor de decodeerstrook van één vraag: goed antwoord + foute antwoorden, aangevuld tot 5.
-  function opties(q) {
+  // Opties voor de decodeerstrook van één vraag: goed antwoord + foute antwoorden, aangevuld tot 'min'
+  // (bij de moeilijke vraag meer opties, zodat gokken op het bord niet loont).
+  function opties(q, min = 5) {
     const vals = [q.antwoord].concat(q.fout || []);
     const num = vals.every(v => typeof v === 'number');
     if (num) {
       for (const d of [1, -1, 2, -2, 10, -10, 3, -3, 5, -5, 20, -20]) {
-        if (vals.length >= 5) break;
+        if (vals.length >= min) break;
         const v = q.antwoord + d;
         if (!vals.includes(v) && (v >= 0 || q.antwoord < 0)) vals.push(v);
       }
@@ -72,27 +73,28 @@
   function plan(k) {
     const key = k.id + '|' + (k.seed || '');
     if (cache.has(key)) return cache.get(key);
-    const gebruikt = {};
+    // Elk niveau heeft een eigen code: anders verraadt één makkelijke vraag
+    // welke code uit de strook van de moeilijke vraag de goede is.
+    const gebruikt = new Set();
     const routes = k.routes.map(route => {
       const stations = volgorde(k, route).map((t, idx) => {
         const r = rng(hash(key + '|' + route.id + '|' + t.id));
-        gebruikt[t.id] = gebruikt[t.id] || new Set();
-        let code; do { code = randCode(r, k.tekens, CODELENGTE); } while (gebruikt[t.id].has(code));
-        gebruikt[t.id].add(code);
-        const strook = {};
+        const codes = {}, strook = {};
         NIVEAUS.forEach(n => {
+          let code; do { code = randCode(r, k.tekens, CODELENGTE); } while (gebruikt.has(code));
+          gebruikt.add(code); codes[n.id] = code;
           const len = CODELENGTE / n.aantal;
           strook[n.id] = (t.opdrachten[n.id] || []).map((q, i) => {
             const goed = code.slice(i * len, (i + 1) * len);
             const bezet = new Set([goed]);
-            return opties(q).map(v => {
+            return opties(q, n.aantal === 1 ? 8 : 5).map(v => {
               if (String(v) === String(q.antwoord)) return {waarde: v, teken: goed, goed: true};
               let s; do { s = randCode(r, k.tekens, len); } while (bezet.has(s)); bezet.add(s);
               return {waarde: v, teken: s, goed: false};
             });
           });
         });
-        return {nr: idx + 1, thema: t, code, strook};
+        return {nr: idx + 1, thema: t, codes, strook};
       });
       return {route, stations};
     });

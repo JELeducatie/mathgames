@@ -15,11 +15,11 @@ Escaperoom voor het digibord (CTOUCH) met printbare opdrachtkaarten.
 4. Op het bord tikken ze hun wiskundige aan en voeren de code in. Goed: er gaat een slot van de kluis open en ze krijgen een tip voor de volgende kaart.
 5. Na het laatste slot gaat de schatkist open. Als de tijd om is, sluit de kluis en volgt de prijsuitreiking.
 
-Alle teams krijgen dezelfde vragen, maar elke wiskundige heeft eigen decodeerstroken. Daardoor heeft elk team andere codes en heeft doorgeven geen zin. Twee teams met hetzelfde startthema lopen de route in tegengestelde richting.
+Alle teams krijgen dezelfde vragen, maar elke wiskundige heeft eigen decodeerstroken. Daardoor heeft elk team andere codes en heeft doorgeven geen zin. Binnen een kaart heeft ook elk niveau een eigen code (het bord accepteert alle drie), zodat je met één makkelijke vraag niet de code van de moeilijke vraag kunt afleiden. Twee teams met hetzelfde startthema lopen de route in tegengestelde richting.
 
 ## Punten
 
-Per slot +100, snelheidsbonus tot +100 per slot (minder naarmate het langer duurt), foute code −25 (en 5 seconden wachten), hint −40, en een bonus voor de eerste drie teams bij de schat. Alles is per kamer in te stellen bij `punten`.
+Per slot +100, snelheidsbonus tot +100 per slot (minder naarmate het langer duurt), foute code −25 (en wachten: 5 s, bij elke volgende foute poging op dezelfde kaart 5 s langer), hint −40, en een bonus voor de eerste drie teams bij de schat. Alles is per kamer in te stellen bij `punten`.
 
 ## Een nieuwe escaperoom maken
 

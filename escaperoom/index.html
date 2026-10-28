@@ -419,7 +419,7 @@ function showInfo() {
     <div class="info">
       <div class="istep plate"><span class="inum">1</span><div class="iico">🃏</div><h3>Pak kaart 1</h3><p>Jullie team heeft de naam van een <b>wiskundige</b>. Lees samen de voorkant: wie was jullie wiskundige en over welke wiskunde gaat de kaart?</p></div>
       <div class="istep plate"><span class="inum">2</span><div class="iico">⭐</div><h3>Kies een niveau</h3><p>Op de achterkant staan drie niveaus. Kies er <b>één</b>:</p>
-        <div class="ilv"><span>★ <b>4</b> makkelijke vragen</span><span>★★ <b>2</b> middelvragen</span><span>★★★ <b>1</b> moeilijke vraag</span></div><p class="muted">Allemaal geven ze dezelfde code.</p></div>
+        <div class="ilv"><span>★ <b>4</b> makkelijke vragen</span><span>★★ <b>2</b> middelvragen</span><span>★★★ <b>1</b> moeilijke vraag</span></div><p class="muted">Elk niveau heeft een eigen code. Niveaus mengen werkt dus niet!</p></div>
       <div class="istep plate"><span class="inum">3</span><div class="iico">🔎</div><h3>Zoek je antwoord op</h3><p>Onder elke vraag staat een tabel. Is het antwoord <b>${esc(ER.fmt(ex.thema.opdrachten.makkelijk[0].antwoord))}</b>? Dan is het teken <b>${esc(q.find(o => o.goed).teken)}</b>.</p>
         <table class="idec"><tr>${q.map(o => `<td>${esc(ER.fmt(o.waarde))}</td>`).join('')}</tr><tr>${q.map(o => `<td class="${o.goed ? 'hl' : ''}">${esc(o.teken)}</td>`).join('')}</tr></table>
         <p class="muted">Staat jullie antwoord er niet bij? Dan klopt het nog niet!</p></div>
@@ -559,14 +559,18 @@ function tryCode() {
   if (CODE.length < ER.CODELENGTE) { toast('Vul eerst alle 4 tekens in.'); return; }
   if (t.lockUntil > now()) return;
   const slots = [...document.querySelectorAll('#slots .slot')];
-  if (CODE.join('') === cur.code) {
+  const lvl = ER.NIVEAUS.find(n => cur.codes[n.id] === CODE.join(''));
+  if (lvl) {
+    t.levels = (t.levels || []).concat(lvl.id);
     t.solved.push(now()); if (t.solved.length === st.length) t.done = now(); save();
     slots.forEach((el, k) => setTimeout(() => el.classList.add('ok'), k * 120));
     SND.ok(); spinBg(); $('#vault').classList.add('busy');
     const ring = $('#ring' + i); if (ring) { ring.classList.remove('cur'); ring.classList.add('turn'); }
     setTimeout(() => { if (t.done) finale(id, true); else reveal(id); }, 1900);
   } else {
-    t.wrong++; t.lockUntil = now() + K.punten.wachtNaFout * 1000; save();
+    // wachttijd loopt op bij elke foute poging op dezelfde kaart (5, 10, 15 … s): gokken loont niet
+    t.wrongHere = (t.wrongAt === i ? t.wrongHere || 0 : 0) + 1; t.wrongAt = i;
+    t.wrong++; t.lockUntil = now() + K.punten.wachtNaFout * 1000 * t.wrongHere; save();
     slots.forEach(el => el.classList.add('bad')); const sl = $('#slots'); sl.classList.remove('shake'); void sl.offsetWidth; sl.classList.add('shake');
     SND.bad(); toast(`Die code klopt niet. ${K.punten.foutCode} punten`);
     setTimeout(() => { CODE = []; drawSlots(false); }, 900); cooldown();
