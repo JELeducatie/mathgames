@@ -637,6 +637,9 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .wseg.hit{background:rgba(255,210,63,.22);border:2px solid var(--gold)}
 .wseg.bad{background:rgba(255,77,109,.18);border-color:var(--bad);text-decoration:line-through}
 .wmissing{display:inline-block;padding:.1rem .6rem;border:2px dashed var(--gold);border-radius:.6rem;color:var(--gold);font-weight:700}
+.wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
+#weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
+.ddesc mark{background:rgba(255,210,63,.3);color:inherit;border-radius:.3rem;padding:0 .2rem}
 .wehint{font-size:1.3rem;font-weight:700;color:#C9CFEA;text-align:center;min-height:1.6rem}
 .wopts{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:0 0 auto}
 .wopt{font-size:clamp(1.2rem,2.8vmin,1.9rem);min-height:4.6rem;padding:.4rem 1rem;line-height:1.2}
@@ -1284,21 +1287,12 @@ const GAMES = {
     frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Onderzoekssituatie</div><div class="wdesc" id="wdesc"></div></div><div class="mkstep" id="mkstep"></div><div class="wehint" id="wehint"></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
     setup: () => {}, begin: () => mkNext()
   },
-  oordeel: {
-    section: 'wia', title: 'Gering of groot?', sub: 'Beoordeel het verschil met de vuistregels van het formuleblad',
-    opts: ['maten', 'hulp2', 'time'], choices: {time: [60, 120, 180].map(t => ({v: t, name: timeLabel(t)}))},
-    defaults: {maten: ['phi', 'vcp', 'e', 'box'], hulp2: 'nee', time: 120},
-    example: c => `Voorbeeld: <b>φ = 0,32</b>`,
-    tile: () => `<div class="mini-w"><span>max VCP = 46</span><b>groot ✓</b></div>`,
-    frame: () => `<div class="qcard wq oocard" id="qcard"><div class="wlab" id="oolab"></div><div class="ooshow" id="ooshow"></div><div class="oorule" id="oorule"></div></div><div class="wexp" id="wexp"></div><div class="wopts three" id="wopts"></div>`,
-    setup: () => { G.cfg.hulp = G.cfg.hulp2 === 'ja' ? 'ja' : 'nee'; }, begin: () => ooNext()
-  },
   fout: {
-    section: 'wia', title: 'Foutje zoeken', sub: 'Vind de fout in het antwoord op een examenvraag',
+    section: 'wia', title: 'Foutje zoeken', sub: 'Vind de fout en kies de beste verbetering',
     opts: ['hst', 'time'], choices: {time: [120, 180, 300, 480].map(t => ({v: t, name: timeLabel(t)}))},
     defaults: {hst: ['H2', 'H7', 'H11'], time: 300}, scoreLabel: 'goed',
     example: c => `Voorbeeld: <b>${esc(wiaErrQ(c).q.slice(0, 70))}…</b>`,
-    tile: () => `<div class="mini-w"><span>‘…dus het verschil is groot.’</span><b class="bad">✗ criterium?</b></div>`,
+    tile: () => `<div class="mini-w"><span>‘…dus het verschil is groot.’</span><b>✓ middelmatig</b></div>`,
     frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Examenvraag</div><div class="weq" id="weq"></div></div>
       <div class="card wa"><div class="wlab">Antwoord van een leerling</div><div class="wea" id="wea"></div></div>
       <div class="wehint" id="wehint"></div><div class="wexp" id="wexp"></div><div class="wopts" id="weopts"></div>`,
@@ -2180,6 +2174,7 @@ const WIA_ERRT = {
   soortvar: {name: 'Soort variabele niet herkend', desc: 'Kwalitatief, ordinaal of kwantitatief verward', tip: 'Laat leerlingen eerst bepalen: kun je ermee rekenen? Is er een volgorde?'},
   maat: {name: 'Verkeerde associatiemaat', desc: 'φ, max VCP, E of boxplots verkeerd gekozen', tip: 'Koppel de maat aan wat er gegeven is: kruistabel, cumulatieve percentages, gemiddelde + sd of min, Q1, mediaan, Q3 en max.'},
   grens: {name: 'Vuistregel verkeerd toegepast', desc: 'Gering, middelmatig of groot verkeerd beoordeeld', tip: 'Oefen de grenzen van het formuleblad, ook bij negatieve φ en E.'},
+  verbeter: {name: 'Verkeerde verbetering gekozen', desc: 'Fout gevonden, maar niet goed verbeterd', tip: 'Laat leerlingen hun verbetering hardop teruglezen: klopt de zin nu én beantwoordt hij de vraag?'},
   soort: {name: 'Soort fout niet herkend', desc: 'Verkeerde soort fout gekozen', tip: 'Bespreek het verschil tussen een wiskundige fout en een formuleringsfout.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
 };
@@ -2194,7 +2189,7 @@ const STAT_TOPICS = {
       {id: 'z1', name: 'Zijde (keer)', short: 'Zijde ×', color: 'var(--sub)'}, {id: 'z2', name: 'Zijde (delen)', short: 'Zijde :', color: 'var(--div)'},
       {id: 'h', name: 'Hoek', short: 'Hoek', color: 'var(--mul)'}]},
   wia: {name: 'Begrippen & formuleren', g: ['w', 'e', 'm', 'o'], unit: 'vragen', fast: 15000, errs: WIA_ERRT, noLevel: true,
-    cats: [{id: 'begrip', name: 'Begrip herkennen', short: 'Begrip', color: 'var(--sub)'}, {id: 'plek', name: 'Fout vinden', short: 'Fout vinden', color: 'var(--mul)'}, {id: 'soort', name: 'Soort fout', short: 'Soort', color: 'var(--div)'},
+    cats: [{id: 'begrip', name: 'Begrip herkennen', short: 'Begrip', color: 'var(--sub)'}, {id: 'plek', name: 'Fout vinden', short: 'Fout vinden', color: 'var(--mul)'}, {id: 'verbeter', name: 'Verbetering kiezen', short: 'Verbeteren', color: 'var(--div)'}, {id: 'soort', name: 'Soort fout', short: 'Soort', color: '#94A3B8'},
       {id: 'soortvar', name: 'Soort variabele', short: 'Variabele', color: 'var(--add)'}, {id: 'maat', name: 'Maat kiezen', short: 'Maat', color: 'var(--gold)'},
       {id: 'phi', name: 'Oordeel φ', short: 'φ', color: '#22D3EE'}, {id: 'vcp', name: 'Oordeel max VCP', short: 'VCP', color: '#F472B6'}, {id: 'e', name: 'Oordeel E', short: 'E', color: '#A3E635'}, {id: 'box', name: 'Oordeel boxplots', short: 'Box', color: '#FB923C'}]},
   bal: {name: 'Balansmethode', g: ['l'], unit: 'stappen', fast: 8000, errs: BAL_ERR, noLevel: true,
@@ -3233,6 +3228,70 @@ const WIA_ERRS = [
     fix: '990 = 1000 − 10: dat is één standaardafwijking onder het gemiddelde. Binnen één standaardafwijking ligt 68%, dus (100 − 68) : 2 = 16. Ongeveer 16% van de pakken bevat minder dan 990 ml.',
     why: 'Het antwoord eindigt met een kaal getal zonder procentteken en zonder conclusie.'}
 ];
+// Verbeteropties per foutopgave (zelfde volgorde als WIA_ERRS). ok = juiste verbetering van het gele deel (of wat ontbreekt), alt = foute verbeteringen.
+const WIA_FIX = [
+  {ok: 'Er zijn dus een paar uitschieters naar boven.', alt: ['Er zijn dus geen uitschieters.', 'De meeste lengtes liggen dus boven het gemiddelde.']},
+  {ok: 'Het aantal broers en zussen is een discrete variabele,', alt: ['Het aantal broers en zussen is een kwalitatieve variabele,', 'Het aantal broers en zussen is een ordinale variabele,']},
+  {a: ['Uit de boxplot lees je af: Q1 = 12 en Q3 = 20.', 'De kwartielafstand is 16 − 12 = 4.'], e: 1,
+    ok: 'De kwartielafstand is 20 − 12 = 8.', alt: ['De kwartielafstand is 31 − 5 = 26.', 'De kwartielafstand is 20 − 16 = 4.']},
+  {a: ['Het gemiddelde is hier niet geschikt.', 'Je kunt het beste de mediaan gebruiken.'],
+    ok: 'want het gemiddelde wordt door de paar zeer hoge inkomens sterk omhooggetrokken.', alt: ['want de mediaan is altijd beter dan het gemiddelde.', 'want het gemiddelde wordt door de miljonairs omlaaggetrokken.']},
+  {ok: 'Het is nominaal, want er is geen natuurlijke volgorde tussen de vakken.', alt: ['Het is ordinaal, want je kunt de vakken rangschikken van leuk naar minder leuk.', 'Het is discreet, want je kunt de vakken tellen.']},
+  {ok: 'Er zijn nu 21 leerlingen: 137 : 21 ≈ 6,5.', alt: ['Het nieuwe gemiddelde is (6,4 + 9,0) : 2 = 7,7.', 'Het nieuwe gemiddelde is 137 : 22 ≈ 6,2.']},
+  {ok: 'want daar is de standaardafwijking kleiner (0,8 tegen 1,6).', alt: ['want daar is de standaardafwijking groter.', 'want daar is de mediaan kleiner.']},
+  {ok: 'Dus bij 100 − 70 = 30% van de dagen was het warmer dan 18 °C.', alt: ['Dus bij 70 − 18 = 52% van de dagen was het warmer dan 18 °C.', 'Dus bij 70 : 2 = 35% van de dagen was het warmer dan 18 °C.']},
+  {ok: 'dus 65% van de leerlingen heeft een cijfer van 5,5 of hoger.', alt: ['dus 65 leerlingen hebben een cijfer van 5,5 of hoger.', 'dus 35% van de leerlingen heeft een cijfer van 5,5 of hoger.']},
+  {ok: 'dus het gemiddelde is groter dan de mediaan.', alt: ['dus de mediaan is groter dan het gemiddelde.', 'dus het gemiddelde en de mediaan zijn even groot.']},
+  {ok: 'Klas A heeft ook een kleinere kwartielafstand (1,2 tegen 2,0), dus daar liggen de cijfers dichter bij elkaar.', alt: ['Klas A heeft ook een hogere Q3 (7,4 tegen 7,0), dus klas A is beter.', 'Klas B heeft een grotere kwartielafstand, dus klas B scoort hoger.']},
+  {a: ['φ ≈ 0,32,', 'dus het verschil is groot.'], fix: 'φ ≈ 0,32. Omdat φ tussen 0,2 en 0,4 ligt, is het verschil middelmatig.',
+    ok: 'Omdat φ tussen 0,2 en 0,4 ligt, is het verschil middelmatig.', alt: ['Omdat φ kleiner is dan 0,4, is het verschil gering.', 'Omdat φ groter is dan 0,2, is het verschil groot.']},
+  {q: 'Jongens hebben een gemiddelde reactietijd van 0,62 s, meisjes van 0,53 s. Beide standaardafwijkingen zijn 0,10 s. Onderzoek met de effectgrootte of het verschil groot is.',
+    a: ['E = (0,62 − 0,53) / (½ · (0,10 + 0,10)) = 0,9.', 'Het verschil is groot.'], e: 1, type: 'criterium',
+    fix: 'E = (0,62 − 0,53) / (½ · (0,10 + 0,10)) = 0,9. Omdat E groter is dan 0,8, is het verschil groot.',
+    why: 'De conclusie klopt, maar het criterium van het formuleblad (E > 0,8) wordt niet genoemd.',
+    ok: 'Omdat E groter is dan 0,8, is het verschil groot.', alt: ['Omdat E groter is dan 0,4, is het verschil groot.', 'Omdat E kleiner is dan 1, is het verschil middelmatig.']},
+  {a: ['De boxen overlappen elkaar niet.', 'Ja.'], ok: 'Dus het verschil tussen groep A en groep B is groot.', alt: ['Dus het verschil tussen groep A en groep B is gering.', 'Ja, groep B is groter dan groep A.']},
+  {fix: 'Het grootste verschil in cumulatieve percentages is 46 − 12 = 34. Omdat max VCP tussen 20 en 40 ligt, is het verschil middelmatig.',
+    ok: 'Omdat max VCP tussen 20 en 40 ligt, is het verschil middelmatig.', alt: ['Omdat max VCP kleiner is dan 40, is het verschil gering.', 'Omdat max VCP groter is dan 20, is het verschil groot.']},
+  {ok: 'E = (68 − 62) / (½ · (6 + 6)) = 1.', alt: ['E = (68 − 62) / (6 + 6) = 0,5.', 'E = (62 − 68) / 6 = −1.']},
+  {a: ['Er zijn 32 meisjes die niet sporten.', '32 : 200 · 100% = 16%.'], e: 1,
+    ok: '32 : 80 · 100% = 40%, dus 40% van de meisjes sport niet.', alt: ['32 : 62 · 100% ≈ 52%, dus 52% van de meisjes sport niet.', '32 : 120 · 100% ≈ 27%, dus 27% van de meisjes sport niet.']},
+  {a: ['Je gebruikt de phi-coëfficiënt,', 'omdat de phi-coëfficiënt nauwkeuriger is.'], e: 1,
+    ok: 'omdat beide kenmerken kwalitatief zijn met twee categorieën: je hebt een 2×2-kruistabel.', alt: ['omdat de effectgrootte alleen bij grote groepen werkt.', 'omdat roken een kwantitatieve variabele is.']},
+  {a: ['Er worden 50 bezoekers ondervraagd.', 'Dat is genoeg, dus de steekproef is representatief.'], e: 1,
+    ok: 'Nee: sportschoolbezoekers sporten meer dan gemiddeld en ze zijn niet aselect gekozen, dus de steekproef is niet representatief.',
+    alt: ['Nee: 50 is te weinig; met 500 bezoekers van de sportschool is hij wel representatief.', 'Ja: 50 bezoekers is een goede afspiegeling als ze allemaal verschillend zijn.']},
+  {a: ['De steekproefproportie is 22%,', 'dus de populatieproportie is ook 22%.'], e: 1,
+    ok: 'dus de populatieproportie ligt waarschijnlijk in de buurt van 22%; een betrouwbaarheidsinterval geeft aan waartussen.', alt: ['dus de populatieproportie is 22% van 400 = 88.', 'dus de populatieproportie is groter dan 22%.']},
+  {ok: 'Door de symmetrie is ongeveer 2,5% langer dan 195 cm.', alt: ['Dus ongeveer 95% is langer dan 195 cm.', 'Door de symmetrie is ongeveer 47,5% langer dan 195 cm.']},
+  {ok: 'dus ongeveer 16% van de pakken bevat minder dan 990 ml.', alt: ['dus 16 pakken bevatten minder dan 990 ml.', 'dus ongeveer 32% van de pakken bevat minder dan 990 ml.']}
+];
+if (WIA_FIX.length !== WIA_ERRS.length) console.warn('WIA_FIX en WIA_ERRS verschillen in lengte');
+WIA_ERRS.forEach((x, i) => Object.assign(x, WIA_FIX[i] || {}));
+// Gegenereerde opgaven over de vuistregels (gering / middelmatig / groot)
+function wiaCritQ() {
+  const o = genOO({maten: ['phi', 'vcp', 'e', 'box']}), m = o.m, ans = o.ans, w = [0, 1, 2].filter(k => k !== ans)[rnd(0, 1)];
+  let crit, q, a;
+  if (o.box) {
+    const ov = !(o.A[3] < o.B[1] || o.B[3] < o.A[1]);
+    crit = ['de boxen overlappen en beide medianen liggen binnen de box van de andere groep, dus het verschil is gering.',
+      'de boxen overlappen, maar een mediaan ligt buiten de box van de andere groep, dus het verschil is middelmatig.',
+      'de boxen overlappen elkaar niet, dus het verschil is groot.'].map(s => s[0].toUpperCase() + s.slice(1));
+    q = 'Hieronder staan de boxplots van groep A en groep B. Is het verschil tussen de groepen gering, middelmatig of groot?';
+    a = ['Ik vergelijk de boxen van groep A en groep B.', `${ov ? 'De boxen overlappen elkaar' : 'De boxen overlappen elkaar niet'}, dus het verschil is ${OO[w]}.`];
+  } else {
+    const val = o.show, neg = /−/.test(val), nm = m === 'phi' ? 'φ' : m === 'e' ? 'E' : 'max VCP';
+    const g = {phi: ['φ tussen −0,2 en 0,2 ligt', neg ? 'φ tussen −0,4 en −0,2 ligt' : 'φ tussen 0,2 en 0,4 ligt', neg ? 'φ kleiner is dan −0,4' : 'φ groter is dan 0,4'],
+      vcp: ['max VCP kleiner is dan 20', 'max VCP tussen 20 en 40 ligt', 'max VCP groter is dan 40'],
+      e: ['E kleiner is dan 0,4', 'E tussen 0,4 en 0,8 ligt', 'E groter is dan 0,8']}[m];
+    crit = g.map((s, k) => `Omdat ${s}, is het verschil ${OO[k]}.`);
+    q = `Bij een onderzoek naar het verschil tussen twee groepen is ${val}. Is het verschil gering, middelmatig of groot?`;
+    a = [`${val},`, `dus het verschil is ${OO[w]}.`];
+    void nm;
+  }
+  return {h: 'H7', gen: true, m, q, html: o.box ? o.show : '', a, e: 1, type: 'criterium', ok: crit[ans], alt: crit.filter((_, k) => k !== ans),
+    fix: (o.box ? '' : a[0] + ' ') + crit[ans], why: `Volgens de vuistregels op het formuleblad is het verschil hier ${OO[ans]}.`};
+}
 const WIA_CH = ['H2', 'H7', 'H11'];
 function wiaTerms(cfg) { const L = WIA_TERMS.filter(x => cfg.hst.includes(x.h)); return L.length >= 4 ? L : WIA_TERMS; }
 function wiaBegripQ(cfg, prev) {
@@ -3245,9 +3304,9 @@ function wiaBegripQ(cfg, prev) {
 }
 function wiaErrQ(cfg, prev) {
   let L = WIA_ERRS.filter(x => cfg.hst.includes(x.h)); if (!L.length) L = WIA_ERRS;
-  let q, g = 0; do { q = L[rnd(0, L.length - 1)]; } while (prev && prev === q && L.length > 1 && g++ < 10);
-  const kinds = shuffle(Object.keys(WIA_FTYPE).filter(k => k !== q.type)).slice(0, 3);
-  return Object.assign({}, q, {kinds: shuffle([q.type, ...kinds])});
+  if (cfg.hst.includes('H7') && Math.random() < (cfg.hst.length === 1 ? 0.5 : 0.3)) { const g = wiaCritQ(); return Object.assign(g, {opts: shuffle([g.ok, ...g.alt])}); }
+  let q, g = 0; do { q = L[rnd(0, L.length - 1)]; } while (prev && prev.q === q.q && L.length > 1 && g++ < 10);
+  return Object.assign({}, q, {opts: shuffle([q.ok, ...q.alt])});
 }
 /* --- spel: Begrippen --- */
 function wbNext() {
@@ -3275,19 +3334,19 @@ function weNext() {
 }
 function weRender() {
   const q = G.wq;
-  $('#weq').textContent = q.q;
+  $('#weq').innerHTML = esc(q.q) + (q.html ? `<div class="wefig">${q.html}</div>` : '');
   $('#wea').innerHTML = q.a.map((s, i) => `<button class="wseg ${q.step > 1 && i === q.e ? 'hit' : ''} ${q.miss === i ? 'bad' : ''}" data-fast="wseg" data-arg="${i}" ${q.step > 1 ? 'disabled' : ''}>${esc(s)}</button>`).join(' ') +
     (q.step > 1 && q.e === -1 ? ' <span class="wmissing">… hier ontbreekt iets</span>' : '');
-  $('#wehint').textContent = q.step === 1 ? 'Tik op het deel van het antwoord waar het misgaat, of op ‘Er ontbreekt iets’.' : q.step === 2 ? 'Wat voor fout is het?' : '';
+  $('#wehint').textContent = q.step === 1 ? 'Tik op het deel van het antwoord waar het misgaat, of op ‘Er ontbreekt iets’.' : q.step === 2 ? (q.e === -1 ? 'Wat moet er nog bij?' : 'Waardoor moet het gele deel vervangen worden?') : '';
   const pad = $('#weopts');
   if (q.step === 1) pad.innerHTML = `<button class="ans wopt wmiss" data-fast="wseg" data-arg="-1">Er ontbreekt iets</button>`;
-  else if (q.step === 2) pad.innerHTML = q.kinds.map((k, i) => `<button class="ans wopt" data-fast="wkind" data-arg="${i}">${esc(WIA_FTYPE[k])}</button>`).join('');
+  else if (q.step === 2) pad.innerHTML = q.opts.map((k, i) => `<button class="ans wopt wverb" data-fast="wkind" data-arg="${i}">${esc(k)}</button>`).join('');
   else pad.innerHTML = '';
+  pad.classList.toggle('verb', q.step === 2);
 }
-function weFinish(okKind, chosen) {
+function weFinish(ok, chosen) {
   const q = G.wq; q.step = 3; weRender();
-  $('#weopts').innerHTML = '';
-  $('#wexp').innerHTML = `${okKind ? '<div class="wgood">✓ Goed gezien!</div>' : `<div class="wbad">Het was: <b>${esc(WIA_FTYPE[q.type])}</b></div>`}<div class="wwhy">${esc(q.why)}</div><div class="wfix"><span>Zo had het moeten staan</span>${esc(q.fix)}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
+  $('#wexp').innerHTML = `${ok ? '<div class="wgood">✓ Goed verbeterd!</div>' : `<div class="wbad">Jij koos: ${esc(chosen)}</div>`}<div class="wwhy">${esc(q.why)}</div><div class="wfix"><span>Zo had het moeten staan</span>${esc(q.fix)}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
   G.after = weNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === weNext) { G.after = null; weNext(); } }, 20000));
 }
 function weSeg(i) {
@@ -3298,13 +3357,14 @@ function weSeg(i) {
   if (ok) { award(5); beep(true); flash('good', 300); q.step = 2; weRender(); return; }
   penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.q, given: i === -1 ? 'er ontbreekt iets' : q.a[i]});
   q.miss = i; q.step = 2; weRender();
-  $('#wehint').textContent = q.e === -1 ? 'Niet goed: er ontbreekt juist iets (zie de stippellijn). Wat voor fout is het?' : 'Niet goed: de fout zit in het gele deel. Wat voor fout is het?';
+  $('#wehint').textContent = q.e === -1 ? 'Niet goed: er ontbreekt juist iets (zie de stippellijn). Wat moet er nog bij?' : 'Niet goed: de fout zit in het gele deel. Waardoor moet het vervangen worden?';
 }
 function weKind(i) {
   const q = G && G.wq; if (!G || !G.running || G.locked || !q || q.step !== 2) return;
-  const k = q.kinds[+i], ok = k === q.type; G.locked = true;
-  recordGen('e', 'soort', ok, 'soort', q.q.slice(0, 90) + '…', WIA_FTYPE[q.type], WIA_FTYPE[k]);
-  if (ok) { award(10); beep(true); flash('good', 400); } else { penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.q, given: WIA_FTYPE[k]}); }
+  const k = q.opts[+i], ok = k === q.ok; G.locked = true;
+  const cat = q.gen ? q.m : 'verbeter';
+  recordGen('e', cat, ok, ok ? null : (q.gen ? 'grens' : 'verbeter'), q.gen ? q.a.join(' ') : q.q.slice(0, 90) + '…', q.ok, k);
+  if (ok) { award(10); beep(true); flash('good', 400); } else { penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.q, given: k}); }
   weFinish(ok, k);
 }
 
@@ -3650,11 +3710,6 @@ function duoQuestion(gid, cfg) {
     return {prompt: `<div class="dsub">Welke associatiemaat gebruik je?</div><div class="ddesc">${esc(q.s)}</div>`, opts: shuffle(Object.keys(MK_MAAT)).map(k => ({html: esc(MK_MAAT[k]), ok: k === q.m, err: 'maat'})),
       explain: esc(mkWhy(q)), rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'm', 'maat', o.ok ? 1 : 0, o.ok ? '' : 'maat', Math.round(performance.now() - ms0), 0, q.s.slice(0, 90) + '…', MK_MAAT[q.m], o.html])};
   }
-  if (gid === 'oordeel') {
-    const q = genOO(cfg);
-    return {prompt: `<div class="dsub">Is het verschil gering, middelmatig of groot?</div><div class="${q.box ? 'dfig' : 'dq'}">${q.show}</div>`, opts: OO.map((o, i) => ({html: o, ok: i === q.ans, err: 'grens'})),
-      explain: ooExplain(q), rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'o', q.m, o.ok ? 1 : 0, o.ok ? '' : 'grens', Math.round(performance.now() - ms0), 0, q.box ? 'Twee boxplots' : q.show, OO[q.ans], o.html])};
-  }
   if (gid === 'begrip') {
     const q = wiaBegripQ(cfg);
     return {prompt: `<div class="dsub">Welk begrip wordt omschreven?</div><div class="ddesc">${esc(q.t.d)}</div>`, opts: q.opts.map(o => ({html: esc(o.t), ok: o === q.t, err: 'begrip'})),
@@ -3662,10 +3717,10 @@ function duoQuestion(gid, cfg) {
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'w', 'begrip', o.ok ? 1 : 0, o.ok ? '' : 'begrip', Math.round(performance.now() - ms0), 0, q.t.d.slice(0, 90) + '…', q.t.t, o.html])};
   }
   if (gid === 'fout') {
-    const q = wiaErrQ(cfg);
-    return {prompt: `<div class="ddesc small"><b>Vraag:</b> ${esc(q.q)}</div><div class="ddesc ans"><b>Antwoord:</b> ${esc(q.a.join(' '))}</div><div class="dsub">Wat is er mis?</div>`,
-      opts: q.kinds.map(k => ({html: esc(WIA_FTYPE[k]), ok: k === q.type, err: 'soort'})), explain: esc(q.why),
-      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'e', 'soort', o.ok ? 1 : 0, o.ok ? '' : 'soort', Math.round(performance.now() - ms0), 0, q.q.slice(0, 90) + '…', WIA_FTYPE[q.type], o.html])};
+    const q = wiaErrQ(cfg), seg = q.a.map((t, i) => i === q.e ? `<mark>${esc(t)}</mark>` : esc(t)).join(' ') + (q.e === -1 ? ' <mark>…</mark>' : '');
+    return {prompt: `<div class="ddesc small"><b>Vraag:</b> ${esc(q.q)}</div>${q.html ? `<div class="dfig">${q.html}</div>` : ''}<div class="ddesc ans"><b>Antwoord:</b> ${seg}</div><div class="dsub">${q.e === -1 ? 'Wat moet er nog bij?' : 'Wat moet er in plaats van het gele deel staan?'}</div>`,
+      opts: q.opts.map(k => ({html: esc(k), ok: k === q.ok, err: q.gen ? 'grens' : 'verbeter'})), explain: esc(q.why), small: true,
+      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'e', q.gen ? q.m : 'verbeter', o.ok ? 1 : 0, o.ok ? '' : (q.gen ? 'grens' : 'verbeter'), Math.round(performance.now() - ms0), 0, q.q.slice(0, 90) + '…', q.ok, o.html])};
   }
   if (gid === 'gonio') {
     const q = genGon(cfg, null), hulp = cfg.hulp === 'ja', u = q.kind === 'z' ? ' cm' : '°', cand = [];
