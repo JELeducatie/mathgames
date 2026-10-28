@@ -3870,7 +3870,7 @@ document.addEventListener('pointerup', e => {
   if (pd && !pd.bad) {
     const dt = performance.now() - pd.t, mv = Math.hypot(e.clientX - pd.x, e.clientY - pd.y);
     const el = document.elementFromPoint(e.clientX, e.clientY), b = el && el.closest('[data-fast="dans"]');
-    if (b === pd.btn && dt >= 40 && dt <= 2500 && mv < 40) duoAnswer(b.dataset.arg);
+    if (b === pd.btn && (dt >= 40 || e.pointerType !== 'touch') && dt <= 2500 && mv < 40) duoAnswer(b.dataset.arg);
   }
   touchEnd(e);
 }, true);
