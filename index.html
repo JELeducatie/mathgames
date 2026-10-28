@@ -218,8 +218,9 @@ textarea.inp{width:100%;min-height:12rem;resize:vertical}
 @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
 
 /* startscherm secties */
-.hs{flex:1;overflow:auto;padding:.3rem}
-.grades{flex:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:1.6rem;align-content:center;padding:.3rem}
+.hs{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;padding:.3rem}
+.grades{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch;display:grid;grid-template-columns:repeat(auto-fit,minmax(18rem,1fr));gap:1.6rem;align-content:center;padding:.3rem}
+@media (max-width:700px),(max-height:560px){.grades{align-content:start}.gtile{min-height:0}.screen{overflow-y:auto}}
 .gtile{position:relative;overflow:hidden;text-align:left;display:flex;flex-direction:column;gap:1rem;padding:1.8rem 1.8rem 1.6rem;min-height:22rem;border-radius:1.4rem;
   background:linear-gradient(160deg,color-mix(in srgb,var(--gc) 26%,transparent),rgba(255,255,255,.02) 60%),var(--card);border:2px solid color-mix(in srgb,var(--gc) 55%,transparent);box-shadow:var(--sh);transition:transform .1s}
 .gtile:active{transform:scale(.98)}
@@ -650,6 +651,9 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .ddesc{font-size:1.25rem;line-height:1.5;text-align:left;color:#E3E7FA}
 .lopts:has(.dans:not(:empty)) .dans{font-size:clamp(1rem,2.4vmin,1.5rem)}
 .ddesc.small{font-size:1.1rem}.ddesc.ans{font-size:1.35rem;font-weight:700;background:rgba(255,255,255,.06);border-radius:.6rem;padding:.4rem .7rem}
+.ttest{max-width:44rem!important}
+.tarea{height:12rem;border:3px dashed var(--sub);border-radius:1rem;display:grid;place-items:center;font-family:var(--fd);font-size:2rem;color:var(--sub);touch-action:none}
+.tlog{margin:1rem 0;min-height:3rem;font-size:1rem;color:var(--gold);word-break:break-word}
 </style>
 </head>
 <body>
@@ -3684,6 +3688,7 @@ function showSettings() {
           <div class="lvrow" style="margin-top:0"><b>Leerlingen tonen als</b><div class="seg">${[['karakter', 'Karakter', 'eigen figuur'], ['pixel', 'Pixel-foto', 'bewerkte foto'], ['foto', 'Foto', 'echte foto']].map(([v, n, sub]) => `<button class="${avMode() === v ? 'on' : ''}" data-act="avMode" data-arg="${v}">${n}<small>${sub}</small></button>`).join('')}</div></div>
           ${avMode() !== 'foto' ? `<div class="lvrow"><b>Stijl van de karakters</b><div class="seg avstyles">${[['street', 'Streetwear'], ['held', 'Helden'], ['dier', 'Dieren'], ['strak', 'Strak'], ['monster', 'Monsters'], ['robot', 'Robots'], ['pixel', 'Pixel']].map(([v, n]) => `<button class="${avStyle() === v ? 'on' : ''}" data-act="avStyle" data-arg="${v}"><span class="av char sm">${charSVG(4242, v)}</span>${n}</button>`).join('')}</div></div>` : ''}
           <div class="lvrow"><b>Weergavegrootte</b><div class="seg">${[[0.75, 'Klein'], [0.85, 'Normaal'], [1, 'Groot']].map(([v, n]) => `<button class="${zoomLv() === v ? 'on' : ''}" data-act="zoom" data-arg="${v}">${n}</button>`).join('')}</div></div>
+          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 28-10-2026</span></div>
           <div class="row between"><span>Geluid</span><button class="switch ${D.sound ? 'on' : ''}" data-act="sound" aria-label="Geluid"><i></i></button></div>
           <div class="row"><button class="btn" data-act="exportB">💾 Back-up opslaan</button><button class="btn" data-act="importB">📂 Back-up terugzetten</button></div>
           <p class="muted small">Klassen, foto's en scores worden bewaard in de browser van dit apparaat. De back-up bevat ook alle resultaten. Een back-up is één bestand dat je op de USB-stick kunt zetten en op een ander apparaat kunt terugzetten.</p>
@@ -3714,6 +3719,18 @@ function findStudent(id) { for (const c of D.classes) { const s = c.students.fin
 
 /* ===================== Acties ===================== */
 const ACT = {
+  touchTest: () => {
+    const m = document.createElement('div'); m.className = 'modal';
+    m.innerHTML = `<div class="card ttest"><p>Tik in het vak hieronder</p><div class="tarea" id="tarea">tik hier</div><div class="tlog" id="tlog"></div>
+      <p class="muted small" style="font-weight:400">Hier zie je welke signalen het bord doorgeeft. Zie je 'pointerdown' en 'click', dan werkt alles. Zie je alleen 'click' of alleen 'touchstart', stuur dan een foto hiervan door.</p>
+      <div class="row"><button class="btn primary" data-close="1">Sluiten</button></div></div>`;
+    document.body.appendChild(m);
+    const a = m.querySelector('#tarea'), log = m.querySelector('#tlog'), seen = [];
+    const add = ev => { seen.push(ev.type + (ev.pointerType ? ' (' + ev.pointerType + ')' : '')); log.textContent = seen.slice(-8).join(' → '); };
+    ['pointerdown', 'pointerup', 'touchstart', 'mousedown', 'click'].forEach(t => a.addEventListener(t, add));
+    m.querySelector('[data-close]').addEventListener('click', () => m.remove());
+    log.textContent = navigator.userAgent.replace(/^Mozilla\/5\.0 /, '');
+  },
   wNext: () => { if (G && G.running && G.after) { const f = G.after; G.after = null; f(); } },
   gnNext: () => { if (G && G.running && G.locked && G.gq) gnAfter(G.gq); },
   duo: () => { DUO.sel = DUO.sel.filter(p => p.guest || (curClass() && curClass().students.some(s => s.id === p.id))); showDuoPick(); },
@@ -3885,12 +3902,22 @@ function ghostTouch(e) {
 }
 app.addEventListener('pointerdown', e => {
   const db = e.target.closest('[data-fast="dans"]');
-  if (db) { e.preventDefault(); DPEND.set(e.pointerId, {btn: db, t: performance.now(), x: e.clientX, y: e.clientY, bad: ghostTouch(e)}); return; }
+  if (db) { e.preventDefault(); LASTFAST = {el: db, t: performance.now()}; DPEND.set(e.pointerId, {btn: db, t: performance.now(), x: e.clientX, y: e.clientY, bad: ghostTouch(e)}); return; }
   const tg = e.target.closest('svg.tapgraph');
   if (tg) { e.preventDefault(); grTap(tg, e); return; }
   const bal = e.target.closest('.balloon');
   if (bal) { e.preventDefault(); balHit(bal); return; }
   const b = e.target.closest('[data-fast]'); if (!b) return; e.preventDefault();
+  LASTFAST = {el: b, t: performance.now()}; fastAct(b);
+});
+/* Reservepad: sommige borden/browsers sturen geen pointer-events door. Dan vangen we de gewone klik op. */
+let LASTFAST = {el: null, t: 0};
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-fast]'); if (!b) return;
+  if (LASTFAST.el === b && performance.now() - LASTFAST.t < 1000) return;
+  fastAct(b);
+});
+function fastAct(b) {
   const f = b.dataset.fast;
   if (f === 'ans') rrAnswer(parseInt(b.dataset.arg, 10), b);
   else if (f === 'key') rrKey(b.dataset.arg);
@@ -3906,7 +3933,7 @@ app.addEventListener('pointerdown', e => {
   else if (f === 'gpick') gnPick(b.dataset.arg);
   else if (f === 'gsel') gnSel(b.dataset.arg);
   else if (f === 'vans') vrAns(b.dataset.arg);
-});
+}
 app.addEventListener('change', e => { const el = e.target.closest('[data-change]'); if (el && CHANGE[el.dataset.change]) CHANGE[el.dataset.change](el.dataset.arg, el); });
 app.addEventListener('input', e => { if (e.target.dataset.change === 'impName') CHANGE.impName(e.target.dataset.arg, e.target); });
 app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'newcls') ACT.addClass(); });
