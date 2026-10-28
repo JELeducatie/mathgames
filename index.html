@@ -3204,10 +3204,10 @@ const WIA_ERRS = [
     a: ['Het grootste verschil in cumulatieve percentages is 46 − 12 = 34.', 'Max VCP = 34, dus het verschil is groot.'], e: 1, type: 'criterium',
     fix: 'Het grootste verschil in cumulatieve percentages is 46 − 12 = 34. Omdat 20 < max VCP ≤ 40 is het verschil middelmatig.',
     why: 'Volgens het formuleblad is het verschil pas groot bij een max VCP groter dan 40.'},
-  {h: 'H7', q: 'Leg uit waarom een effectgrootte negatief kan zijn.',
-    a: ['Omdat de standaardafwijking negatief kan zijn.'], e: 0, type: 'begrip',
-    fix: 'In de teller trek je het gemiddelde van de ene groep af van dat van de andere groep. Is het eerste gemiddelde kleiner, dan is het verschil en dus E negatief.',
-    why: 'Een standaardafwijking is nooit negatief; het teken komt van het verschil tussen de gemiddelden.'},
+  {h: 'H7', q: 'Groep A heeft een gemiddelde van 62 en groep B van 68. Beide standaardafwijkingen zijn 6. Bereken de effectgrootte en beoordeel het verschil.',
+    a: ['E = (62 − 68) / (½ · (6 + 6)) = −1.', 'E < 0,4, dus het verschil is gering.'], e: 0, type: 'criterium',
+    fix: 'Neem voor X̄₁ het grootste gemiddelde: E = (68 − 62) / (½ · (6 + 6)) = 1. Omdat E > 0,8 is het verschil groot.',
+    why: 'Op het formuleblad geldt X̄₁ ≥ X̄₂: je trekt het kleinste gemiddelde van het grootste af, dus E is nooit negatief.'},
   {h: 'H7', q: 'Er zijn 120 jongens en 80 meisjes ondervraagd. Van hen sporten 30 jongens en 32 meisjes niet. Bereken het percentage meisjes dat niet sport.',
     a: ['32 : 200 · 100% = 16%.'], e: 0, type: 'reken',
     fix: '32 : 80 · 100% = 40%, dus 40% van de meisjes sport niet.',
@@ -3372,7 +3372,7 @@ const ooFm = (v, d) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(d).replace('.'
 function ooRule(m) {
   if (m === 'phi') return 'φ < −0,4 of φ > 0,4: groot · −0,4 ≤ φ < −0,2 of 0,2 < φ ≤ 0,4: middelmatig · −0,2 ≤ φ ≤ 0,2: gering';
   if (m === 'vcp') return 'max VCP > 40: groot · 20 < max VCP ≤ 40: middelmatig · max VCP ≤ 20: gering';
-  if (m === 'e') return '|E| > 0,8: groot · 0,4 < |E| ≤ 0,8: middelmatig · |E| ≤ 0,4: gering';
+  if (m === 'e') return 'E > 0,8: groot · 0,4 ≤ E ≤ 0,8: middelmatig · E < 0,4: gering';
   return 'Boxen overlappen niet: groot · boxen overlappen en een mediaan ligt buiten de andere box: middelmatig · anders: gering';
 }
 function boxSVG(A, B) {
@@ -3389,7 +3389,7 @@ function genOO(cfg) {
   const ms = cfg.maten && cfg.maten.length ? cfg.maten : ['phi', 'vcp', 'e', 'box'], m = ms[rnd(0, ms.length - 1)], want = rnd(0, 2);
   if (m === 'phi') { const r = [[0.02, 0.18], [0.22, 0.38], [0.42, 0.8]][want], v = Math.round((r[0] + Math.random() * (r[1] - r[0])) * 100) / 100 * (Math.random() < 0.35 ? -1 : 1); return {m, ans: want, show: `φ = ${ooFm(v, 2)}`}; }
   if (m === 'vcp') { const r = [[4, 18], [22, 38], [42, 75]][want], v = rnd(r[0], r[1]); return {m, ans: want, show: `max VCP = ${v}`}; }
-  if (m === 'e') { const r = [[0.05, 0.38], [0.42, 0.78], [0.82, 1.9]][want], v = Math.round((r[0] + Math.random() * (r[1] - r[0])) * 100) / 100 * (Math.random() < 0.35 ? -1 : 1); return {m, ans: want, show: `E = ${ooFm(v, 2)}`}; }
+  if (m === 'e') { const r = [[0.05, 0.38], [0.42, 0.78], [0.82, 1.9]][want], v = Math.round((r[0] + Math.random() * (r[1] - r[0])) * 100) / 100; return {m, ans: want, show: `E = ${ooFm(v, 2)}`}; }
   for (let g = 0; g < 200; g++) {
     const mk = c => { const w = rnd(4, 10), q1 = c - rnd(1, w), q3 = c + rnd(1, w), md = rnd(q1 + 1, q3 - 1); return [q1 - rnd(3, 10), q1, md, q3, q3 + rnd(3, 10)]; };
     const A = mk(rnd(30, 40)), B = mk(A[2] + rnd(-4, 22));
