@@ -667,6 +667,14 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .mv.fdopt.wrong{background:linear-gradient(180deg,#FF8095,var(--bad))}
 .fdmini{font-family:var(--fd);font-size:clamp(1.1rem,2.6vmin,1.7rem);text-align:left;line-height:1.5}
 .fdn{display:inline-block;width:4.6rem;font-size:.6em;color:var(--muted);font-family:system-ui,sans-serif}
+.mkstep{font-family:var(--fd);font-style:italic;font-size:1.5rem;text-align:center;color:var(--gold)}
+.oocard{text-align:center}
+.ooshow{font-family:var(--fd);font-size:clamp(3rem,10vmin,6rem);margin:.6rem 0}
+.ooshow.box{font-size:1rem;display:flex;justify-content:center}.boxsvg{width:min(60rem,100%);height:auto}
+.oorule{font-size:1.1rem;color:#C9CFEA;min-height:1.2rem}
+.wopts.three{grid-template-columns:repeat(3,1fr)}
+.wopt.oo0{border-bottom:.35rem solid #2EE59D}.wopt.oo1{border-bottom:.35rem solid #FFD23F}.wopt.oo2{border-bottom:.35rem solid #FF4D6D}
+.dfig .boxsvg{width:100%}
 </style>
 </head>
 <body>
@@ -691,6 +699,8 @@ const LEVELS = [
 const timeLabel = t => t < 60 ? t + ' sec' : (t / 60) + ' min';
 const OPTDEFS = {
   ops: {label: 'Sommen', multi: true, allName: 'Alles door elkaar', choices: OP_ORDER.map(o => ({v: o, name: o, sub: OPS[o].name, long: OPS[o].name, cls: OPS[o].cls}))},
+  maten: {label: 'Maten', multi: true, allName: 'alle maten', choices: [{v: 'phi', name: 'φ'}, {v: 'vcp', name: 'max VCP'}, {v: 'e', name: 'E'}, {v: 'box', name: 'boxplots'}]},
+  hulp2: {label: 'Hulp', choices: [{v: 'nee', name: 'Zonder vuistregels', sub: 'uit het hoofd'}, {v: 'ja', name: 'Vuistregels in beeld', sub: 'zoals op het formuleblad'}]},
   hst: {label: 'Hoofdstukken', multi: true, allName: 'alle hoofdstukken', choices: [{v: 'H2', name: 'H2'}, {v: 'H7', name: 'H7'}, {v: 'H11', name: 'H11'}]},
   bdist: {label: 'Niveau', choices: [{v: 'mix', name: 'Basis', sub: 'keuzes uit verschillende onderwerpen'}, {v: 'lijk', name: 'Lastig', sub: 'keuzes die op elkaar lijken'}]},
   gt: {label: 'Soort', multi: true, allName: 'alle soorten', choices: [
@@ -1264,6 +1274,24 @@ const GAMES = {
     tile: () => `<div class="mini-w"><span>‘De middelste waarneming als…’</span><b>Mediaan ✓</b></div>`,
     frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Welk begrip wordt hier omschreven?</div><div class="wdesc" id="wdesc"></div></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
     setup: () => {}, begin: () => wbNext()
+  },
+  maat: {
+    section: 'wia', title: 'Welke maat?', sub: 'Kies het soort variabele en de juiste associatiemaat',
+    opts: ['time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {time: 180},
+    example: () => `Voorbeeld: <b>${esc(MK_SIT[0].s.slice(0, 70))}…</b>`,
+    tile: () => `<div class="mini-w"><span>‘2×2-kruistabel…’</span><b>φ ✓</b></div>`,
+    frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Onderzoekssituatie</div><div class="wdesc" id="wdesc"></div></div><div class="mkstep" id="mkstep"></div><div class="wehint" id="wehint"></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
+    setup: () => {}, begin: () => mkNext()
+  },
+  oordeel: {
+    section: 'wia', title: 'Gering of groot?', sub: 'Beoordeel het verschil met de vuistregels van het formuleblad',
+    opts: ['maten', 'hulp2', 'time'], choices: {time: [60, 120, 180].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {maten: ['phi', 'vcp', 'e', 'box'], hulp2: 'nee', time: 120},
+    example: c => `Voorbeeld: <b>φ = 0,32</b>`,
+    tile: () => `<div class="mini-w"><span>max VCP = 46</span><b>groot ✓</b></div>`,
+    frame: () => `<div class="qcard wq oocard" id="qcard"><div class="wlab" id="oolab"></div><div class="ooshow" id="ooshow"></div><div class="oorule" id="oorule"></div></div><div class="wexp" id="wexp"></div><div class="wopts three" id="wopts"></div>`,
+    setup: () => { G.cfg.hulp = G.cfg.hulp2 === 'ja' ? 'ja' : 'nee'; }, begin: () => ooNext()
   },
   fout: {
     section: 'wia', title: 'Foutje zoeken', sub: 'Vind de fout in het antwoord op een examenvraag',
@@ -2149,6 +2177,9 @@ const VR_ERR = {
 const WIA_ERRT = {
   begrip: {name: 'Verkeerd begrip gekozen', desc: 'Omschrijving niet herkend', tip: 'Laat leerlingen de omschrijving hardop lezen en de kernwoorden onderstrepen.'},
   plek: {name: 'Fout niet gevonden', desc: 'Verkeerd deel van het antwoord aangewezen', tip: 'Laat leerlingen het antwoord zin voor zin controleren tegen de vraag.'},
+  soortvar: {name: 'Soort variabele niet herkend', desc: 'Kwalitatief, ordinaal of kwantitatief verward', tip: 'Laat leerlingen eerst bepalen: kun je ermee rekenen? Is er een volgorde?'},
+  maat: {name: 'Verkeerde associatiemaat', desc: 'φ, max VCP, E of boxplots verkeerd gekozen', tip: 'Koppel de maat aan wat er gegeven is: kruistabel, cumulatieve percentages, gemiddelde + sd of vijfgetallensamenvatting.'},
+  grens: {name: 'Vuistregel verkeerd toegepast', desc: 'Gering, middelmatig of groot verkeerd beoordeeld', tip: 'Oefen de grenzen van het formuleblad, ook bij negatieve φ en E.'},
   soort: {name: 'Soort fout niet herkend', desc: 'Verkeerde soort fout gekozen', tip: 'Bespreek het verschil tussen een wiskundige fout en een formuleringsfout.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
 };
@@ -2162,8 +2193,10 @@ const STAT_TOPICS = {
     cats: [{id: 'kies', name: 'Verhouding kiezen', short: 'Kiezen', color: 'var(--gold)'}, {id: 'gegv', name: 'Gegeven en gevraagd', short: 'Gegeven', color: 'var(--add)'},
       {id: 'z1', name: 'Zijde (keer)', short: 'Zijde ×', color: 'var(--sub)'}, {id: 'z2', name: 'Zijde (delen)', short: 'Zijde :', color: 'var(--div)'},
       {id: 'h', name: 'Hoek', short: 'Hoek', color: 'var(--mul)'}]},
-  wia: {name: 'Begrippen & formuleren', g: ['w', 'e'], unit: 'vragen', fast: 15000, errs: WIA_ERRT, noLevel: true,
-    cats: [{id: 'begrip', name: 'Begrip herkennen', short: 'Begrip', color: 'var(--sub)'}, {id: 'plek', name: 'Fout vinden', short: 'Fout vinden', color: 'var(--mul)'}, {id: 'soort', name: 'Soort fout', short: 'Soort', color: 'var(--div)'}]},
+  wia: {name: 'Begrippen & formuleren', g: ['w', 'e', 'm', 'o'], unit: 'vragen', fast: 15000, errs: WIA_ERRT, noLevel: true,
+    cats: [{id: 'begrip', name: 'Begrip herkennen', short: 'Begrip', color: 'var(--sub)'}, {id: 'plek', name: 'Fout vinden', short: 'Fout vinden', color: 'var(--mul)'}, {id: 'soort', name: 'Soort fout', short: 'Soort', color: 'var(--div)'},
+      {id: 'soortvar', name: 'Soort variabele', short: 'Variabele', color: 'var(--add)'}, {id: 'maat', name: 'Maat kiezen', short: 'Maat', color: 'var(--gold)'},
+      {id: 'phi', name: 'Oordeel φ', short: 'φ', color: '#22D3EE'}, {id: 'vcp', name: 'Oordeel max VCP', short: 'VCP', color: '#F472B6'}, {id: 'e', name: 'Oordeel E', short: 'E', color: '#A3E635'}, {id: 'box', name: 'Oordeel boxplots', short: 'Box', color: '#FB923C'}]},
   bal: {name: 'Balansmethode', g: ['l'], unit: 'stappen', fast: 8000, errs: BAL_ERR, noLevel: true,
     cats: [{id: 'haakjes', name: 'Haakjes wegwerken', short: 'Haakjes', color: 'var(--gold)'}, {id: 'xweg', name: 'x naar links', short: 'x links', color: 'var(--div)'},
       {id: 'getalweg', name: 'Getallen naar rechts', short: 'Getal rechts', color: 'var(--sub)'}, {id: 'breukweg', name: 'Breuken wegwerken', short: 'Breuk', color: 'var(--add)'}, {id: 'delen', name: 'Delen', short: 'Delen', color: 'var(--mul)'}]},
@@ -2332,7 +2365,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -3157,20 +3190,20 @@ const WIA_ERRS = [
     why: 'Bij ‘vergelijk’ hoort naast een centrummaat ook een spreidingsmaat.'},
   {h: 'H7', q: 'Bij een onderzoek is φ ≈ 0,32. Is het verschil tussen de twee groepen gering, middelmatig of groot?',
     a: ['φ ≈ 0,32.', 'Het verschil is groot.'], e: 1, type: 'criterium',
-    fix: 'φ ≈ 0,32. Omdat 0,2 ≤ φ < 0,4 is het verschil middelmatig.',
-    why: 'Volgens het formuleblad is het verschil pas groot bij φ ≥ 0,4 (of φ ≤ −0,4).'},
+    fix: 'φ ≈ 0,32. Omdat 0,2 < φ ≤ 0,4 is het verschil middelmatig.',
+    why: 'Volgens het formuleblad is het verschil pas groot bij φ > 0,4 (of φ < −0,4).'},
   {h: 'H7', q: 'Onderzoek met de effectgrootte of het verschil in reactietijd tussen jongens en meisjes groot is.',
     a: ['E = 0,9.', 'Het verschil is groot.'], e: -1, type: 'toelichting',
-    fix: 'Vul de gemiddelden en standaardafwijkingen van beide groepen in de formule van het formuleblad in: E ≈ 0,9. Omdat E ≥ 0,8 is het verschil groot.',
-    why: 'Er staat geen berekening en het criterium (E ≥ 0,8) wordt niet genoemd.'},
+    fix: 'Vul de gemiddelden en standaardafwijkingen van beide groepen in de formule van het formuleblad in: E ≈ 0,9. Omdat E > 0,8 is het verschil groot.',
+    why: 'Er staat geen berekening en het criterium (E > 0,8) wordt niet genoemd.'},
   {h: 'H7', q: 'Van twee groepen zijn boxplots getekend. De box van groep A loopt van 10 tot 18, de box van groep B van 20 tot 28. Is het verschil tussen de groepen groot?',
     a: ['De boxen overlappen elkaar niet.', 'Ja.'], e: 1, type: 'vraag',
     fix: 'De boxen overlappen elkaar niet, dus het verschil tussen groep A en groep B is groot.',
     why: '‘Ja.’ is geen volledige conclusie: herhaal de vraag in je antwoord.'},
   {h: 'H7', q: 'Bereken de max VCP van de twee groepen en beoordeel het verschil.',
-    a: ['Het grootste verschil in cumulatieve percentages is 46 − 12 = 34.', 'Max VCP = 34, dus het verschil is middelmatig.'], e: 1, type: 'criterium',
-    fix: 'Het grootste verschil in cumulatieve percentages is 46 − 12 = 34. Omdat max VCP < 40 is het verschil gering.',
-    why: 'Volgens het formuleblad is het verschil pas middelmatig vanaf een max VCP van 40.'},
+    a: ['Het grootste verschil in cumulatieve percentages is 46 − 12 = 34.', 'Max VCP = 34, dus het verschil is groot.'], e: 1, type: 'criterium',
+    fix: 'Het grootste verschil in cumulatieve percentages is 46 − 12 = 34. Omdat 20 < max VCP ≤ 40 is het verschil middelmatig.',
+    why: 'Volgens het formuleblad is het verschil pas groot bij een max VCP groter dan 40.'},
   {h: 'H7', q: 'Leg uit waarom een effectgrootte negatief kan zijn.',
     a: ['Omdat de standaardafwijking negatief kan zijn.'], e: 0, type: 'begrip',
     fix: 'In de teller trek je het gemiddelde van de ene groep af van dat van de andere groep. Is het eerste gemiddelde kleiner, dan is het verschil en dus E negatief.',
@@ -3273,6 +3306,123 @@ function weKind(i) {
   recordGen('e', 'soort', ok, 'soort', q.q.slice(0, 90) + '…', WIA_FTYPE[q.type], WIA_FTYPE[k]);
   if (ok) { award(10); beep(true); flash('good', 400); } else { penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.q, given: WIA_FTYPE[k]}); }
   weFinish(ok, k);
+}
+
+/* ===================== Havo 5: Welke maat? en Gering/middelmatig/groot ===================== */
+const MK_VAR = {k2: 'Kwalitatief, twee categorieën', ord: 'Kwalitatief, ordinaal', kw: 'Kwantitatief'};
+const MK_MAAT = {phi: 'Phi-coëfficiënt (φ)', vcp: 'Max VCP', e: 'Effectgrootte (E)', box: 'Twee boxplots'};
+const MK_GIVEN = {phi: 'een 2×2-kruistabel', vcp: 'cumulatieve percentages', e: 'gemiddelden en standaardafwijkingen', box: 'twee vijfgetallensamenvattingen'};
+// v = soort variabele, m = maat. De situatie noemt steeds wat er gegeven is.
+const MK_SIT = [
+  {s: 'Onderzoek of jongens en meisjes verschillen in het wel of niet hebben van een bijbaan. Van beide groepen is het aantal met en zonder bijbaan bekend.', v: 'k2', m: 'phi'},
+  {s: 'Bij twee scholen is geteld hoeveel leerlingen wel en niet met de fiets komen.', v: 'k2', m: 'phi'},
+  {s: 'Onderzoek of het slagingspercentage (geslaagd/gezakt) verschilt tussen havo-leerlingen met en zonder bijles.', v: 'k2', m: 'phi'},
+  {s: 'Van twee afdelingen is bekend hoeveel medewerkers wel en niet thuiswerken.', v: 'k2', m: 'phi'},
+  {s: 'Klanten van twee winkels gaven een oordeel: zeer ontevreden, ontevreden, neutraal, tevreden of zeer tevreden. Per winkel zijn de cumulatieve percentages gegeven.', v: 'ord', m: 'vcp'},
+  {s: 'Leerlingen van klas 4 en klas 5 gaven aan hoe vaak ze sporten: nooit, soms, regelmatig of vaak. Van beide klassen is de verdeling in procenten gegeven.', v: 'ord', m: 'vcp'},
+  {s: 'Twee groepen patiënten beoordeelden hun pijn als geen, licht, matig of hevig.', v: 'ord', m: 'vcp'},
+  {s: 'De lengtes van spelers van twee volleybalclubs zijn in klassen ingedeeld (160–<170, 170–<180, …). Per club zijn de cumulatieve percentages gegeven.', v: 'kw', m: 'vcp'},
+  {s: 'De reistijden van leerlingen van twee scholen staan in een frequentietabel met klassen van 10 minuten.', v: 'kw', m: 'vcp'},
+  {s: 'Van de gewichten van appels uit twee boomgaarden zijn het gemiddelde en de standaardafwijking bekend.', v: 'kw', m: 'e'},
+  {s: 'Bij een reactietest zijn van jongens en meisjes de gemiddelde reactietijd en de standaardafwijking berekend.', v: 'kw', m: 'e'},
+  {s: 'Van twee klassen zijn het gemiddelde cijfer voor een toets en de standaardafwijking gegeven.', v: 'kw', m: 'e'},
+  {s: 'Van de zakgeldbedragen in twee groepen zijn het minimum, Q1, de mediaan, Q3 en het maximum gegeven.', v: 'kw', m: 'box'},
+  {s: 'De wachttijden bij twee huisartsenposten zijn met een vijfgetallensamenvatting weergegeven.', v: 'kw', m: 'box'},
+  {s: 'Van de hardlooptijden op de 5 km van twee atletiekverenigingen zijn boxplots getekend.', v: 'kw', m: 'box'}
+];
+function mkNext() {
+  let q, g = 0; do { q = MK_SIT[rnd(0, MK_SIT.length - 1)]; } while (G.mq && G.mq.s === q.s && g++ < 10);
+  G.mq = Object.assign({}, q, {step: 1}); G.locked = false; G.qStart = performance.now(); flash(''); G.after = null;
+  $('#wexp').innerHTML = ''; mkRender('');
+}
+function mkRender(hint) {
+  const q = G.mq;
+  $('#wdesc').textContent = q.s;
+  $('#mkstep').innerHTML = q.step === 1 ? 'Stap 1: wat voor variabele wordt hier vergeleken?' : 'Stap 2: welke associatiemaat gebruik je?';
+  const opts = q.step === 1 ? Object.keys(MK_VAR) : Object.keys(MK_MAAT);
+  $('#wopts').innerHTML = opts.map(k => `<button class="ans wopt" data-fast="mk" data-arg="${k}">${esc(q.step === 1 ? MK_VAR[k] : MK_MAAT[k])}</button>`).join('');
+  $('#wehint').textContent = hint || '';
+}
+function mkWhy(q) {
+  if (q.m === 'phi') return 'Een kwalitatieve variabele met twee categorieën bij twee groepen geeft een 2×2-kruistabel: daar hoort de phi-coëfficiënt bij.';
+  if (q.m === 'vcp') return q.v === 'ord' ? 'Bij een ordinale variabele kun je cumulatieve percentages berekenen: daar hoort de max VCP bij.' : 'De kwantitatieve gegevens zijn in klassen ingedeeld, dus je hebt cumulatieve percentages: daar hoort de max VCP bij.';
+  if (q.m === 'e') return 'Bij een kwantitatieve variabele waarvan de gemiddelden en standaardafwijkingen bekend zijn, gebruik je de effectgrootte.';
+  return 'Bij een kwantitatieve variabele met een vijfgetallensamenvatting vergelijk je twee boxplots.';
+}
+function mkPick(k) {
+  const q = G && G.mq; if (!G || !G.running || G.locked || !q) return;
+  const btns = [...document.querySelectorAll('#wopts .wopt')], btn = btns.find(b => b.dataset.arg === k);
+  if (q.step === 1) {
+    const ok = k === q.v;
+    recordGen('m', 'soortvar', ok, ok ? null : 'soortvar', q.s.slice(0, 90) + '…', MK_VAR[q.v], MK_VAR[k]);
+    G.qStart = performance.now();
+    if (ok) { award(5); beep(true); flash('good', 300); } else { penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.s, given: MK_VAR[k]}); }
+    q.step = 2; mkRender(ok ? '✓ ' + MK_VAR[q.v] : `Niet goed: het is ${MK_VAR[q.v].toLowerCase()}.`); return;
+  }
+  G.locked = true; const ok = k === q.m;
+  recordGen('m', 'maat', ok, ok ? null : 'maat', q.s.slice(0, 90) + '…', MK_MAAT[q.m], MK_MAAT[k]);
+  btns.forEach(b => { if (b.dataset.arg === q.m) b.classList.add('right'); });
+  if (ok) { award(10); beep(true); flash('good', 400); } else { btn.classList.add('wrong'); penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.s, given: MK_MAAT[k]}); }
+  $('#wexp').innerHTML = `<div class="wfix ${ok ? '' : 'bad'}"><span>${ok ? 'Goed!' : 'Het is: ' + esc(MK_MAAT[q.m])}</span>${esc(mkWhy(q))}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
+  G.after = mkNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === mkNext) { G.after = null; mkNext(); } }, ok ? 2500 : 9000));
+}
+/* --- Gering, middelmatig of groot (formuleblad) --- */
+const OO = ['gering', 'middelmatig', 'groot'];
+const ooFm = (v, d) => (v < 0 ? '−' : '') + Math.abs(v).toFixed(d).replace('.', ',');
+function ooRule(m) {
+  if (m === 'phi') return 'φ < −0,4 of φ > 0,4: groot · −0,4 ≤ φ < −0,2 of 0,2 < φ ≤ 0,4: middelmatig · −0,2 ≤ φ ≤ 0,2: gering';
+  if (m === 'vcp') return 'max VCP > 40: groot · 20 < max VCP ≤ 40: middelmatig · max VCP ≤ 20: gering';
+  if (m === 'e') return '|E| > 0,8: groot · 0,4 < |E| ≤ 0,8: middelmatig · |E| ≤ 0,4: gering';
+  return 'Boxen overlappen niet: groot · boxen overlappen en een mediaan ligt buiten de andere box: middelmatig · anders: gering';
+}
+function boxSVG(A, B) {
+  const lo = Math.min(A[0], B[0]) - 2, hi = Math.max(A[4], B[4]) + 2, X = v => 30 + (v - lo) / (hi - lo) * 540;
+  const one = (b, y, c, lab) => `<text x="12" y="${y + 6}" font-size="18" font-weight="800" fill="#E8ECFF">${lab}</text>
+    <line x1="${X(b[0])}" y1="${y}" x2="${X(b[1])}" y2="${y}" stroke="${c}" stroke-width="3"/><line x1="${X(b[3])}" y1="${y}" x2="${X(b[4])}" y2="${y}" stroke="${c}" stroke-width="3"/>
+    <line x1="${X(b[0])}" y1="${y - 10}" x2="${X(b[0])}" y2="${y + 10}" stroke="${c}" stroke-width="3"/><line x1="${X(b[4])}" y1="${y - 10}" x2="${X(b[4])}" y2="${y + 10}" stroke="${c}" stroke-width="3"/>
+    <rect x="${X(b[1])}" y="${y - 22}" width="${X(b[3]) - X(b[1])}" height="44" fill="${c}" fill-opacity=".18" stroke="${c}" stroke-width="3" rx="3"/>
+    <line x1="${X(b[2])}" y1="${y - 22}" x2="${X(b[2])}" y2="${y + 22}" stroke="#fff" stroke-width="4"/>`;
+  let ax = ''; for (let v = Math.ceil(lo / 5) * 5; v <= hi; v += 5) ax += `<line x1="${X(v)}" y1="168" x2="${X(v)}" y2="174" stroke="#8F98BF"/><text x="${X(v)}" y="192" font-size="14" text-anchor="middle" fill="#8F98BF">${v}</text>`;
+  return `<svg viewBox="0 0 600 200" class="boxsvg">${one(A, 50, '#3DA5FF', 'A')}${one(B, 125, '#FF9F1C', 'B')}<line x1="30" y1="168" x2="570" y2="168" stroke="#8F98BF"/>${ax}</svg>`;
+}
+function genOO(cfg) {
+  const ms = cfg.maten && cfg.maten.length ? cfg.maten : ['phi', 'vcp', 'e', 'box'], m = ms[rnd(0, ms.length - 1)], want = rnd(0, 2);
+  if (m === 'phi') { const r = [[0.02, 0.18], [0.22, 0.38], [0.42, 0.8]][want], v = Math.round((r[0] + Math.random() * (r[1] - r[0])) * 100) / 100 * (Math.random() < 0.35 ? -1 : 1); return {m, ans: want, show: `φ = ${ooFm(v, 2)}`}; }
+  if (m === 'vcp') { const r = [[4, 18], [22, 38], [42, 75]][want], v = rnd(r[0], r[1]); return {m, ans: want, show: `max VCP = ${v}`}; }
+  if (m === 'e') { const r = [[0.05, 0.38], [0.42, 0.78], [0.82, 1.9]][want], v = Math.round((r[0] + Math.random() * (r[1] - r[0])) * 100) / 100 * (Math.random() < 0.35 ? -1 : 1); return {m, ans: want, show: `E = ${ooFm(v, 2)}`}; }
+  for (let g = 0; g < 200; g++) {
+    const mk = c => { const w = rnd(4, 10), q1 = c - rnd(1, w), q3 = c + rnd(1, w), md = rnd(q1 + 1, q3 - 1); return [q1 - rnd(3, 10), q1, md, q3, q3 + rnd(3, 10)]; };
+    const A = mk(rnd(30, 40)), B = mk(A[2] + rnd(-4, 22));
+    const overlap = !(A[3] < B[1] || B[3] < A[1]), out = B[2] < A[1] || B[2] > A[3] || A[2] < B[1] || A[2] > B[3];
+    const c = !overlap ? 2 : out ? 1 : 0;
+    if (c !== want) continue;
+    if ([A[1], A[3], B[1], B[3]].some(v => v === A[2] || v === B[2]) || A[3] === B[1] || B[3] === A[1]) continue;
+    return {m, ans: c, show: boxSVG(A, B), box: true, A, B};
+  }
+  return {m: 'vcp', ans: 1, show: 'max VCP = 30'};
+}
+function ooExplain(q) {
+  if (q.box) { const [A, B] = [q.A, q.B]; const ov = !(A[3] < B[1] || B[3] < A[1]);
+    return ov ? (q.ans === 1 ? 'De boxen overlappen, maar een mediaan ligt buiten de box van de andere boxplot: middelmatig.' : 'De boxen overlappen en beide medianen liggen binnen de andere box: gering.') : 'De boxen overlappen elkaar niet: groot.'; }
+  return `${q.show}, dus het verschil is <b>${OO[q.ans]}</b>.`;
+}
+function ooNext() {
+  G.oq = genOO(G.cfg); G.locked = false; G.qStart = performance.now(); flash(''); G.after = null;
+  $('#wexp').innerHTML = '';
+  $('#oolab').textContent = MK_MAAT[G.oq.m];
+  $('#ooshow').innerHTML = G.oq.show; $('#ooshow').className = 'ooshow' + (G.oq.box ? ' box' : '');
+  $('#wopts').innerHTML = OO.map((o, i) => `<button class="ans wopt oo${i}" data-fast="oo" data-arg="${i}">${o}</button>`).join('');
+  $('#oorule').textContent = G.cfg.hulp === 'ja' ? ooRule(G.oq.m) : '';
+}
+function ooPick(i) {
+  const q = G && G.oq; if (!G || !G.running || G.locked || !q) return; G.locked = true; i = +i;
+  const ok = i === q.ans, btns = document.querySelectorAll('#wopts .wopt');
+  recordGen('o', q.m, ok, ok ? null : 'grens', q.box ? 'Twee boxplots' : q.show, OO[q.ans], OO[i]);
+  btns[q.ans].classList.add('right');
+  if (ok) { award(10); beep(true); flash('good', 300); G.timers.push(setTimeout(() => { if (G && G.running) ooNext(); }, 650)); return; }
+  btns[i].classList.add('wrong'); penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.box ? 'Twee boxplots' : q.show, given: OO[i]});
+  $('#wexp').innerHTML = `<div class="wfix bad"><span>Het is ${OO[q.ans]}</span>${ooExplain(q)}<br><small>${esc(ooRule(q.m))}</small></div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
+  G.after = ooNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === ooNext) { G.after = null; ooNext(); } }, 9000));
 }
 
 /* ===================== Voorrangsregels ===================== */
@@ -3494,6 +3644,16 @@ function duoQuestion(gid, cfg) {
       opts: q.shown.slice(1).map((t, k) => ({html: 'regel ' + (k + 1), ok: k + 1 === q.bad, err: q.err})).slice(0, 4),
       explain: `In regel ${q.bad} ging het mis (${FD_ERRNAME[q.err] || 'rekenfout'}). Goed was: = ${vrText(q.opts.find(x => x.ok).t)}`,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'd', vrKind(q.good[q.bad - 1], vrValid(q.good[q.bad - 1])[0]), o.ok ? 1 : 0, o.ok ? '' : q.err, Math.round(performance.now() - ms0), 0, `Fout zoeken: ${start}`, `regel ${q.bad}`, o.html])};
+  }
+  if (gid === 'maat') {
+    const q = MK_SIT[rnd(0, MK_SIT.length - 1)];
+    return {prompt: `<div class="dsub">Welke associatiemaat gebruik je?</div><div class="ddesc">${esc(q.s)}</div>`, opts: shuffle(Object.keys(MK_MAAT)).map(k => ({html: esc(MK_MAAT[k]), ok: k === q.m, err: 'maat'})),
+      explain: esc(mkWhy(q)), rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'm', 'maat', o.ok ? 1 : 0, o.ok ? '' : 'maat', Math.round(performance.now() - ms0), 0, q.s.slice(0, 90) + '…', MK_MAAT[q.m], o.html])};
+  }
+  if (gid === 'oordeel') {
+    const q = genOO(cfg);
+    return {prompt: `<div class="dsub">Is het verschil gering, middelmatig of groot?</div><div class="${q.box ? 'dfig' : 'dq'}">${q.show}</div>`, opts: OO.map((o, i) => ({html: o, ok: i === q.ans, err: 'grens'})),
+      explain: ooExplain(q), rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'o', q.m, o.ok ? 1 : 0, o.ok ? '' : 'grens', Math.round(performance.now() - ms0), 0, q.box ? 'Twee boxplots' : q.show, OO[q.ans], o.html])};
   }
   if (gid === 'begrip') {
     const q = wiaBegripQ(cfg);
@@ -4043,6 +4203,8 @@ function fastAct(b) {
   else if (f === 'dans') duoAnswer(b.dataset.arg);
   else if (f === 'gkey') gnKey(b.dataset.arg);
   else if (f === 'wb') wbAnswer(b.dataset.arg);
+  else if (f === 'mk') mkPick(b.dataset.arg);
+  else if (f === 'oo') ooPick(b.dataset.arg);
   else if (f === 'wseg') weSeg(b.dataset.arg);
   else if (f === 'wkind') weKind(b.dataset.arg);
   else if (f === 'gpick') gnPick(b.dataset.arg);
