@@ -3673,7 +3673,7 @@ function vrAns(k) {
 
 /* ===================== Klassikaal: de docent klikt zelf door (stempelkaarten) ===================== */
 const KCOL = {rood: '#EF4444', blauw: '#3B82F6', geel: '#FACC15', groen: '#22C55E', oranje: '#F97316', paars: '#A855F7', roze: '#EC4899', wit: '#F1F5F9'};
-const kCards = () => (Array.isArray(D.cards) && D.cards.length === 4 ? D.cards : ['rood', 'blauw', 'geel', 'groen']);
+const kCards = () => (Array.isArray(D.cards) && D.cards.length === 4 ? D.cards : ['rood', 'groen', 'geel', 'wit']);
 const KL = {q: null, n: 0, shown: false, good: 0, bad: 0};
 function klStart() {
   stopGame(); duoStop();
