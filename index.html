@@ -637,6 +637,20 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .wseg.hit{background:rgba(255,210,63,.22);border:2px solid var(--gold)}
 .wseg.bad{background:rgba(255,77,109,.18);border-color:var(--bad);text-decoration:line-through}
 .wmissing{display:inline-block;padding:.1rem .6rem;border:2px dashed var(--gold);border-radius:.6rem;color:var(--gold);font-weight:700}
+.kl{display:flex;flex-direction:column;gap:.8rem}
+.klq{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.8rem;text-align:center;background:var(--card);border-radius:1.2rem;padding:1rem 1.4rem;overflow:hidden}
+.klq .dq{font-size:clamp(2.4rem,8vmin,6rem)}.klq .dq.small{font-size:clamp(1.8rem,5.5vmin,4rem)}.klq .dsub{font-size:clamp(1.2rem,2.6vmin,1.9rem)}
+.klq .ddesc{font-size:clamp(1.3rem,2.8vmin,2rem);max-width:70rem}.klq .ddesc.small{font-size:clamp(1.1rem,2.3vmin,1.6rem)}.klq .ddesc.ans{font-size:clamp(1.3rem,2.8vmin,2rem)}
+.klq .dfig{width:100%}.klq .fdmini{font-size:clamp(1.4rem,3.4vmin,2.4rem)}
+.klexp{min-height:1.6rem;font-size:clamp(1.1rem,2.4vmin,1.7rem);text-align:center;color:#C9CFEA}
+.klfix{margin-top:.4rem;color:#E3E7FA}.klfix b{color:var(--good)}
+.klopts{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;flex:0 0 auto}
+.klopts.n3{grid-template-columns:1fr}.klopts.big{height:40vh}
+.kans{display:flex;align-items:center;gap:1rem;justify-content:flex-start;text-align:left;min-height:5.5rem;font-size:clamp(1.3rem,3vmin,2.3rem);border-left:1.1rem solid var(--kc);padding:.5rem 1rem;transition:opacity .2s}
+.klopts.big .kans{background:#fff}.klopts.big .kans svg{height:100%;width:100%}.kans .ktxt{flex:1;min-width:0;height:100%;display:flex;align-items:center}
+.kdot{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--kc);color:#111;font-family:var(--fd);display:grid;place-items:center;font-size:1.3rem}
+.kans.dim{opacity:.35}.klopts.big .kans.right{outline:7px solid var(--good);outline-offset:-2px}.klopts.big .kans.wrong{outline:7px solid var(--bad);outline-offset:-2px;background:#fff}.kans.picked{outline:4px solid var(--good)}
+.kcrow{display:flex;gap:.4rem;flex-wrap:wrap}.kcbtn{font:inherit;color:#fff;background:rgba(255,255,255,.06);border:2px solid var(--kc);border-radius:.6rem;padding:.3rem .6rem;cursor:pointer}.kcbtn b{color:var(--kc);margin-right:.3rem}
 .wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
 #weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
 .ddesc mark{background:rgba(255,210,63,.3);color:inherit;border-radius:.3rem;padding:0 .2rem}
@@ -1459,6 +1473,7 @@ function showSetup() {
     <div class="setup">${g.opts.map(optHTML).join('')}</div>
     <div class="actions"><div class="example">${g.example(effCfg(curId()))}</div><div class="spacer"></div>
       <button class="btn" data-act="board">🏆 Ranglijst</button>
+      <button class="btn big" data-act="klas">🎓 Klassikaal</button>
       <button class="btn big" data-act="duo">⚔ Samen spelen</button>
       <button class="btn primary big" data-act="toPlayers">Kies speler ▶</button></div>
   </section>`;
@@ -3290,7 +3305,7 @@ function wiaCritQ() {
     void nm;
   }
   return {h: 'H7', gen: true, m, q, html: o.box ? o.show : '', a, e: 1, type: 'criterium', ok: crit[ans], alt: crit.filter((_, k) => k !== ans),
-    fix: (o.box ? '' : a[0] + ' ') + crit[ans], why: `Volgens de vuistregels op het formuleblad is het verschil hier ${OO[ans]}.`};
+    fix: (o.box ? '' : o.show + '. ') + crit[ans], why: `Volgens de vuistregels op het formuleblad is het verschil hier ${OO[ans]}.`};
 }
 const WIA_CH = ['H2', 'H7', 'H11'];
 function wiaTerms(cfg) { const L = WIA_TERMS.filter(x => cfg.hst.includes(x.h)); return L.length >= 4 ? L : WIA_TERMS; }
@@ -3655,6 +3670,49 @@ function vrAns(k) {
   vrRender('');
 }
 
+
+/* ===================== Klassikaal: de docent klikt zelf door (stempelkaarten) ===================== */
+const KCOL = {rood: '#EF4444', blauw: '#3B82F6', geel: '#FACC15', groen: '#22C55E', oranje: '#F97316', paars: '#A855F7', roze: '#EC4899', wit: '#F1F5F9'};
+const kCards = () => (Array.isArray(D.cards) && D.cards.length === 4 ? D.cards : ['rood', 'blauw', 'geel', 'groen']);
+const KL = {q: null, n: 0, shown: false, good: 0, bad: 0};
+function klStart() {
+  stopGame(); duoStop();
+  const c = curClass(); Object.assign(KL, {game: GID, cfg: effCfg(c && c.id), n: 0, good: 0, bad: 0});
+  screen = 'klas'; rerender = null;
+  app.innerHTML = `<section class="screen kl">
+    <header class="top"><button class="btn" data-act="setup">← Terug</button><h2>🎓 ${esc(GAMES[GID].title)}</h2><span class="chip">${esc(modeLabel(GID, KL.cfg))}</span><div class="spacer"></div>
+      <span class="chip" id="klcount"></span></header>
+    <div class="klq" id="klq"></div><div class="klexp" id="klexp"></div><div class="klopts" id="klopts"></div>
+    <div class="actions"><span class="muted small">Tik de kleur die de klas omhooghoudt, of toon direct het antwoord.</span><div class="spacer"></div>
+      <button class="btn big" data-act="klShow" id="klshow">👁 Toon antwoord</button><button class="btn primary big" data-act="klNext">Volgende ▶</button></div></section>`;
+  klNext();
+}
+function klNext() {
+  if (screen !== 'klas') return;
+  KL.q = duoQuestion(KL.game, KL.cfg); KL.n++; KL.shown = false;
+  const cols = kCards();
+  $('#klq').innerHTML = KL.q.prompt; $('#klexp').innerHTML = '';
+  const op = $('#klopts'); op.className = 'klopts n' + KL.q.opts.length + (KL.q.big ? ' big' : '');
+  op.innerHTML = KL.q.opts.map((o, k) => `<button class="ans kans" style="--kc:${KCOL[cols[k]]}" data-fast="kans" data-arg="${k}"><span class="kdot">${'ABCD'[k]}</span><span class="ktxt">${o.html}</span></button>`).join('');
+  klCount();
+}
+function klCount() { const e = $('#klcount'); if (e) e.textContent = `Opgave ${KL.n}` + (KL.good + KL.bad ? ` · ✓ ${KL.good} · ✗ ${KL.bad}` : ''); }
+function klReveal(k) {
+  if (screen !== 'klas' || !KL.q || KL.shown) return;
+  KL.shown = true;
+  const btns = document.querySelectorAll('#klopts .kans');
+  KL.q.opts.forEach((o, j) => { btns[j].classList.add(o.ok ? 'right' : 'dim'); });
+  if (k != null) {
+    const ok = KL.q.opts[k].ok; ok ? KL.good++ : KL.bad++;
+    btns[k].classList.remove('dim'); btns[k].classList.add(ok ? 'picked' : 'wrong'); beep(ok); flash(ok ? 'good' : 'bad', 400);
+  }
+  $('#klexp').innerHTML = KL.q.full || KL.q.explain; klCount();
+}
+document.addEventListener('keydown', e => {
+  if (screen !== 'klas') return;
+  if ([' ', 'ArrowRight', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); KL.shown ? klNext() : klReveal(null); }
+  else if (/^[1-4]$/.test(e.key) || /^[a-dA-D]$/.test(e.key)) { const k = /\d/.test(e.key) ? +e.key - 1 : 'abcd'.indexOf(e.key.toLowerCase()); if (KL.q && KL.q.opts[k]) klReveal(k); }
+});
 /* ===================== Samen spelen (2 of 3 spelers tegelijk) ===================== */
 const LANE_COL = ['#3DA5FF', '#FF4D6D', '#2EE59D'];
 const DUO = {played: new Set(), sel: [], game: null, lanes: [], running: false, end: 0, raf: 0, timers: [], cfg: null, classId: null, time: 60};
@@ -3719,7 +3777,7 @@ function duoQuestion(gid, cfg) {
   if (gid === 'fout') {
     const q = wiaErrQ(cfg), seg = q.a.map((t, i) => i === q.e ? `<mark>${esc(t)}</mark>` : esc(t)).join(' ') + (q.e === -1 ? ' <mark>…</mark>' : '');
     return {prompt: `<div class="ddesc small"><b>Vraag:</b> ${esc(q.q)}</div>${q.html ? `<div class="dfig">${q.html}</div>` : ''}<div class="ddesc ans"><b>Antwoord:</b> ${seg}</div><div class="dsub">${q.e === -1 ? 'Wat moet er nog bij?' : 'Wat moet er in plaats van het gele deel staan?'}</div>`,
-      opts: q.opts.map(k => ({html: esc(k), ok: k === q.ok, err: q.gen ? 'grens' : 'verbeter'})), explain: esc(q.why), small: true,
+      opts: q.opts.map(k => ({html: esc(k), ok: k === q.ok, err: q.gen ? 'grens' : 'verbeter'})), explain: esc(q.why), full: `${esc(q.why)}<div class="klfix"><b>Zo had het moeten staan:</b> ${esc(q.fix)}</div>`, small: true,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'e', q.gen ? q.m : 'verbeter', o.ok ? 1 : 0, o.ok ? '' : (q.gen ? 'grens' : 'verbeter'), Math.round(performance.now() - ms0), 0, q.q.slice(0, 90) + '…', q.ok, o.html])};
   }
   if (gid === 'gonio') {
@@ -4016,7 +4074,8 @@ function showSettings() {
           <div class="lvrow" style="margin-top:0"><b>Leerlingen tonen als</b><div class="seg">${[['karakter', 'Karakter', 'eigen figuur'], ['pixel', 'Pixel-foto', 'bewerkte foto'], ['foto', 'Foto', 'echte foto']].map(([v, n, sub]) => `<button class="${avMode() === v ? 'on' : ''}" data-act="avMode" data-arg="${v}">${n}<small>${sub}</small></button>`).join('')}</div></div>
           ${avMode() !== 'foto' ? `<div class="lvrow"><b>Stijl van de karakters</b><div class="seg avstyles">${[['street', 'Streetwear'], ['held', 'Helden'], ['dier', 'Dieren'], ['strak', 'Strak'], ['monster', 'Monsters'], ['robot', 'Robots'], ['pixel', 'Pixel']].map(([v, n]) => `<button class="${avStyle() === v ? 'on' : ''}" data-act="avStyle" data-arg="${v}"><span class="av char sm">${charSVG(4242, v)}</span>${n}</button>`).join('')}</div></div>` : ''}
           <div class="lvrow"><b>Weergavegrootte</b><div class="seg">${[[0.75, 'Klein'], [0.85, 'Normaal'], [1, 'Groot']].map(([v, n]) => `<button class="${zoomLv() === v ? 'on' : ''}" data-act="zoom" data-arg="${v}">${n}</button>`).join('')}</div></div>
-          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 28-10-2026</span></div>
+          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 29-10-2026</span></div>
+          <div class="row between"><span>Kleuren stempelkaarten <small class="muted">(tik om te wisselen)</small></span><div class="kcrow">${kCards().map((k, i) => `<button class="kcbtn" style="--kc:${KCOL[k]}" data-act="kcol" data-arg="${i}"><b>${'ABCD'[i]}</b>${k}</button>`).join('')}</div></div>
           <div class="row between"><span>Geluid</span><button class="switch ${D.sound ? 'on' : ''}" data-act="sound" aria-label="Geluid"><i></i></button></div>
           <div class="row"><button class="btn" data-act="exportB">💾 Back-up opslaan</button><button class="btn" data-act="importB">📂 Back-up terugzetten</button></div>
           <p class="muted small">Klassen, foto's en scores worden bewaard in de browser van dit apparaat. De back-up bevat ook alle resultaten. Een back-up is één bestand dat je op de USB-stick kunt zetten en op een ander apparaat kunt terugzetten.</p>
@@ -4062,6 +4121,8 @@ const ACT = {
   },
   wNext: () => { if (G && G.running && G.after) { const f = G.after; G.after = null; f(); } },
   gnNext: () => { if (G && G.running && G.locked && G.gq) gnAfter(G.gq); },
+  klas: () => klStart(), klNext: () => klNext(), klShow: () => klReveal(null),
+  kcol: a => { const L = kCards().slice(), names = Object.keys(KCOL), i = +a; L[i] = names[(names.indexOf(L[i]) + 1) % names.length]; D.cards = L; save(); showSettings(); },
   duo: () => { DUO.sel = DUO.sel.filter(p => p.guest || (curClass() && curClass().students.some(s => s.id === p.id))); showDuoPick(); },
   duoGuests: () => { DUO.sel = [1, 2, 3].map(n => ({id: 'gast' + n + Date.now(), name: 'Gast ' + n, guest: true})); showDuoPick(); },
   duoTog: id => { const i = DUO.sel.findIndex(p => p.id === id); if (i >= 0) DUO.sel.splice(i, 1); else { if (DUO.sel.length >= 3) { toast('Maximaal 3 spelers.'); return; } const st = curClass().students.find(s => s.id === id); if (st) DUO.sel.push(st); } showDuoPick(); },
@@ -4256,6 +4317,7 @@ function fastAct(b) {
   else if (f === 'gans') grAnswer(b.dataset.arg);
   else if (f === 'vop') vrOp(b.dataset.arg);
   else if (f === 'dans') duoAnswer(b.dataset.arg);
+  else if (f === 'kans') klReveal(+b.dataset.arg);
   else if (f === 'gkey') gnKey(b.dataset.arg);
   else if (f === 'wb') wbAnswer(b.dataset.arg);
   else if (f === 'mk') mkPick(b.dataset.arg);
