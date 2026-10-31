@@ -651,6 +651,17 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .kdot{flex:0 0 auto;width:2.6rem;height:2.6rem;border-radius:50%;background:var(--kc);color:#111;font-family:var(--fd);display:grid;place-items:center;font-size:1.3rem}
 .kans.dim{opacity:.35}.klopts.big .kans.right{outline:7px solid var(--good);outline-offset:-2px}.klopts.big .kans.wrong{outline:7px solid var(--bad);outline-offset:-2px;background:#fff}.kans.picked{outline:4px solid var(--good)}
 .kcrow{display:flex;gap:.4rem;flex-wrap:wrap}.kcbtn{font:inherit;color:#fff;background:rgba(255,255,255,.06);border:2px solid var(--kc);border-radius:.6rem;padding:.3rem .6rem;cursor:pointer}.kcbtn b{color:var(--kc);margin-right:.3rem}
+.hcard{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;text-align:center}
+.hlq{display:flex;flex-direction:column;align-items:center;gap:1rem}
+.hgiven{font-size:clamp(2.2rem,6vmin,4.6rem);font-weight:700;font-variant-numeric:tabular-nums;line-height:1.3}
+.hgiven i,.hopt i,.hask i{font-family:"Cambria Math","Times New Roman",serif;font-style:italic;font-weight:600}
+.hgiven sup,.hopt sup,.hask sup,.hfr sup{font-size:.6em}
+.hask{font-size:clamp(1.1rem,2.6vmin,1.7rem);font-weight:700;color:#C9CFEA}
+.hfr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15}.hfr>span:first-child{border-bottom:.08em solid currentColor;padding:0 .2em}.hfr>span:last-child{padding:0 .2em}
+.hopt{font-size:clamp(1.6rem,4vmin,2.8rem);font-weight:700;text-transform:none}
+.hlq.duo .hgiven{font-size:clamp(1.4rem,3.6vmin,2.6rem)}.hlq.duo .hask{font-size:1rem}
+.klq .hlq.duo .hgiven{font-size:clamp(2.4rem,7vmin,5rem)}.klq .hlq.duo .hask{font-size:clamp(1.2rem,2.6vmin,1.8rem)}
+.dans i,.kans i{font-family:"Cambria Math","Times New Roman",serif;font-style:italic}.dans sup,.kans sup{font-size:.6em}
 .wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
 #weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
 .ddesc mark{background:rgba(255,210,63,.3);color:inherit;border-radius:.3rem;padding:0 .2rem}
@@ -743,6 +754,11 @@ const OPTDEFS = {
   breuk: {label: 'Breuken', choices: [{v: 'nee', name: 'Nee'}, {v: 'ja', name: 'Ja', sub: 'extra uitdaging'}]},
   vars: {label: 'Variabelen', choices: [{v: 'xy', name: 'x en y'}, {v: 'mix', name: 'Wisselend', sub: 'bijv. t en h'}]},
   level: {label: 'Niveau', choices: [{v: 'klas', name: 'Klasniveau', sub: ''}].concat(LEVELS.map(l => ({v: l.id, name: l.name, sub: l.sub})))},
+  hlt: {label: 'Onderdelen', multi: true, allName: 'alle onderdelen', choices: [
+    {v: 'macht', name: 'Machten', sub: '(2x³)² = 4x⁶', long: 'machten'}, {v: 'breuk', name: 'Breuken', sub: '6/x² = 6x⁻²', long: 'breuken'},
+    {v: 'wortel', name: 'Wortels', sub: 'x√x = x^1,5', long: 'wortels'}, {v: 'subst', name: 'Substitutie', sub: 'invullen en herleiden', long: 'substitutie'},
+    {v: 'vrij', name: 'Vrijmaken', sub: 'y = 4x² → x = …', long: 'vrijmaken'}]},
+  hulp3: {label: 'Hulp', choices: [{v: 'nee', name: 'Zonder rekenregels'}, {v: 'ja', name: 'Rekenregels in beeld', sub: 'om te leren'}]},
   time: {label: 'Tijd', choices: [30, 60, 120].map(t => ({v: t, name: timeLabel(t)}))},
   input: {label: 'Antwoorden', choices: [{v: 'kies', name: 'Kiezen', sub: 'uit 4 antwoorden'}, {v: 'typ', name: 'Intypen', sub: 'met cijfertoetsen'}]},
   speed: {label: 'Snelheid', choices: [{v: 1, name: 'Rustig'}, {v: 2, name: 'Normaal'}, {v: 3, name: 'Snel'}]}
@@ -1301,6 +1317,15 @@ const GAMES = {
     frame: () => `<div class="qcard wq" id="qcard"><div class="wlab">Onderzoekssituatie</div><div class="wdesc" id="wdesc"></div></div><div class="mkstep" id="mkstep"></div><div class="wehint" id="wehint"></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
     setup: () => {}, begin: () => mkNext()
   },
+  herleid: {
+    section: 'herl', title: 'Herleiden', sub: 'Machten, wortels, breuken en substitutie',
+    opts: ['hlt', 'hulp3', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {hlt: ['macht', 'breuk', 'wortel', 'subst'], hulp3: 'nee', time: 180},
+    example: c => { const q = genHL(c); return `Voorbeeld: <b>${q.text}</b>`; },
+    tile: () => `<div class="mini-w"><span>3x² · 4x⁵</span><b>12x⁷ ✓</b></div>`,
+    frame: () => `<div class="qcard wq hcard" id="qcard"><div class="hlq" id="hlq"></div><div class="oorule" id="hlrule"></div></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
+    setup: () => {}, begin: () => hlNext()
+  },
   fout: {
     section: 'wia', title: 'Foutje zoeken', sub: 'Vind de fout en kies de beste verbetering',
     opts: ['hst', 'time'], choices: {time: [120, 180, 300, 480].map(t => ({v: t, name: timeLabel(t)}))},
@@ -1355,7 +1380,7 @@ const GAMES = {
 };
 // Jaarlagen en hoofdstukken. Nieuw hoofdstuk: voeg een regel toe aan SECTIONS met de jaarlaag erbij.
 const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D'], [5, 'Havo 5', '#FF9F1C']];
-const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5]];
+const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5], ['herl', 'Herleiden (§ 11.2)', 5]];
 const gamesIn = sid => Object.entries(GAMES).filter(([, g]) => g.section === sid);
 const gradeOf = gid => { const sc = SECTIONS.find(x => x[0] === (GAMES[gid] || {}).section); return sc ? sc[2] : null; };
 let GRADE = null;
@@ -2193,7 +2218,20 @@ const WIA_ERRT = {
   soort: {name: 'Soort fout niet herkend', desc: 'Verkeerde soort fout gekozen', tip: 'Bespreek het verschil tussen een wiskundige fout en een formuleringsfout.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
 };
+const HL_ERR = {
+  expmul: {name: 'Exponenten vermenigvuldigd', desc: 'x³ · x⁴ = x¹² in plaats van x⁷', tip: 'Bij vermenigvuldigen van machten met hetzelfde grondtal tel je de exponenten op.'},
+  expadd: {name: 'Exponenten opgeteld', desc: '(x³)² = x⁵ in plaats van x⁶', tip: 'Een macht van een macht: exponenten vermenigvuldigen. Schrijf het eventueel uit: x³ · x³.'},
+  haakje: {name: 'Getal niet mee verheven', desc: '(2x³)² = 2x⁶ in plaats van 4x⁶', tip: 'Alles binnen de haakjes gaat tot de macht, ook het getal.'},
+  coef: {name: 'Fout met het getal ervoor', desc: 'Getallen opgeteld of verkeerd vermenigvuldigd', tip: 'Behandel eerst de getallen, daarna de machten van de variabele.'},
+  teken: {name: 'Min-teken van de exponent', desc: '1/x³ = x³ in plaats van x⁻³', tip: 'Een macht onder de deelstreep krijgt een negatieve exponent: 1/xⁿ = x⁻ⁿ.'},
+  wortel: {name: 'Wortel als macht', desc: '√x = x² of x⁻⁰˒⁵ in plaats van x⁰˒⁵', tip: 'Oefen: √x = x^0,5 en ∛x = x^(1/3); x√x = x^1,5.'},
+  breuk: {name: 'Getal omgedraaid', desc: '6/(2x²) = 1/3 · x⁻² in plaats van 3x⁻²', tip: 'Alleen de macht verhuist naar boven met een min-teken; het getal deel je gewoon.'},
+  vrij: {name: 'Vrijmaken', desc: 'Verkeerd teruggerekend naar de variabele', tip: 'Eerst delen door het getal, dan de omgekeerde macht nemen (machtswortel): x = (y : a)^(1/n).'},
+  anders: {name: 'Andere fout', desc: '', tip: ''}
+};
 const STAT_TOPICS = {
+  herl: {name: 'Herleiden', g: ['h'], unit: 'vragen', fast: 20000, errs: HL_ERR, noLevel: true,
+    cats: [{id: 'macht', name: 'Machten', short: 'Machten', color: 'var(--sub)'}, {id: 'breuk', name: 'Breuken', short: 'Breuken', color: 'var(--mul)'}, {id: 'wortel', name: 'Wortels', short: 'Wortels', color: 'var(--add)'}, {id: 'subst', name: 'Substitutie', short: 'Subst.', color: 'var(--div)'}, {id: 'vrij', name: 'Vrijmaken', short: 'Vrij', color: 'var(--gold)'}]},
   neg: {name: 'Negatieve getallen', g: ['r', 'b'], unit: 'sommen', fast: 6000, errs: ERR,
     cats: OP_ORDER.map(o => ({id: o, name: OPS[o].name, short: o, color: `var(--${OPS[o].cls})`}))},
   vr: {name: 'Voorrangsregels', g: ['v', 'd'], unit: 'stappen', fast: 8000, errs: VR_ERR, noLevel: true,
@@ -2375,7 +2413,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {h: 'Herleiden', m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -3500,6 +3538,146 @@ function ooPick(i) {
   G.after = ooNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === ooNext) { G.after = null; ooNext(); } }, 9000));
 }
 
+/* ===================== Havo 5: Herleiden (machten, wortels, breuken, substitutie) ===================== */
+// Een term c·v^n wordt opgeslagen als {c, n}. Exponenten met een komma (0,5), derden als breuk (1/3).
+const HL_SUP = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹', '−': '⁻', ',': '˒', '/': 'ᐟ'};
+const hlR = x => Math.round(x * 1e6) / 1e6;
+function hlNum(x) { x = hlR(x); return (x < 0 ? '−' : '') + String(Math.abs(x)).replace('.', ','); }
+function hlExp(n) {
+  n = hlR(n);
+  if (Math.abs(n * 100 - Math.round(n * 100)) < 1e-6) return hlNum(n);
+  for (const d of [3, 6, 9]) if (Math.abs(n * d - Math.round(n * d)) < 1e-4) { const p = Math.round(n * d), g = (a, b) => b ? g(b, a % b) : Math.abs(a), k = g(p, d); return (p < 0 ? '−' : '') + Math.abs(p / k) + '/' + d / k; }
+  return hlNum(n);
+}
+// HTML van c·v^n (zonder vermenigvuldigingspunt, zoals in het boek: 3x², 0,5t⁻²)
+function hlT(t, v) {
+  const c = hlR(t.c), n = hlR(t.n);
+  if (n === 0) return hlNum(c);
+  const cs = c === 1 ? '' : c === -1 ? '−' : hlNum(c);
+  return `${cs}<i>${v}</i>${n === 1 ? '' : `<sup>${hlExp(n)}</sup>`}`;
+}
+const hlKey = t => hlR(t.c) + '|' + hlR(t.n);
+const hlFrac = (a, b) => `<span class="hfr"><span>${a}</span><span>${b}</span></span>`;
+const hlPow = (b, e) => `${b}<sup>${e}</sup>`;
+const HL_VARS = ['x', 't', 'q', 'p', 'a'];
+const HL_CATS = {macht: 'Machten', breuk: 'Breuken en negatieve exponenten', wortel: 'Wortels', subst: 'Substitutie', vrij: 'Vrijmaken'};
+const HL_RULE = {
+  macht: 'a<sup>p</sup> · a<sup>q</sup> = a<sup>p+q</sup> · a<sup>p</sup> : a<sup>q</sup> = a<sup>p−q</sup> · (a<sup>p</sup>)<sup>q</sup> = a<sup>p·q</sup> · (ab)<sup>p</sup> = a<sup>p</sup>b<sup>p</sup>',
+  breuk: '1/a<sup>n</sup> = a<sup>−n</sup> · c/(d·a<sup>n</sup>) = (c:d)·a<sup>−n</sup> · (c/a)<sup>n</sup> = c<sup>n</sup>·a<sup>−n</sup>',
+  wortel: '√a = a<sup>0,5</sup> · ∛a = a<sup>1/3</sup> · a√a = a<sup>1,5</sup> · 1/√a = a<sup>−0,5</sup> · √(c·a) = √c·√a',
+  subst: 'Vervang de variabele door de hele formule, mét haakjes. Werk daarna de haakjes weg met de rekenregels.',
+  vrij: 'y = a·x<sup>n</sup> → x<sup>n</sup> = y : a → x = (y : a)<sup>1/n</sup> = a<sup>−1/n</sup>·y<sup>1/n</sup>'
+};
+const hlPlain = h => h.replace(/<span class="hfr"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, '$1/($2)').replace(/<sup>(.*?)<\/sup>/g, '^$1').replace(/<[^>]+>/g, '');
+const pick = L => L[rnd(0, L.length - 1)];
+function genHL(cfg) {
+  const cats = cfg.hlt && cfg.hlt.length ? cfg.hlt : ['macht', 'breuk', 'wortel', 'subst'], cat = pick(cats), v = pick(HL_VARS);
+  const T = (c, n) => ({c, n}), q = {cat, v, wrong: []};
+  const W = (c, n, err) => q.wrong.push(Object.assign(T(c, n), {err}));
+  const vi = `<i>${v}</i>`;
+  if (cat === 'macht') {
+    const k = rnd(1, 3);
+    if (k === 1) { const a = rnd(2, 6), b = rnd(2, 5), p = rnd(2, 5), r = rnd(2, 4);
+      q.expr = `${a}${hlPow(vi, p)} · ${b}${hlPow(vi, r)}`; q.ans = T(a * b, p + r);
+      W(a * b, p * r, 'expmul'); W(a + b, p + r, 'coef'); W(a + b, p * r, 'coef');
+      q.why = `Getallen vermenigvuldigen: ${a} · ${b} = ${a * b}. Exponenten optellen: ${p} + ${r} = ${p + r}.`;
+    } else if (k === 2) { const a = rnd(2, 4), p = rnd(2, 4), e = rnd(2, 3);
+      q.expr = hlPow(`(${a}${hlPow(vi, p)})`, e); q.ans = T(a ** e, p * e);
+      W(a, p * e, 'haakje'); W(a ** e, p + e, 'expadd'); W(a * e, p * e, 'coef');
+      q.why = `Alles binnen de haakjes tot de macht ${e}: ${a}<sup>${e}</sup> = ${a ** e} en (${v}<sup>${p}</sup>)<sup>${e}</sup> = ${v}<sup>${p * e}</sup>.`;
+    } else { const b = pick([2, 4, 5]), m = rnd(2, 6), a = b * m, p = rnd(5, 8), r = rnd(2, p - 1);
+      q.expr = hlFrac(`${a}${hlPow(vi, p)}`, `${b}${hlPow(vi, r)}`); q.ans = T(m, p - r);
+      W(m, p + r, 'teken'); W(a - b, p - r, 'coef'); if ((p / r) % 1 === 0 && p / r !== p - r) W(m, p / r, 'expmul'); else W(m, p * r, 'expmul');
+      q.why = `Getallen delen: ${a} : ${b} = ${m}. Exponenten aftrekken: ${p} − ${r} = ${p - r}.`;
+    }
+  } else if (cat === 'breuk') {
+    const k = rnd(1, 3);
+    if (k === 1) { const a = rnd(2, 12), p = rnd(1, 4);
+      q.expr = hlFrac(a, p === 1 ? vi : hlPow(vi, p)); q.ans = T(a, -p);
+      W(a, p, 'teken'); W(1 / a, -p, 'breuk'); W(a, p > 1 ? -1 / p : -2, p > 1 ? 'wortel' : 'anders');
+      q.why = `${v}<sup>${p}</sup> staat onder de deelstreep, dus de exponent wordt negatief: ${a}/${v}<sup>${p}</sup> = ${a}${v}<sup>−${p}</sup>.`;
+    } else if (k === 2) { const b = pick([2, 4, 5]), a = pick([1, 3, 6, 7, 9, 10, 12].filter(x => x !== b)), p = rnd(1, 3), c = a / b;
+      q.expr = hlFrac(a, `${b}${p === 1 ? vi : hlPow(vi, p)}`); q.ans = T(c, -p);
+      W(c, p, 'teken'); W(b / a, -p, 'breuk'); W(a * b, -p, 'coef');
+      q.why = `Het getal deel je gewoon: ${a} : ${b} = ${hlNum(c)}. De macht gaat naar boven met een min-teken: ${v}<sup>−${p}</sup>.`;
+    } else { const a = rnd(2, 5), e = rnd(2, 3);
+      q.expr = hlPow(`(${hlFrac(a, vi)})`, e); q.ans = T(a ** e, -e);
+      W(a, -e, 'haakje'); W(a ** e, e, 'teken'); W(a * e, -e, 'coef');
+      q.why = `(${a}/${v})<sup>${e}</sup> = ${a ** e}/${v}<sup>${e}</sup> = ${a ** e}${v}<sup>−${e}</sup>.`;
+    }
+  } else if (cat === 'wortel') {
+    const k = rnd(1, 6), a = rnd(2, 9);
+    if (k === 1) { q.expr = `${a}√${vi}`; q.ans = T(a, .5); W(a, 2, 'wortel'); W(a, -.5, 'teken'); W(a / 2, 1, 'wortel');
+      q.why = `√${v} = ${v}<sup>0,5</sup>, dus ${a}√${v} = ${a}${v}<sup>0,5</sup>.`; }
+    else if (k === 2) { q.expr = `${a}${vi}√${vi}`; q.ans = T(a, 1.5); W(a, .5, 'wortel'); W(a, 2, 'wortel'); W(a, .5 * 1, 'wortel');
+      q.why = `${v}√${v} = ${v}<sup>1</sup> · ${v}<sup>0,5</sup> = ${v}<sup>1,5</sup>.`; }
+    else if (k === 3) { q.expr = hlFrac(a, `√${vi}`); q.ans = T(a, -.5); W(a, .5, 'teken'); W(a, -2, 'wortel'); W(1 / a, .5, 'breuk');
+      q.why = `√${v} = ${v}<sup>0,5</sup> staat onder de deelstreep: ${a}${v}<sup>−0,5</sup>.`; }
+    else if (k === 4) { const r = rnd(2, 6), b = r * r; q.expr = `√(${b}${vi})`; q.ans = T(r, .5); W(b, .5, 'wortel'); W(b / 2, .5, 'wortel'); W(r, 2, 'wortel');
+      q.why = `√(${b}${v}) = √${b} · √${v} = ${r}${v}<sup>0,5</sup>.`; }
+    else if (k === 5) { const p = pick([3, 5]); q.expr = `${a}√(${hlPow(vi, p)})`; q.ans = T(a, p / 2); W(a, p * 2, 'wortel'); W(a, p - .5, 'wortel'); W(a, p + .5, 'wortel');
+      q.why = `√(${v}<sup>${p}</sup>) = (${v}<sup>${p}</sup>)<sup>0,5</sup> = ${v}<sup>${hlExp(p / 2)}</sup>.`; }
+    else { const p = pick([1, 2]); q.expr = `${a}∛${p === 1 ? vi : `(${hlPow(vi, p)})`}`; q.ans = T(a, p / 3); W(a, p * 3, 'wortel'); W(a, 3 / p, 'wortel'); W(a, -p / 3, 'teken');
+      q.why = `∛(${v}<sup>${p}</sup>) = (${v}<sup>${p}</sup>)<sup>1/3</sup> = ${v}<sup>${hlExp(p / 3)}</sup>.`; }
+  } else if (cat === 'subst') {
+    const [Y, U] = pick([['N', 'p'], ['y', 'x'], ['A', 'q'], ['W', 'v'], ['K', 'm']]), w = v === U.toLowerCase() || v === 'x' && U === 'x' ? 't' : v;
+    const vv = w === U ? 't' : w, k = rnd(1, 3); q.v = vv; const vvi = `<i>${vv}</i>`, Ui = `<i>${U}</i>`;
+    if (k === 1) { const a = rnd(2, 5), m = rnd(2, 3), b = rnd(2, 3), kk = rnd(1, 3);
+      q.given = `${Y} = ${a}${hlPow(Ui, m)} en ${Ui} = ${b}${kk === 1 ? vvi : hlPow(vvi, kk)}`; q.ans = T(a * b ** m, m * kk);
+      W(a * b, m * kk, 'haakje'); W(a * b ** m, m + kk, 'expadd'); W((a * b) ** m, m * kk, 'coef');
+      q.why = `${Y} = ${a}·(${b}${vv}${kk === 1 ? '' : `<sup>${kk}</sup>`})<sup>${m}</sup> = ${a}·${b ** m}${vv}<sup>${m * kk}</sup> = ${a * b ** m}${vv}<sup>${m * kk}</sup>.`;
+    } else if (k === 2) { const b = 2, m = rnd(1, 2), a = pick([4, 8, 12, 16, 20]), kk = rnd(1, 3);
+      q.given = `${Y} = ${hlFrac(a, m === 1 ? Ui : hlPow(Ui, m))} en ${Ui} = ${b}${kk === 1 ? vvi : hlPow(vvi, kk)}`; q.ans = T(a / b ** m, -m * kk);
+      W(a / b ** m, m * kk, 'teken'); W(a / b, -m * kk, 'haakje'); W(a / b ** m, -(m + kk), 'expadd');
+      q.why = `${Y} = ${a}/(${b}${vv}${kk === 1 ? '' : `<sup>${kk}</sup>`})${m === 1 ? '' : `<sup>${m}</sup>`} = ${a}/(${b ** m}${vv}<sup>${m * kk}</sup>) = ${hlNum(a / b ** m)}${vv}<sup>−${m * kk}</sup>.`;
+    } else { const a = rnd(2, 5), r = rnd(2, 4), b = r * r, kk = pick([1, 2, 3]);
+      q.given = `${Y} = ${a}√${Ui} en ${Ui} = ${b}${kk === 1 ? vvi : hlPow(vvi, kk)}`; q.ans = T(a * r, kk / 2);
+      W(a * b, kk / 2, 'wortel'); W(a * r, kk * 2, 'wortel'); W(a * r, kk + .5, 'expadd');
+      q.why = `${Y} = ${a}√(${b}${vv}${kk === 1 ? '' : `<sup>${kk}</sup>`}) = ${a}·${r}·${vv}<sup>${hlExp(kk / 2)}</sup> = ${a * r}${vv}<sup>${hlExp(kk / 2)}</sup>.`;
+    }
+    q.Y = Y;
+  } else {
+    const [a, n, c] = pick([[4, 2, .5], [16, 2, .25], [25, 2, .2], [100, 2, .1], [8, 3, .5], [.25, 2, 2], [.01, 2, 10]]);
+    const Y = 'y'; q.v = 'y'; q.X = v === 'y' ? 'x' : v;
+    q.given = `${Y} = ${hlNum(a)}${hlPow(`<i>${q.X}</i>`, n)}`; q.ans = T(c, 1 / n);
+    W(1 / c, 1 / n, 'vrij'); W(c, n, 'vrij'); W(1 / a, 1 / n, 'vrij');
+    q.why = `${q.X}<sup>${n}</sup> = y : ${hlNum(a)}, dus ${q.X} = (y : ${hlNum(a)})<sup>${hlExp(1 / n)}</sup> = ${hlNum(c)}·y<sup>${hlExp(1 / n)}</sup>.`;
+  }
+  // antwoordopties: goed + 3 foute (uniek), aangevuld met algemene foute opties
+  const seen = new Set([hlKey(q.ans)]), opts = [{t: q.ans, ok: true}];
+  const fin = x => Math.abs(x * 1000 - Math.round(x * 1000)) < 1e-6;
+  for (const w of q.wrong) if (opts.length < 4 && !seen.has(hlKey(w)) && isFinite(w.c) && w.c !== 0 && fin(w.c)) { seen.add(hlKey(w)); opts.push({t: w, ok: false, err: w.err}); }
+  for (const d of [[1, 1], [2, 0], [1, -1], [-1, 0], [.5, 0]]) if (opts.length < 4) { const w = T(q.ans.c * (d[0] === -1 ? 1 : d[0] || 1) * (d[0] === .5 ? 1 : 1), q.ans.n + d[1] + (d[0] === -1 ? -2 * q.ans.n : 0)); if (!seen.has(hlKey(w))) { seen.add(hlKey(w)); opts.push({t: w, ok: false, err: 'anders'}); } }
+  q.opts = shuffle(opts);
+  const lhs = cat === 'subst' ? q.Y : cat === 'vrij' ? `<i>${q.X}</i>` : '';
+  q.prompt = cat === 'subst' ? `<div class="hgiven">${q.given}</div><div class="hask">Schrijf ${q.Y} in de vorm ${q.Y} = a·<i>${q.v}</i><sup>n</sup></div>`
+    : cat === 'vrij' ? `<div class="hgiven">${q.given}</div><div class="hask">Schrijf <i>${q.X}</i> in de vorm <i>${q.X}</i> = a·y<sup>n</sup></div>`
+    : `<div class="hgiven">${q.expr}</div><div class="hask">Schrijf in de vorm a·<i>${v}</i><sup>n</sup></div>`;
+  q.lhs = lhs; q.text = hlPlain(cat === 'subst' || cat === 'vrij' ? q.given : q.expr);
+  q.optHTML = o => `<span class="hterm">${lhs ? lhs + ' = ' : ''}${hlT(o.t, q.v)}</span>`;
+  return q;
+}
+
+function hlNext() {
+  G.hq = genHL(G.cfg); G.locked = false; G.qStart = performance.now(); flash(''); G.after = null;
+  const q = G.hq;
+  $('#hlq').innerHTML = q.prompt; $('#wexp').innerHTML = '';
+  $('#hlrule').innerHTML = G.cfg.hulp3 === 'ja' ? HL_RULE[q.cat] : '';
+  $('#wopts').innerHTML = q.opts.map((o, i) => `<button class="ans wopt hopt" data-fast="hl" data-arg="${i}">${q.optHTML(o)}</button>`).join('');
+}
+function hlPick(i) {
+  const q = G && G.hq; if (!G || !G.running || G.locked || !q) return;
+  const o = q.opts[+i]; if (!o) return; G.locked = true;
+  const btns = document.querySelectorAll('#wopts .hopt'), good = q.opts.find(x => x.ok);
+  recordGen('h', q.cat, o.ok, o.ok ? null : o.err || 'anders', q.text, hlPlain(q.optHTML(good)), hlPlain(q.optHTML(o)));
+  btns.forEach((b, k) => { if (q.opts[k].ok) b.classList.add('right'); });
+  if (o.ok) { award(10); beep(true); flash('good', 400); }
+  else { btns[+i].classList.add('wrong'); penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.text, given: hlPlain(q.optHTML(o))}); }
+  const tip = !o.ok && HL_ERR[o.err] && HL_ERR[o.err].name !== 'Andere fout' ? `<b>${HL_ERR[o.err].name}.</b> ` : '';
+  $('#wexp').innerHTML = `<div class="wfix ${o.ok ? '' : 'bad'}"><span>${o.ok ? 'Goed!' : 'Goed is: ' + q.optHTML(good)}</span>${tip}${q.why}</div>${o.ok ? '' : '<button class="btn primary wnx" data-act="wNext">Volgende ▶</button>'}`;
+  G.after = hlNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === hlNext) { G.after = null; hlNext(); } }, o.ok ? 1800 : 12000));
+}
+
 /* ===================== Voorrangsregels ===================== */
 // Tokens: {t:'n', v} | {t:'op', v:'+'|'−'|'×'|':'} | {t:'('} | {t:')'}
 const VR_LEVELS = [['×', ':'], ['+', '−']];
@@ -3762,6 +3940,12 @@ function duoQuestion(gid, cfg) {
       opts: q.shown.slice(1).map((t, k) => ({html: 'regel ' + (k + 1), ok: k + 1 === q.bad, err: q.err})).slice(0, 4),
       explain: `In regel ${q.bad} ging het mis (${FD_ERRNAME[q.err] || 'rekenfout'}). Goed was: = ${vrText(q.opts.find(x => x.ok).t)}`,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'd', vrKind(q.good[q.bad - 1], vrValid(q.good[q.bad - 1])[0]), o.ok ? 1 : 0, o.ok ? '' : q.err, Math.round(performance.now() - ms0), 0, `Fout zoeken: ${start}`, `regel ${q.bad}`, o.html])};
+  }
+  if (gid === 'herleid') {
+    const q = genHL(cfg), good = q.opts.find(o => o.ok);
+    return {prompt: `<div class="hlq duo">${q.prompt}</div>`, opts: q.opts.map(o => ({html: q.optHTML(o), ok: o.ok, err: o.err})),
+      explain: q.why, full: `${q.why}${cfg.hulp3 === 'ja' ? '' : `<div class="klfix">${HL_RULE[q.cat]}</div>`}`,
+      rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'h', q.cat, o.ok ? 1 : 0, o.ok ? '' : (o.err || 'anders'), Math.round(performance.now() - ms0), 0, q.text, hlPlain(q.optHTML(good)), hlPlain(o.html)])};
   }
   if (gid === 'maat') {
     const q = MK_SIT[rnd(0, MK_SIT.length - 1)];
@@ -4074,7 +4258,7 @@ function showSettings() {
           <div class="lvrow" style="margin-top:0"><b>Leerlingen tonen als</b><div class="seg">${[['karakter', 'Karakter', 'eigen figuur'], ['pixel', 'Pixel-foto', 'bewerkte foto'], ['foto', 'Foto', 'echte foto']].map(([v, n, sub]) => `<button class="${avMode() === v ? 'on' : ''}" data-act="avMode" data-arg="${v}">${n}<small>${sub}</small></button>`).join('')}</div></div>
           ${avMode() !== 'foto' ? `<div class="lvrow"><b>Stijl van de karakters</b><div class="seg avstyles">${[['street', 'Streetwear'], ['held', 'Helden'], ['dier', 'Dieren'], ['strak', 'Strak'], ['monster', 'Monsters'], ['robot', 'Robots'], ['pixel', 'Pixel']].map(([v, n]) => `<button class="${avStyle() === v ? 'on' : ''}" data-act="avStyle" data-arg="${v}"><span class="av char sm">${charSVG(4242, v)}</span>${n}</button>`).join('')}</div></div>` : ''}
           <div class="lvrow"><b>Weergavegrootte</b><div class="seg">${[[0.75, 'Klein'], [0.85, 'Normaal'], [1, 'Groot']].map(([v, n]) => `<button class="${zoomLv() === v ? 'on' : ''}" data-act="zoom" data-arg="${v}">${n}</button>`).join('')}</div></div>
-          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 29-10-2026</span></div>
+          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 31-10-2026</span></div>
           <div class="row between"><span>Kleuren stempelkaarten <small class="muted">(tik om te wisselen)</small></span><div class="kcrow">${kCards().map((k, i) => `<button class="kcbtn" style="--kc:${KCOL[k]}" data-act="kcol" data-arg="${i}"><b>${'ABCD'[i]}</b>${k}</button>`).join('')}</div></div>
           <div class="row between"><span>Geluid</span><button class="switch ${D.sound ? 'on' : ''}" data-act="sound" aria-label="Geluid"><i></i></button></div>
           <div class="row"><button class="btn" data-act="exportB">💾 Back-up opslaan</button><button class="btn" data-act="importB">📂 Back-up terugzetten</button></div>
@@ -4321,6 +4505,7 @@ function fastAct(b) {
   else if (f === 'gkey') gnKey(b.dataset.arg);
   else if (f === 'wb') wbAnswer(b.dataset.arg);
   else if (f === 'mk') mkPick(b.dataset.arg);
+  else if (f === 'hl') hlPick(b.dataset.arg);
   else if (f === 'oo') ooPick(b.dataset.arg);
   else if (f === 'wseg') weSeg(b.dataset.arg);
   else if (f === 'wkind') weKind(b.dataset.arg);
