@@ -658,7 +658,11 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .hgiven sup,.hopt sup,.hask sup,.hfr sup{font-size:.6em}
 .hask{font-size:clamp(1.1rem,2.6vmin,1.7rem);font-weight:700;color:#C9CFEA}
 .wfix span span{display:inline;font-family:inherit;font-style:normal;font-size:inherit;color:inherit;margin:0}.wfix span.hterm{font-size:1.15em;color:#fff;margin-left:.3rem}.wfix .hfr{display:inline-flex}.wfix .hfr>span{display:block}
-.hrt{white-space:nowrap}.hrt>span{border-top:.07em solid currentColor;padding:0 .1em;margin-left:.02em}
+.hrt{display:inline-flex;align-items:stretch;white-space:nowrap;vertical-align:bottom;margin-left:.05em}
+.hrs{width:.62em;flex:none;overflow:visible;fill:none;stroke:currentColor;stroke-width:max(1.6px,.075em);stroke-linejoin:round;stroke-linecap:round;margin-right:-.02em}
+.hrd{display:inline-block;border-top:max(1.6px,.075em) solid currentColor;padding:.06em .12em 0 .08em;line-height:1.15}
+.hrt:has(.hfr){vertical-align:middle}
+.wfix .hrt{display:inline-flex}.wfix .hrd{display:inline-block}
 .hfr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15}.hfr>span:first-child{border-bottom:.08em solid currentColor;padding:0 .2em}.hfr>span:last-child{padding:0 .2em}
 .hopt{font-size:clamp(1.6rem,4vmin,2.8rem);font-weight:700;text-transform:none}
 .hlq.duo .hgiven{font-size:clamp(1.4rem,3.6vmin,2.6rem)}.hlq.duo .hask{font-size:1rem}
@@ -3555,7 +3559,7 @@ const hlNum = x => { x = Math.round(x * 1e6) / 1e6; return (x < 0 ? '−' : '') 
 const hV = l => `<i>${l}</i>`;
 const hP = (b, e) => e === 1 ? b : `${b}<sup>${String(e).replace('-', '−')}</sup>`;
 const hF = (a, b) => `<span class="hfr"><span>${a}</span><span>${b}</span></span>`;
-const hR = x => `<span class="hrt">√<span>${x}</span></span>`;
+const hR = x => `<span class="hrt"><svg class="hrs" viewBox="0 0 10 20" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="M0.6 12.2 L2.8 10.9 L5.4 19.3 L9.7 0.35 L10.4 0.35"/></svg><span class="hrd">${x}</span></span>`;
 // c·var, met c = 1 weggelaten en c = −1 als −
 const hC = (c, v) => (v === '' ? hlNum(c) : (c === 1 ? '' : c === -1 ? '−' : hlNum(c)) + v);
 // som van termen [[c, v], …] met nette plus- en mintekens
@@ -3735,7 +3739,7 @@ function genHL(cfg) {
   q.optHTML = o => `<span class="hterm">${o.h}</span>`;
   return q;
 }
-const hlPlain = h => h.replace(/<span class="hfr"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, '($1)/($2)').replace(/<span class="hrt">√<span>(.*?)<\/span><\/span>/g, '√($1)').replace(/<sup>(.*?)<\/sup>/g, '^$1').replace(/<[^>]+>/g, '');
+const hlPlain = h => h.replace(/<span class="hfr"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, '($1)/($2)').replace(/<svg class="hrs".*?<\/svg>/g, '√').replace(/<span class="hrd">(.*?)<\/span><\/span>/g, '($1)').replace(/<sup>(.*?)<\/sup>/g, '^$1').replace(/<[^>]+>/g, '');
 function hlNext() {
   G.hq = genHL(G.cfg); G.locked = false; G.qStart = performance.now(); flash(''); G.after = null;
   const q = G.hq;
