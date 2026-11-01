@@ -668,6 +668,23 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .hlq.duo .hgiven{font-size:clamp(1.4rem,3.6vmin,2.6rem)}.hlq.duo .hask{font-size:1rem}
 .klq .hlq.duo .hgiven{font-size:clamp(2.4rem,7vmin,5rem)}.klq .hlq.duo .hask{font-size:clamp(1.2rem,2.6vmin,1.8rem)}
 .dans i,.kans i{font-family:"Cambria Math","Times New Roman",serif;font-style:italic}.dans sup,.kans sup{font-size:.6em}
+.hlwork{background:rgba(255,77,109,.07);border:1px solid rgba(255,77,109,.3);border-radius:1rem;padding:1rem 1.4rem;display:flex;flex-direction:column;gap:.7rem}
+.hlhead{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center}
+.hlbad{font-size:1.3rem;font-weight:700;color:#FF97AA}.hlbad .hterm{color:#FFC2CD}
+.hlerr{font-weight:800;background:rgba(255,210,63,.15);color:var(--gold);border-radius:.5rem;padding:.2rem .7rem}
+.hllab{font-family:var(--fd);font-style:italic;color:var(--good);font-size:1rem;text-transform:uppercase;letter-spacing:.03em}
+.hsteps{display:grid;grid-template-columns:max-content 1fr;gap:.5rem 2rem;align-items:center}
+.hsm{font-size:clamp(1.4rem,3.2vmin,2.2rem);font-weight:700;white-space:nowrap;line-height:1.35}
+.hsm i{font-family:"Cambria Math","Times New Roman",serif;font-style:italic;font-weight:600}.hsm sup{font-size:.6em}
+.hsn{color:#AEB6DA;font-size:clamp(1rem,2vmin,1.3rem)}
+.hltip{color:#DCE1F7;font-size:1.1rem}
+.hlfoot{display:flex;align-items:center;gap:1rem;justify-content:space-between;flex-wrap:wrap}
+.hlok{font-family:var(--fd);font-style:italic;font-size:1.6rem;color:var(--good);text-align:center}
+.timer.paused .timerfill{background:linear-gradient(90deg,#8F98BF,#5C6590)!important;box-shadow:none;animation:none}
+.ttext.paused::after{content:" ❚❚";font-size:.55em;vertical-align:.2em}
+.hlpause #wopts{display:none}.hlpause .hcard{padding:.6rem 1rem;flex:0 0 auto}.hlpause .hgiven{font-size:clamp(1.6rem,3.6vmin,2.6rem)}.hlpause .hask{font-size:1.1rem}.hlpause .oorule{display:none}
+.hlgood{font-size:1.3rem;font-weight:700;color:var(--good)}.hlgood .hterm{color:#B9F6D8}
+.klexp .hsteps{justify-content:center;text-align:left;margin:0 auto;width:max-content;max-width:100%}
 .wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
 #weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
 .ddesc mark{background:rgba(255,210,63,.3);color:inherit;border-radius:.3rem;padding:0 .2rem}
@@ -1585,7 +1602,9 @@ function startGame(player, classId) {
 }
 function tick() {
   if (!G || !G.running) return;
-  const now = performance.now(), dt = Math.min(0.05, (now - G.last) / 1000); G.last = now;
+  const now = performance.now(), dt = Math.min(0.05, (now - G.last) / 1000);
+  if (G.paused) G.end += now - G.last;   // tijd staat stil zolang de leerling de uitwerking bekijkt
+  G.last = now;
   const left = Math.max(0, G.end - now);
   const f = $('#tfill'); if (f) f.style.width = (left / (G.cfg.time * 1000) * 100) + '%';
   const tt = $('#ttext'); if (tt) tt.textContent = Math.ceil(left / 1000);
@@ -1593,6 +1612,17 @@ function tick() {
   if (G.onFrame) G.onFrame(dt, now);
   if (left <= 0) { finish(); return; }
   G.raf = requestAnimationFrame(tick);
+}
+/* Pauze: na een fout staat de tijd stil tot de leerling zelf op Volgende tikt. De tijd meet zo alleen denktijd. */
+function pauseClock() {
+  if (!G || G.paused) return; G.paused = true;
+  const tm = $('#timer'); if (tm) tm.classList.add('paused');
+  const tt = $('#ttext'); if (tt) tt.classList.add('paused');
+}
+function resumeClock() {
+  if (!G || !G.paused) return; G.paused = false; G.last = performance.now();
+  const tm = $('#timer'); if (tm) tm.classList.remove('paused');
+  const tt = $('#ttext'); if (tt) tt.classList.remove('paused');
 }
 /* Punten: goed = basis + reeksbonus, fout = −5 en de reeks stopt */
 const PENALTY = 5;
@@ -3043,7 +3073,7 @@ function gnNext() {
 function gnGo(q, step) {
   q.step = step; q.sel = {}; q.res = null; q.after = null; G.input = ''; G.locked = false; G.qStart = performance.now(); flash(''); gnRender();
 }
-function gnAfter(q) { if (G && G.running && G.gq === q && q.after) { const f = q.after; q.after = null; f(); } }
+function gnAfter(q) { if (G && G.running && G.gq === q && q.after) { const f = q.after; q.after = null; resumeClock(); f(); } }
 function gnRender(reveal) {
   const q = G.gq, c = G.cfg, hulp = c.hulp === 'ja', st = q.step;
   $('#qtext').innerHTML = st === 1 ? `Welke verhouding heb je nodig?<span class="gnsub">sin, cos of tan</span>`
@@ -3068,7 +3098,7 @@ function gnPick(v) {
   recordGen('g', 'kies', ok, ok ? null : 'formule', 'Verhouding kiezen: ' + q.descr, q.t, v);
   q.after = () => gnGo(q, 2);
   if (ok) { award(5); beep(true); flash('good', 400); gnPad(q); G.timers.push(setTimeout(() => gnAfter(q), 650)); }
-  else { penalty(); G.mistakes.push({q: `Verhouding bij ${q.descr}: ${q.t}`, given: v}); beep(false); flash('bad', 600); gnPad(q); $('#gnnote').innerHTML = gnStepExplain(q, 1); G.timers.push(setTimeout(() => gnAfter(q), 7000)); }
+  else { penalty(); G.mistakes.push({q: `Verhouding bij ${q.descr}: ${q.t}`, given: v}); beep(false); flash('bad', 600); gnPad(q); $('#gnnote').innerHTML = gnStepExplain(q, 1); pauseClock(); }
 }
 function gnSel(arg) {
   const q = G && G.gq; if (!G || !G.running || G.locked || !q || q.step !== 2) return;
@@ -3080,7 +3110,7 @@ function gnSel(arg) {
   q.done.push(`gegeven: ${gnGivenTxt(gk)}`, `gevraagd: ${gnAskedTxt(ak)}`);
   q.after = () => gnGo(q, 3);
   if (ok) { award(5); beep(true); flash('good', 400); gnPad(q); G.timers.push(setTimeout(() => gnAfter(q), 650)); }
-  else { penalty(); G.mistakes.push({q: `Gegeven/gevraagd bij ${q.descr}`, given: `${gnGivenTxt(q.sel.g)}; ${gnAskedTxt(q.sel.a)}`}); beep(false); flash('bad', 600); gnPad(q); $('#gnnote').innerHTML = gnStepExplain(q, 2); G.timers.push(setTimeout(() => gnAfter(q), 7000)); }
+  else { penalty(); G.mistakes.push({q: `Gegeven/gevraagd bij ${q.descr}`, given: `${gnGivenTxt(q.sel.g)}; ${gnAskedTxt(q.sel.a)}`}); beep(false); flash('bad', 600); gnPad(q); $('#gnnote').innerHTML = gnStepExplain(q, 2); pauseClock(); }
 }
 function gnExplain(q, r) {
   const t = q.t, role = gnRole;
@@ -3140,7 +3170,7 @@ function gnSubmit() {
     recordGen('g', q.type, false, err, q.eqTxt, ansTxt, given);
     penalty(); G.mistakes.push({q: `${q.eqTxt} → ${ansTxt}`, given}); beep(false); flash('bad', 700);
     gnRender({err, given});
-    q.after = gnNext; G.timers.push(setTimeout(() => gnAfter(q), 12000));
+    q.after = gnNext; pauseClock();
   }
 }
 
@@ -3392,7 +3422,7 @@ function wbAnswer(i) {
   btns[+i].classList.add('wrong'); penalty(); beep(false); flash('bad', 600);
   G.mistakes.push({q: G.wq.t.t, given: o.t});
   $('#wexp').innerHTML = `<div class="wfix bad"><span>Jij koos: ${esc(o.t)}</span>${esc(o.d)}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
-  G.after = wbNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === wbNext) { G.after = null; wbNext(); } }, 9000));
+  G.after = wbNext; pauseClock();
 }
 /* --- spel: Foutje zoeken --- */
 function weNext() {
@@ -3415,7 +3445,8 @@ function weRender() {
 function weFinish(ok, chosen) {
   const q = G.wq; q.step = 3; weRender();
   $('#wexp').innerHTML = `${ok ? '<div class="wgood">✓ Goed verbeterd!</div>' : `<div class="wbad">Jij koos: ${esc(chosen)}</div>`}<div class="wwhy">${esc(q.why)}</div><div class="wfix"><span>Zo had het moeten staan</span>${esc(q.fix)}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
-  G.after = weNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === weNext) { G.after = null; weNext(); } }, 20000));
+  G.after = weNext;
+  if (ok) G.timers.push(setTimeout(() => { if (G && G.running && G.after === weNext) { G.after = null; weNext(); } }, 20000)); else pauseClock();
 }
 function weSeg(i) {
   const q = G && G.wq; if (!G || !G.running || G.locked || !q || q.step !== 1) return;
@@ -3492,7 +3523,8 @@ function mkPick(k) {
   btns.forEach(b => { if (b.dataset.arg === q.m) b.classList.add('right'); });
   if (ok) { award(10); beep(true); flash('good', 400); } else { btn.classList.add('wrong'); penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.s, given: MK_MAAT[k]}); }
   $('#wexp').innerHTML = `<div class="wfix ${ok ? '' : 'bad'}"><span>${ok ? 'Goed!' : 'Het is: ' + esc(MK_MAAT[q.m])}</span>${esc(mkWhy(q))}</div><button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
-  G.after = mkNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === mkNext) { G.after = null; mkNext(); } }, ok ? 2500 : 9000));
+  G.after = mkNext;
+  if (ok) G.timers.push(setTimeout(() => { if (G && G.running && G.after === mkNext) { G.after = null; mkNext(); } }, 2500)); else pauseClock();
 }
 /* --- Gering, middelmatig of groot (formuleblad) --- */
 const OO = ['gering', 'middelmatig', 'groot'];
@@ -3587,27 +3619,27 @@ function genHL(cfg) {
     if (k === 1) { const c1 = rnd(2, 6), c2 = rnd(2, 6), p = rnd(2, 5), r = rnd(2, 5);
       expr = `${c1}${hP(a, p)} · ${c2}${hP(a, r)}`; good = `${c1 * c2}${hP(a, p + r)}`;
       W(`${c1 * c2}${hP(a, p * r)}`, 'expmul'); W(`${c1 + c2}${hP(a, p + r)}`, 'coef'); W(`${c1 + c2}${hP(a, p * r)}`, 'coef');
-      why = `Getallen vermenigvuldigen: ${c1} · ${c2} = ${c1 * c2}. Exponenten optellen: ${p} + ${r} = ${p + r}.`;
+      why = [[`${c1}${hP(a, p)} · ${c2}${hP(a, r)}`, ''], [`= ${c1} · ${c2} · ${hP(a, p)} · ${hP(a, r)}`, 'getallen bij elkaar, letters bij elkaar'], [`= ${c1 * c2}${hP(a, `${p}+${r}`)}`, 'a<sup>p</sup> · a<sup>q</sup> = a<sup>p+q</sup>'], [`= ${c1 * c2}${hP(a, p + r)}`, '']];
     } else if (k === 2) { const c2 = pick([2, 3, 4, 5]), m = rnd(2, 5), c1 = c2 * m, p = rnd(4, 8), r = rnd(2, p - 2);
       expr = hF(`${c1}${hP(a, p)}`, `${c2}${hP(a, r)}`); good = `${m}${hP(a, p - r)}`;
       W(`${m}${hP(a, p + r)}`, 'teken'); W(`${c1 - c2}${hP(a, p - r)}`, 'coef'); W(`${m}${hP(a, p % r === 0 && p / r !== p - r ? p / r : p * r)}`, 'expmul'); W(`${c1 * c2}${hP(a, p - r)}`, 'coef'); W(`${c1 - c2}${hP(a, p + r)}`, 'coef');
-      why = `Getallen delen: ${c1} : ${c2} = ${m}. Exponenten aftrekken: ${p} − ${r} = ${p - r}.`;
+      why = [[hF(`${c1}${hP(a, p)}`, `${c2}${hP(a, r)}`), ''], [`= ${hF(c1, c2)} · ${hF(hP(a, p), hP(a, r))}`, 'getallen en letters apart'], [`= ${m}${hP(a, `${p}−${r}`)}`, 'a<sup>p</sup>/a<sup>q</sup> = a<sup>p−q</sup>'], [`= ${m}${hP(a, p - r)}`, '']];
     } else if (k === 3) { const c = rnd(2, 3), p = rnd(2, 4), e = rnd(2, 4), ce = c ** e;
       expr = hP(`(${c}${hP(a, p)})`, e); good = `${ce}${hP(a, p * e)}`;
       W(`${c}${hP(a, p * e)}`, 'haakje'); W(`${ce}${hP(a, p + e)}`, 'expadd'); W(`${c * e}${hP(a, p * e)}`, 'coef'); W(`${ce}${hP(a, p)}`, 'haakje'); W(`${c}${hP(a, p + e)}`, 'expadd'); W(`${2 * ce}${hP(a, p * e)}`, 'coef');
-      why = `(ab)<sup>p</sup> = a<sup>p</sup>b<sup>p</sup>: ${c}<sup>${e}</sup> = ${ce} en (${L}<sup>${p}</sup>)<sup>${e}</sup> = ${L}<sup>${p * e}</sup>.`;
+      why = [[hP(`(${c}${hP(a, p)})`, e), ''], [`= ${hP(c, e)} · ${hP(`(${hP(a, p)})`, e)}`, '(ab)<sup>p</sup> = a<sup>p</sup>b<sup>p</sup>: ook het getal'], [`= ${ce}${hP(a, `${p}·${e}`)}`, '(a<sup>p</sup>)<sup>q</sup> = a<sup>p·q</sup>'], [`= ${ce}${hP(a, p * e)}`, '']];
     } else if (k === 4) { const p = rnd(2, 4), r = p + rnd(1, 3), d = r - p;
       ask = 'Schrijf als één macht'; expr = hF(hP(a, p), hP(a, r)); good = hP(a, -d);
       W(hP(a, d), 'teken'); W(hP(a, -(p + r)), 'expadd'); W(hP(a, p * r), 'expmul');
-      why = `${L}<sup>${p}</sup>/${L}<sup>${r}</sup> = ${L}<sup>${p}−${r}</sup> = ${L}<sup>−${d}</sup> = 1/${L}<sup>${d}</sup>.`;
+      why = [[hF(hP(a, p), hP(a, r)), ''], [`= ${hP(a, `${p}−${r}`)}`, 'a<sup>p</sup>/a<sup>q</sup> = a<sup>p−q</sup>'], [`= ${hP(a, -d)}`, `dat is hetzelfde als ${hF(1, hP(a, d))}`]];
     } else if (k === 5) { const n = rnd(1, 6);
       ask = 'Werk de haakjes weg'; expr = hP(`(${a} + ${n})`, 2); good = hS([[1, hP(a, 2)], [2 * n, a], [n * n, '']]);
       W(hS([[1, hP(a, 2)], [n * n, '']]), 'kwadraat'); W(hS([[1, hP(a, 2)], [n, a], [n * n, '']]), 'kwadraat'); W(hS([[1, hP(a, 2)], [2 * n, a], [2 * n, '']]), 'kwadraat'); W(hS([[2, a], [2 * n, '']]), 'kwadraat');
-      why = `(${L} + ${n})<sup>2</sup> = (${L} + ${n})(${L} + ${n}) = ${L}<sup>2</sup> + ${n}${L} + ${n}${L} + ${n * n} = ${L}<sup>2</sup> + ${2 * n}${L} + ${n * n}.`;
+      why = [[hP(`(${a} + ${n})`, 2), ''], [`= (${a} + ${n})(${a} + ${n})`, 'schrijf het kwadraat uit'], [`= ${hP(a, 2)} + ${hC(n, a)} + ${hC(n, a)} + ${n * n}`, 'elke term met elke term'], [`= ${hP(a, 2)} + ${2 * n}${a} + ${n * n}`, '']];
     } else { const c = rnd(2, 9), p = rnd(2, 5);
       expr = `${c}${hP(a, 0)} · ${hP(a, p)}`; good = hP(a, p).replace(/^/, `${c}`);
       W(hP(a, p), 'nul'); W('0', 'nul'); W(`${c}${hP(a, p + 1)}`, 'nul');
-      why = `${L}<sup>0</sup> = 1, dus ${c}${L}<sup>0</sup> · ${L}<sup>${p}</sup> = ${c} · ${L}<sup>${p}</sup> = ${c}${L}<sup>${p}</sup>.`;
+      why = [[`${c}${hP(a, 0)} · ${hP(a, p)}`, ''], [`= ${c} · 1 · ${hP(a, p)}`, `${hP(a, 0)} = 1`], [`= ${c}${hP(a, p)}`, '']];
     }
   } else if (cat === 'wortel') {
     const k = pick([1, 2, 3, 4, 5, 6]), b = hV(L === 'a' ? 'b' : 'a');
@@ -3615,55 +3647,55 @@ function genHL(cfg) {
       expr = `${m}${hR(a)} + ${n}${hR(a)} − ${j === 1 ? '' : j}${hR(a)}`; good = hC(s, hR(a));
       W(hC(m + n + j, hR(a)), 'teken'); W(hC(s, hR(`${3}${a}`)).replace('3', String(3)), 'wortelop'); W(hC(s, a), 'wortelweg');
       wrong[1] = s > 0 ? {h: hR(hC(s, a)), err: 'wortelop'} : {h: hC(-s, hR(a)), err: 'teken'}; W(hC(m * n - j, hR(a)), 'coef'); W(hC(m + n, hR(a)), 'teken');
-      why = `Gelijke wortels tel je op als gewone termen: ${m} + ${n} − ${j} = ${hlNum(s)}, dus ${hC(s, '√' + L)}.`;
+      why = [[`${m}${hR(a)} + ${n}${hR(a)} − ${j === 1 ? '' : j}${hR(a)}`, ''], [`= (${m} + ${n} − ${j})${hR(a)}`, 'gelijke wortels tel je op als gewone termen'], [`= ${hC(s, hR(a))}`, '']];
     } else if (k === 2) { const m = rnd(1, 4), j = rnd(2, 6), n = rnd(2, 5), s = m - j;
       expr = `${hC(m, hR(a))} + ${n}${hR(b)} − ${j}${hR(a)}`; good = hS([[s, hR(a)], [n, hR(b)]]);
       W(hC(m + n - j, hR(a + b)), 'wortelop'); W(hC(m + n - j, hR(`${a} + ${b}`)), 'wortelop'); W(hS([[m + j, hR(a)], [n, hR(b)]]), 'teken');
-      why = `Alleen gelijke wortels kun je samennemen: ${m}√${L} − ${j}√${L} = ${hC(s, '√' + L)}. √${L} + √${b.replace(/<[^>]+>/g, '')} kan niet verder.`;
+      why = [[`${hC(m, hR(a))} + ${n}${hR(b)} − ${j}${hR(a)}`, ''], [`= ${hC(m, hR(a))} − ${j}${hR(a)} + ${n}${hR(b)}`, 'zet gelijke wortels bij elkaar'], [`= ${hS([[s, hR(a)], [n, hR(b)]])}`, `√${L} + √${L === 'a' ? 'b' : 'a'} kan niet samen`]];
     } else if (k === 3) { const m = rnd(2, 5), n = rnd(2, 5), c = pick([2, 3, 5, 6, 7]);
       expr = `${m}${hR(c)} · ${n}${hR(a)}`; good = `${m * n}${hR(c + a)}`;
       W(`${m + n}${hR(c + a)}`, 'coef'); W(`${m * n}${hR(`${c} + ${a}`)}`, 'wortelop'); W(`${m * n * c}${hR(a)}`, 'wortelweg');
-      why = `√A · √B = √(A·B): ${m} · ${n} = ${m * n} en √${c} · √${L} = √(${c}${L}), dus ${m * n}√(${c}${L}).`;
+      why = [[`${m}${hR(c)} · ${n}${hR(a)}`, ''], [`= ${m} · ${n} · ${hR(c)} · ${hR(a)}`, 'getallen bij elkaar, wortels bij elkaar'], [`= ${m * n}${hR(`${c} · ${a}`)}`, '√A · √B = √(A·B)'], [`= ${m * n}${hR(c + a)}`, '']];
     } else if (k === 4) { const n = pick([2, 3]), q = rnd(2, 3), m = n * q, B = pick([2, 3, 5]), s = pick([2, 3]), A = B * s * s;
       ask = 'Bereken'; expr = hF(`${m}${hR(A)}`, `${n}${hR(B)}`); good = String(q * s);
       W(String(q * s * s), 'wortelweg'); W(`${q}${hR(s)}`, 'wortelweg'); W(String((m - n) * s), 'coef'); W(String(q + s), 'coef'); W(String(m * s), 'coef'); W(String(m + s), 'coef'); W(String(m * s * s), 'coef');
-      why = `√A/√B = √(A/B): ${m}/${n} = ${q} en √${A}/√${B} = √${s * s} = ${s}, dus ${q} · ${s} = ${q * s}.`;
+      why = [[hF(`${m}${hR(A)}`, `${n}${hR(B)}`), ''], [`= ${hF(m, n)} · ${hR(hF(A, B))}`, '√A/√B = √(A/B)'], [`= ${q} · ${hR(s * s)}`, ''], [`= ${q} · ${s} = ${q * s}`, '']];
     } else if (k === 5) { const m = rnd(2, 8), n = rnd(2, 8), s = pick([2, 3, 4, 5]), t = pick([2, 3, 4, 5].filter(x => x !== s));
       expr = `${m}${hR(`${s * s}${a}`)} + ${n}${hR(`${t * t}${a}`)}`; good = `${m * s + n * t}${hR(a)}`;
       W(`${m * s * s + n * t * t}${hR(a)}`, 'wortelweg'); W(`${m + n}${hR(`${s * s + t * t}${a}`)}`, 'wortelop'); W(`${m * s + n * t}${a}`, 'wortelweg');
-      why = `√(${s * s}${L}) = ${s}√${L} en √(${t * t}${L}) = ${t}√${L}: ${m} · ${s} + ${n} · ${t} = ${m * s + n * t}, dus ${m * s + n * t}√${L}.`;
+      why = [[`${m}${hR(`${s * s}${a}`)} + ${n}${hR(`${t * t}${a}`)}`, ''], [`= ${m} · ${hR(s * s)} · ${hR(a)} + ${n} · ${hR(t * t)} · ${hR(a)}`, 'haal het kwadraat uit de wortel'], [`= ${m} · ${s}${hR(a)} + ${n} · ${t}${hR(a)}`, ''], [`= ${m * s}${hR(a)} + ${n * t}${hR(a)}`, ''], [`= ${m * s + n * t}${hR(a)}`, 'gelijke wortels optellen']];
     } else { const s = rnd(2, 10);
       expr = hR(`${s * s}${a}`); good = `${s}${hR(a)}`;
       W(`${s * s}${hR(a)}`, 'wortelweg'); W(`${s}${a}`, 'wortelweg'); W(`${hlNum(s * s / 2)}${hR(a)}`, 'wortelweg'); W(`${s * s}${a}`, 'wortelweg'); W(`${2 * s}${hR(a)}`, 'coef');
-      why = `√(${s * s}${L}) = √${s * s} · √${L} = ${s}√${L}.`;
+      why = [[hR(`${s * s}${a}`), ''], [`= ${hR(s * s)} · ${hR(a)}`, '√(A·B) = √A · √B'], [`= ${s}${hR(a)}`, '']];
     }
   } else if (cat === 'breuk') {
     const k = pick([1, 2, 3, 4, 5, 6]), B2 = L === 'a' ? 'b' : 'a', b = hV(B2);
     if (k === 1) { const c = rnd(2, 9), d = rnd(2, 9);
       ask = 'Schrijf als één breuk'; expr = `${hF(c, a)} · ${hF(d, b)}`; good = hF(c * d, a + b);
       W(hF(c * d, `${a} + ${b}`), 'breukmaal'); W(hF(c + d, a + b), 'breukmaal'); W(hF(`${c}${b}`, `${d}${a}`), 'breukmaal'); W(hF(c * d, a), 'breukmaal');
-      why = `Teller keer teller en noemer keer noemer: ${c} · ${d} = ${c * d} en ${L} · ${B2} = ${L}${B2}.`;
+      why = [[`${hF(c, a)} · ${hF(d, b)}`, ''], [`= ${hF(`${c} · ${d}`, `${a} · ${b}`)}`, 'teller · teller en noemer · noemer'], [`= ${hF(c * d, a + b)}`, '']];
     } else if (k === 2) { const d = pick([2, 3, 4]), c = d * rnd(2, 5);
       ask = 'Schrijf als één breuk'; expr = `${hF(c, a)} : ${hF(d, b)}`; good = hF(`${c / d}${b}`, a);
       W(hF(c * d, a + b), 'breukmaal'); W(hF(`${c / d}${a}`, b), 'breukmaal'); W(hF(c / d, a + b), 'breukmaal');
-      why = `Delen door een breuk is vermenigvuldigen met het omgekeerde: ${c}/${L} · ${B2}/${d} = ${c}${B2}/(${d}${L}) = ${c / d}${B2}/${L}.`;
+      why = [[`${hF(c, a)} : ${hF(d, b)}`, ''], [`= ${hF(c, a)} · ${hF(b, d)}`, 'delen = keer het omgekeerde'], [`= ${hF(`${c}${b}`, `${d}${a}`)}`, ''], [`= ${hF(`${c / d}${b}`, a)}`, `teller en noemer gedeeld door ${d}`]];
     } else if (k === 3) { const d = pick([2, 3, 4, 5]), m = rnd(2, 9), c = d * m;
       expr = hF(`${c}${a}`, d); good = `${m}${a}`;
       W(String(m), 'breukmaal'); W(`${c - d}${a}`, 'coef'); W(hF(m, a), 'breukmaal'); W(`${c * d}${a}`, 'breukmaal');
-      why = `${c}${L}/${d} = ${c}/${d} · ${L} = ${m}${L}.`;
+      why = [[hF(`${c}${a}`, d), ''], [`= ${hF(c, d)} · ${a}`, ''], [`= ${m}${a}`, '']];
     } else if (k === 4) { const c = rnd(2, 9), d = rnd(2, 9);
       ask = 'Schrijf als één breuk'; expr = `${hF(c, a)} + ${hF(d, b)}`; good = hF(`${c}${b} + ${d}${a}`, a + b);
       W(hF(c + d, `${a} + ${b}`), 'gelijknamig'); W(hF(c + d, a + b), 'gelijknamig'); W(hF(`${c}${a} + ${d}${b}`, a + b), 'gelijknamig');
-      why = `Eerst gelijknamig maken: ${c}/${L} = ${c}${B2}/(${L}${B2}) en ${d}/${B2} = ${d}${L}/(${L}${B2}). Dan de tellers optellen.`;
+      why = [[`${hF(c, a)} + ${hF(d, b)}`, ''], [`= ${hF(`${c}${b}`, a + b)} + ${hF(`${d}${a}`, a + b)}`, 'eerst gelijknamig maken'], [`= ${hF(`${c}${b} + ${d}${a}`, a + b)}`, 'tellers optellen']];
     } else if (k === 5) { const c = rnd(2, 9), m = rnd(2, 6);
       ask = 'Schrijf als één breuk'; expr = `${hF(c, a)} − ${m}${a}`; good = hF(`${c} − ${m}${hP(a, 2)}`, a);
       W(hF(`${c} − ${m}${a}`, a), 'gelijknamig'); W(hF(hlNum(c - m), a), 'gelijknamig'); W(hF(`${c} − ${m}${hP(a, 2)}`, hP(a, 2)), 'gelijknamig');
-      why = `Schrijf ${m}${L} als breuk met noemer ${L}: ${m}${L} = ${m}${L}<sup>2</sup>/${L}. Dan: (${c} − ${m}${L}<sup>2</sup>)/${L}.`;
+      why = [[`${hF(c, a)} − ${m}${a}`, ''], [`= ${hF(c, a)} − ${hF(`${m}${a}`, 1)}`, ''], [`= ${hF(c, a)} − ${hF(`${m}${hP(a, 2)}`, a)}`, `gelijknamig: teller en noemer keer ${a}`], [`= ${hF(`${c} − ${m}${hP(a, 2)}`, a)}`, '']];
     } else { const al = pick([0.5, 1.5, 2, 2.5]), be = rnd(2, 6), ga = rnd(2, 9), de = rnd(1, 4);
       expr = `${hF(hS([[al, hP(a, 2)], [-be, a], [ga, '']]), a)} + ${a} − ${de}`;
       good = `${hS([[al + 1, a], [-(be + de), '']])} + ${hF(ga, a)}`;
       W(hS([[al + 1, hP(a, 2)], [-(be + de), a], [ga, '']]), 'splitsen'); W(hS([[al + 1, a], [-(be + de), ''], [ga, '']]), 'splitsen'); W(`${hS([[al + 1, a], [-(be - de), '']])} + ${hF(ga, a)}`, 'teken');
-      why = `Splits de breuk: ${hlNum(al)}${L}<sup>2</sup>/${L} = ${hlNum(al)}${L}, ${be}${L}/${L} = ${be} en ${ga}/${L} blijft staan. Tel daarna ${L} − ${de} erbij op.`;
+      why = [[`${hF(hS([[al, hP(a, 2)], [-be, a], [ga, '']]), a)} + ${a} − ${de}`, ''], [`= ${hF(`${hlNum(al)}${hP(a, 2)}`, a)} − ${hF(`${be}${a}`, a)} + ${hF(ga, a)} + ${a} − ${de}`, 'splits de breuk'], [`= ${hlNum(al)}${a} − ${be} + ${hF(ga, a)} + ${a} − ${de}`, ''], [`= ${hS([[al + 1, a], [-(be + de), '']])} + ${hF(ga, a)}`, 'gelijke termen samen']];
     }
   } else if (cat === 'verg') {
     const k = pick([1, 2, 3]);
@@ -3673,15 +3705,15 @@ function genHL(cfg) {
       expr = `${hF(a, kk)} = ${hF(c, `${m}${a}`)}`; good = `${a} = ${s} ∨ ${a} = −${s}`;
       W(`${a} = ${s}`, 'plusmin'); W(`${a} = ${s * s} ∨ ${a} = −${s * s}`, 'wortelweg'); W(`${a} = ${hlNum(c * kk / m / 2)}`, 'kruislings');
       if (wrong[2].h === good || c * kk / m / 2 === s) wrong[2] = {h: `${a} = ${hlNum(kk * c)}`, err: 'kruislings'};
-      why = `Kruislings: ${L} · ${m}${L} = ${kk} · ${c}, dus ${m}${L}<sup>2</sup> = ${kk * c}, ${L}<sup>2</sup> = ${s * s}, ${L} = ${s} ∨ ${a} = −${s}.`;
+      why = [[`${hF(a, kk)} = ${hF(c, `${m}${a}`)}`, ''], [`${a} · ${m}${a} = ${kk} · ${c}`, 'kruislings vermenigvuldigen'], [`${m}${hP(a, 2)} = ${kk * c}`, ''], [`${hP(a, 2)} = ${s * s}`, `delen door ${m}`], [`${a} = ${s} ∨ ${a} = −${s}`, 'twee oplossingen!']];
     } else if (k === 2) { const [c, kk] = pick([[7, 5], [9, 2], [3, 4], [6, 8], [9, 4], [8, 5], [3, 2]]);
       expr = `${hF(c, a)} = ${kk}`; good = `${a} = ${hlNum(c / kk)}`;
       W(`${a} = ${c * kk}`, 'kruislings'); W(`${a} = ${hF(kk, c)}`, 'kruislings'); W(`${a} = ${hlNum(c - kk)}`, 'anders');
-      why = `${c}/${L} = ${kk} → ${kk}${L} = ${c} → ${L} = ${c}/${kk} = ${hlNum(c / kk)}.`;
+      why = [[`${hF(c, a)} = ${kk}`, ''], [`${kk}${a} = ${c}`, 'A/B = C → A = B · C'], [`${a} = ${hF(c, kk)} = ${hlNum(c / kk)}`, `delen door ${kk}`]];
     } else { const kk = rnd(2, 5), c = rnd(2, 9), p = rnd(1, 9);
       expr = `${hF(`${a} + ${p}`, kk)} = ${c}`; good = `${a} = ${hlNum(kk * c - p)}`;
       W(`${a} = ${hlNum(kk * c + p)}`, 'teken'); W(`${a} = ${hlNum(c - p)}`, 'kruislings'); W(`${a} = ${hlNum(kk * (c - p))}`, 'anders'); W(`${a} = ${hlNum(kk * c)}`, 'anders');
-      why = `${L} + ${p} = ${kk} · ${c} = ${kk * c}, dus ${L} = ${kk * c} − ${p} = ${hlNum(kk * c - p)}.`;
+      why = [[`${hF(`${a} + ${p}`, kk)} = ${c}`, ''], [`${a} + ${p} = ${kk} · ${c} = ${kk * c}`, `keer ${kk}`], [`${a} = ${kk * c} − ${p} = ${hlNum(kk * c - p)}`, `min ${p}`]];
     }
   } else if (cat === 'subst') {
     const k = pick([1, 2, 3, 4]);
@@ -3689,45 +3721,45 @@ function genHL(cfg) {
       const u = hV(U), x = hV(X); ask = `Druk ${Y} uit in ${x}`;
       expr = `${Y} = ${m}${u} + ${n} en ${u} = ${hP(x, 2)} − ${j}${x}`; good = `${Y} = ${hS([[m, hP(x, 2)], [-m * j, x], [n, '']])}`;
       W(`${Y} = ${hS([[m, hP(x, 2)], [-j, x], [n, '']])}`, 'haakje'); W(`${Y} = ${hS([[m, hP(x, 2)], [-m * j, x], [m * n, '']])}`, 'haakje'); W(`${Y} = ${hS([[m, hP(x, 2)], [m * j, x], [n, '']])}`, 'teken');
-      why = `${Y} = ${m}(${X}<sup>2</sup> − ${j}${X}) + ${n} = ${m}${X}<sup>2</sup> − ${m * j}${X} + ${n}. Vergeet de haakjes niet.`;
+      why = [[`${Y} = ${m}${u} + ${n}`, ''], [`${Y} = ${m}(${hP(x, 2)} − ${j}${x}) + ${n}`, `vervang ${u}, mét haakjes`], [`${Y} = ${hS([[m, hP(x, 2)], [-m * j, x], [n, '']])}`, 'haakjes wegwerken']];
     } else if (k === 2) { const c = pick([12, 15, 20, 25]), d = pick(['2,5', '3,74', '1,5', '4,2']);
       ask = `Druk ${hV('v')} uit in ${hV('M')} en ${hV('R')}`; expr = `${hV('Z')} = ${c} · ${hF(hV('M'), hV('R'))} en ${hV('v')} = ${hF(hV('Z'), d)}`;
       good = `${hV('v')} = ${hF(`${c}${hV('M')}`, `${d}${hV('R')}`)}`;
       W(`${hV('v')} = ${hF(`${c} · ${d}${hV('M')}`, hV('R'))}`, 'breukmaal'); W(`${hV('v')} = ${hF(`${c}${hV('M')}${hV('R')}`, d)}`, 'breukmaal'); W(`${hV('v')} = ${hF(`${d}${hV('M')}`, `${c}${hV('R')}`)}`, 'breukmaal');
-      why = `Vervang ${hV('Z')}: ${hV('v')} = (${c} · ${hV('M')}/${hV('R')}) / ${d} = ${c}/${d} · ${hV('M')}/${hV('R')} = ${c}${hV('M')}/(${d}${hV('R')}).`;
+      why = [[`${hV('v')} = ${hF(hV('Z'), d)}`, ''], [`${hV('v')} = ${hF(`${c} · ${hF(hV('M'), hV('R'))}`, d)}`, `vervang ${hV('Z')}`], [`${hV('v')} = ${hF(c, d)} · ${hF(hV('M'), hV('R'))}`, ''], [`${hV('v')} = ${hF(`${c}${hV('M')}`, `${d}${hV('R')}`)}`, 'teller · teller en noemer · noemer']];
     } else if (k === 3) { const [c, d] = pick([[10, 4], [12, 5], [8, 2], [15, 4]]), A = pick([200, 180, 240]), bb = pick([0.6, 0.4, 0.8]);
       const top = c * A / d, bot = Math.round(c * bb / d * 1000) / 1000;
       ask = `Schrijf ${hV('v')} in de vorm ${hF(`a − b · ${hV('L')}`, hV('R'))}`; expr = `${hV('M')} = ${A} − ${hlNum(bb)} · ${hV('L')} en ${hV('v')} = ${hF(`${c}${hV('M')}`, `${d}${hV('R')}`)}`;
-      good = `${hV('v')} = ${hF(`${hlNum(top)} − ${hlNum(bot)}${hV('L')}`, hV('R'))}`;
-      W(`${hV('v')} = ${hF(`${hlNum(top)} − ${hlNum(bb)}${hV('L')}`, hV('R'))}`, 'haakje'); W(`${hV('v')} = ${hF(`${hlNum(c * A)} − ${hlNum(c * bb)}${hV('L')}`, hV('R'))}`, 'breukmaal'); W(`${hV('v')} = ${hF(`${hlNum(A / d)} − ${hlNum(bb / d)}${hV('L')}`, hV('R'))}`, 'haakje');
-      why = `${hV('v')} = ${c}(${A} − ${hlNum(bb)}${hV('L')})/(${d}${hV('R')}) = (${hlNum(c * A)} − ${hlNum(c * bb)}${hV('L')})/(${d}${hV('R')}). Deel teller en noemer door ${d}: (${hlNum(top)} − ${hlNum(bot)}${hV('L')})/${hV('R')}.`;
+      good = `${hV('v')} = ${hF(`${hlNum(top)} − ${hC(bot, hV('L'))}`, hV('R'))}`;
+      W(`${hV('v')} = ${hF(`${hlNum(top)} − ${hC(bb, hV('L'))}`, hV('R'))}`, 'haakje'); W(`${hV('v')} = ${hF(`${hlNum(c * A)} − ${hC(c * bb, hV('L'))}`, hV('R'))}`, 'breukmaal'); W(`${hV('v')} = ${hF(`${hlNum(A / d)} − ${hC(bb / d, hV('L'))}`, hV('R'))}`, 'haakje');
+      why = [[`${hV('v')} = ${hF(`${c}${hV('M')}`, `${d}${hV('R')}`)}`, ''], [`${hV('v')} = ${hF(`${c}(${A} − ${hC(bb, hV('L'))})`, `${d}${hV('R')}`)}`, `vervang ${hV('M')}, mét haakjes`], [`${hV('v')} = ${hF(`${hlNum(c * A)} − ${hC(c * bb, hV('L'))}`, `${d}${hV('R')}`)}`, 'haakjes wegwerken'], [`${hV('v')} = ${hF(`${hlNum(top)} − ${hC(bot, hV('L'))}`, hV('R'))}`, `teller en noemer gedeeld door ${d}`]];
     } else { const kk = rnd(2, 9) * 2, m = rnd(2, 5), n = rnd(1, 9), t = hV('t'), x = hV('x');
       ask = `Druk ${hV('y')} uit in ${t}`; expr = `${hV('y')} = ${hF(kk, x)} en ${x} = ${m}${t} + ${n}`; good = `${hV('y')} = ${hF(kk, `${m}${t} + ${n}`)}`;
       W(`${hV('y')} = ${hF(kk, `${m}${t}`)} + ${hF(kk, n)}`, 'som'); W(`${hV('y')} = ${hF(kk, `${m}${t}`)} + ${n}`, 'haakje'); W(`${hV('y')} = ${hF(kk, m)}${t} + ${n}`, 'haakje');
-      why = `Vervang ${x} door (${m}${t} + ${n}): ${hV('y')} = ${kk}/(${m}${t} + ${n}). Let op: ${kk}/(${m}${t} + ${n}) is níet ${kk}/(${m}${t}) + ${kk}/${n}.`;
+      why = [[`${hV('y')} = ${hF(kk, x)}`, ''], [`${hV('y')} = ${hF(kk, `${m}${t} + ${n}`)}`, `vervang ${x}, de hele som in de noemer`], [`${hF(kk, `${m}${t} + ${n}`)} ≠ ${hF(kk, `${m}${t}`)} + ${hF(kk, n)}`, 'een som in de noemer mag je niet splitsen']];
     }
   } else {
     const k = pick([1, 2, 3, 4, 5]);
     if (k === 1) { const m = rnd(2, 9), n = rnd(1, 12), x = hV('x'), y = hV('y');
       ask = `Maak ${x} vrij`; expr = `${y} = ${m}${x} + ${n}`; good = `${x} = ${hF(`${y} − ${n}`, m)}`;
       W(`${x} = ${hF(`${y} + ${n}`, m)}`, 'teken'); W(`${x} = ${hF(y, m)} − ${n}`, 'vrij'); W(`${x} = ${m}${y} − ${n}`, 'vrij');
-      why = `Eerst − ${n} aan beide kanten: ${y} − ${n} = ${m}${x}. Dan delen door ${m}: ${x} = (${y} − ${n})/${m}.`;
+      why = [[`${y} = ${m}${x} + ${n}`, ''], [`${y} − ${n} = ${m}${x}`, `aan beide kanten − ${n}`], [`${x} = ${hF(`${y} − ${n}`, m)}`, `aan beide kanten : ${m}`]];
     } else if (k === 2) { const s = pick([10, 20, 100]), K = s * s, h = hV('h'), w = hV('w'), I = hV('I');
       ask = `Maak ${h} vrij`; expr = `${I} = ${hF(hP(h, 2), `${hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 ')} · ${w}`)}`; good = `${h} = ${s} · ${hR(`${w} · ${I}`)}`;
       W(`${h} = ${hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 ')} · ${w} · ${I}`, 'wortelweg'); W(`${h} = ${s} · ${w} · ${I}`, 'wortelweg'); W(`${h} = ${s} · ${hR(hF(I, w))}`, 'vrij');
-      why = `${h}<sup>2</sup> = ${K} · ${w} · ${I}, dus ${h} = √(${K} · ${w} · ${I}) = √${K} · √(${w} · ${I}) = ${s}√(${w} · ${I}).`;
+      why = [[`${I} = ${hF(hP(h, 2), `${hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 ')} · ${w}`)}`, ''], [`${hP(h, 2)} = ${hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 ')} · ${w} · ${I}`, `aan beide kanten · ${hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 ')}${w}`], [`${h} = ${hR(`${hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 ')} · ${w} · ${I}`)}`, 'wortel nemen'], [`${h} = ${hR(hlNum(K).replace(/(\d)(?=(\d{3})+$)/g, '$1 '))} · ${hR(`${w} · ${I}`)} = ${s} · ${hR(`${w} · ${I}`)}`, '√(A·B) = √A · √B']];
     } else if (k === 3) { const m = rnd(2, 6), A = hV('A'), B = hV('B');
       ask = `Maak ${B} vrij`; expr = `${A} = ${m}${hR(B)}`; good = `${B} = ${hF(hP(A, 2), m * m)}`;
       W(`${B} = ${hF(hP(A, 2), m)}`, 'haakje'); W(`${B} = ${hF(A, m * m)}`, 'vrij'); W(`${B} = ${hF(hR(A), m)}`, 'vrij');
-      why = `Eerst delen door ${m}: √${B} = ${A}/${m}. Dan kwadrateren: ${B} = (${A}/${m})<sup>2</sup> = ${A}<sup>2</sup>/${m * m}.`;
+      why = [[`${A} = ${m}${hR(B)}`, ''], [`${hR(B)} = ${hF(A, m)}`, `aan beide kanten : ${m}`], [`${B} = ${hP(`(${hF(A, m)})`, 2)} = ${hF(hP(A, 2), m * m)}`, 'kwadrateren (ook de noemer)']];
     } else if (k === 4) { const kk = rnd(2, 9) * 10, N = hV('N'), t = hV('t');
       ask = `Maak ${t} vrij`; expr = `${N} = ${hF(kk, t)}`; good = `${t} = ${hF(kk, N)}`;
       W(`${t} = ${hF(N, kk)}`, 'vrij'); W(`${t} = ${kk}${N}`, 'vrij'); W(`${t} = ${kk} − ${N}`, 'vrij');
-      why = `Vermenigvuldig met ${t}: ${N} · ${t} = ${kk}. Deel door ${N}: ${t} = ${kk}/${N}.`;
+      why = [[`${N} = ${hF(kk, t)}`, ''], [`${N} · ${t} = ${kk}`, `aan beide kanten · ${t}`], [`${t} = ${hF(kk, N)}`, `aan beide kanten : ${N}`]];
     } else { const m = pick([2, 3, 4, 5]), x = hV('x'), y = hV('y');
       ask = `Maak ${x} vrij (${x} > 0)`; expr = `${y} = ${m}${hP(x, 2)}`; good = `${x} = ${hR(hF(y, m))}`;
       W(`${x} = ${hF(y, m)}`, 'wortelweg'); W(`${x} = ${hF(hR(y), m)}`, 'vrij'); W(`${x} = ${hR(`${m}${y}`)}`, 'vrij');
-      why = `Eerst delen door ${m}: ${x}<sup>2</sup> = ${y}/${m}. Dan de wortel: ${x} = √(${y}/${m}).`;
+      why = [[`${y} = ${m}${hP(x, 2)}`, ''], [`${hP(x, 2)} = ${hF(y, m)}`, `aan beide kanten : ${m}`], [`${x} = ${hR(hF(y, m))}`, 'wortel nemen']];
     }
   }
   const seen = new Set([hlPlain(good)]), opts = [{h: good, ok: true}];
@@ -3740,10 +3772,11 @@ function genHL(cfg) {
   return q;
 }
 const hlPlain = h => h.replace(/<span class="hfr"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, '($1)/($2)').replace(/<svg class="hrs".*?<\/svg>/g, '√').replace(/<span class="hrd">(.*?)<\/span><\/span>/g, '($1)').replace(/<sup>(.*?)<\/sup>/g, '^$1').replace(/<[^>]+>/g, '');
+function hlSteps(rows) { return `<div class="hsteps">${rows.map(([m, n]) => `<div class="hsm">${m}</div><div class="hsn">${n || ''}</div>`).join('')}</div>`; }
 function hlNext() {
   G.hq = genHL(G.cfg); G.locked = false; G.qStart = performance.now(); flash(''); G.after = null;
   const q = G.hq;
-  $('#hlq').innerHTML = q.prompt; $('#wexp').innerHTML = '';
+  $('#hlq').innerHTML = q.prompt; $('#wexp').innerHTML = ''; $('#app .screen').classList.remove('hlpause');
   $('#hlrule').innerHTML = G.cfg.hulp3 === 'ja' ? HL_RULE[q.cat] : '';
   $('#wopts').innerHTML = q.opts.map((o, i) => `<button class="ans wopt hopt" data-fast="hl" data-arg="${i}">${q.optHTML(o)}</button>`).join('');
 }
@@ -3755,9 +3788,15 @@ function hlPick(i) {
   btns.forEach((b, k) => { if (q.opts[k].ok) b.classList.add('right'); });
   if (o.ok) { award(10); beep(true); flash('good', 400); }
   else { btns[+i].classList.add('wrong'); penalty(); beep(false); flash('bad', 500); G.mistakes.push({q: q.text, given: hlPlain(o.h)}); }
-  const tip = !o.ok && HL_ERR[o.err] && o.err !== 'anders' ? `<b>${HL_ERR[o.err].name}.</b> ` : '';
-  $('#wexp').innerHTML = `<div class="wfix ${o.ok ? '' : 'bad'}"><span>${o.ok ? 'Goed!' : 'Goed is: ' + q.optHTML(good)}</span>${tip}${q.why}</div>${o.ok ? '' : '<button class="btn primary wnx" data-act="wNext">Volgende ▶</button>'}`;
-  G.after = hlNext; G.timers.push(setTimeout(() => { if (G && G.running && G.after === hlNext) { G.after = null; hlNext(); } }, o.ok ? 2200 : 15000));
+  G.after = hlNext;
+  if (o.ok) { $('#wexp').innerHTML = `<div class="hlok">✓ Goed!</div>`; G.timers.push(setTimeout(() => { if (G && G.running && G.after === hlNext) { G.after = null; hlNext(); } }, 900)); return; }
+  pauseClock(); $('#app .screen').classList.add('hlpause');
+  const er = HL_ERR[o.err] && o.err !== 'anders' ? HL_ERR[o.err] : null;
+  $('#wexp').innerHTML = `<div class="hlwork">
+    <div class="hlhead"><span class="hlbad">✗ Jij koos: ${q.optHTML(o)}</span><span class="hlgood">✓ Goed: ${q.optHTML(good)}</span>${er ? `<span class="hlerr">${er.name}</span>` : ''}</div>
+    <div class="hllab">Uitwerking</div>${hlSteps(q.why)}
+    ${er && er.tip ? `<div class="hltip">💡 ${er.tip}</div>` : ''}
+    <div class="hlfoot"><span class="muted">❚❚ De tijd staat stil. Bekijk de uitwerking rustig en tik dan op Volgende.</span><button class="btn primary big wnx" data-act="wNext">Volgende ▶</button></div></div>`;
 }
 
 /* ===================== Voorrangsregels ===================== */
@@ -4026,7 +4065,7 @@ function duoQuestion(gid, cfg) {
   if (gid === 'herleid') {
     const q = genHL(cfg), good = q.opts.find(o => o.ok);
     return {prompt: `<div class="hlq duo">${q.prompt}</div>`, opts: q.opts.map(o => ({html: q.optHTML(o), ok: o.ok, err: o.err})),
-      explain: q.why, full: `${q.why}${cfg.hulp3 === 'ja' ? '' : `<div class="klfix">${HL_RULE[q.cat]}</div>`}`,
+      explain: `Goed: ${q.optHTML(good)}`, full: hlSteps(q.why),
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'h', q.cat, o.ok ? 1 : 0, o.ok ? '' : (o.err || 'anders'), Math.round(performance.now() - ms0), 0, q.text, hlPlain(q.optHTML(good)), hlPlain(o.html)])};
   }
   if (gid === 'maat') {
@@ -4340,7 +4379,7 @@ function showSettings() {
           <div class="lvrow" style="margin-top:0"><b>Leerlingen tonen als</b><div class="seg">${[['karakter', 'Karakter', 'eigen figuur'], ['pixel', 'Pixel-foto', 'bewerkte foto'], ['foto', 'Foto', 'echte foto']].map(([v, n, sub]) => `<button class="${avMode() === v ? 'on' : ''}" data-act="avMode" data-arg="${v}">${n}<small>${sub}</small></button>`).join('')}</div></div>
           ${avMode() !== 'foto' ? `<div class="lvrow"><b>Stijl van de karakters</b><div class="seg avstyles">${[['street', 'Streetwear'], ['held', 'Helden'], ['dier', 'Dieren'], ['strak', 'Strak'], ['monster', 'Monsters'], ['robot', 'Robots'], ['pixel', 'Pixel']].map(([v, n]) => `<button class="${avStyle() === v ? 'on' : ''}" data-act="avStyle" data-arg="${v}"><span class="av char sm">${charSVG(4242, v)}</span>${n}</button>`).join('')}</div></div>` : ''}
           <div class="lvrow"><b>Weergavegrootte</b><div class="seg">${[[0.75, 'Klein'], [0.85, 'Normaal'], [1, 'Groot']].map(([v, n]) => `<button class="${zoomLv() === v ? 'on' : ''}" data-act="zoom" data-arg="${v}">${n}</button>`).join('')}</div></div>
-          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 31-10-2026</span></div>
+          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 1-11-2026</span></div>
           <div class="row between"><span>Kleuren stempelkaarten <small class="muted">(tik om te wisselen)</small></span><div class="kcrow">${kCards().map((k, i) => `<button class="kcbtn" style="--kc:${KCOL[k]}" data-act="kcol" data-arg="${i}"><b>${'ABCD'[i]}</b>${k}</button>`).join('')}</div></div>
           <div class="row between"><span>Geluid</span><button class="switch ${D.sound ? 'on' : ''}" data-act="sound" aria-label="Geluid"><i></i></button></div>
           <div class="row"><button class="btn" data-act="exportB">💾 Back-up opslaan</button><button class="btn" data-act="importB">📂 Back-up terugzetten</button></div>
@@ -4385,7 +4424,7 @@ const ACT = {
     m.querySelector('[data-close]').addEventListener('click', () => m.remove());
     log.textContent = navigator.userAgent.replace(/^Mozilla\/5\.0 /, '');
   },
-  wNext: () => { if (G && G.running && G.after) { const f = G.after; G.after = null; f(); } },
+  wNext: () => { if (G && G.running && G.after) { const f = G.after; G.after = null; resumeClock(); f(); } },
   gnNext: () => { if (G && G.running && G.locked && G.gq) gnAfter(G.gq); },
   klas: () => klStart(), klNext: () => klNext(), klShow: () => klReveal(null),
   kcol: a => { const L = kCards().slice(), names = Object.keys(KCOL), i = +a; L[i] = names[(names.indexOf(L[i]) + 1) % names.length]; D.cards = L; save(); showSettings(); },
