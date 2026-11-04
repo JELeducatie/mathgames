@@ -467,9 +467,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .balloon .b{box-shadow:inset -.6rem -.9rem 0 rgba(0,0,0,.2),0 0 0 .18rem rgba(255,255,255,.12);text-shadow:0 .12rem 0 rgba(0,0,0,.35)}
 .balloon::after{background:rgba(255,255,255,.35)}
 .balloon.nope .b{--c:#59607F}
-.lsky{min-height:0}
-.lsky .balloon{width:6.2rem;height:7.8rem}.lsky .balloon .b{height:6.7rem;font-size:2.2rem}.lsky .balloon .b.long{font-size:1.7rem}.lsky .balloon::after{top:7rem;height:.8rem}
-.lbq{display:flex;justify-content:center}.lbqt{font-family:var(--fd);font-weight:900;font-size:clamp(1.8rem,4.6vmin,3.2rem);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),var(--card);border:2px solid var(--lc);border-radius:.9rem;padding:.2rem 1.4rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.lframe{flex:1;min-height:0;width:100%;border:0;border-radius:.8rem;background:var(--bg);display:block}
+.lane:has(.lframe){padding:.5rem;gap:.4rem}
+.lanemode .playbar{display:none}.lanemode .screen{padding:.6rem .7rem .8rem}
+.lanemode .bwrap{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:.6rem}.lanemode .side{display:flex;order:-1;padding:.5rem}
+.lanemode .side .scale{zoom:.62;margin:0}.lanemode .hopt{font-size:2rem}.lanemode .hgiven{font-size:2.5rem}.lanemode .hcard{padding:.8rem}.lanemode .side .vrules{font-size:.85em}
+.lanemode .gnwrap{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:.6rem}.lanemode .gnfig{padding:.3rem}.lanemode .gnleg{font-size:1rem;gap:.8rem}.lanemode .gnnote{font-size:1.15rem;padding:.6rem .9rem}
+.lanewait{align-items:center;justify-content:center;text-align:center}.lwtxt{font-family:var(--fd);font-style:italic;font-size:2rem;color:var(--muted)}.lwbig{font-size:4rem}
 /* uitslag */
 .bigscore{font-style:italic;font-size:7rem;background:linear-gradient(180deg,#fff 15%,var(--gold) 60%,#FF8A00);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 .35rem 0 rgba(0,0,0,.55));padding:0 .12em}
 .scorecard .pname{font-family:var(--fd);font-style:italic;text-transform:uppercase}
@@ -817,6 +821,7 @@ function load() {
 }
 let D = load();
 function save() {
+  if (LANE) return true;   // het speelveld bewaart niets zelf; de hoofdpagina doet dat
   if (D.scores.length > 8000) D.scores = D.scores.slice(-8000);
   for (let i = 0; i < 3; i++) {
     try { localStorage.setItem(KEY, JSON.stringify(D)); return true; }
@@ -827,8 +832,13 @@ function save() {
 /* Alle gegeven antwoorden: [tijd(s), klas, leerling, spel, som-soort, a, b, gegeven, ms, niveau] */
 const AKEY = 'lesspellen_ans';
 let A = [];
+/* Speelveld-modus: bij Samen spelen draait in elke baan het echte spel in een eigen venster (iframe). */
+const LANE_M = /[?&]lane=(\d)/.exec(location.search), LANE = !!LANE_M, LANE_I = LANE ? +LANE_M[1] : null;
+const laneMsg = m => { try { parent.postMessage(Object.assign({lane: LANE_I}, m), '*'); } catch (e) {} };
 try { A = JSON.parse(localStorage.getItem(AKEY) || '[]') || []; } catch (e) { A = []; }
+if (LANE) { A = []; A.push = (...rows) => { rows.forEach(r => laneMsg({type: 'lane-ans', row: r})); return 0; }; }
 function saveAns() {
+  if (LANE) return true;
   if (A.length > 25000) A = A.slice(-25000);
   for (let i = 0; i < 4; i++) {
     try { localStorage.setItem(AKEY, JSON.stringify(A)); return true; }
@@ -1574,10 +1584,10 @@ const BM = {on: false};
 
 /* ===================== Spelverloop (gedeeld) ===================== */
 let G = null;
-function startGame(player, classId) {
+function startGame(player, classId, cfgOver) {
   stopGame();
   const game = GAMES[GID];
-  G = {game: GID, cfg: effCfg(classId || curId()), player, classId, qStart: 0, score: 0, wrong: 0, points: 0, streak: 0, best: 0, mistakes: [], q: null, input: '', end: 0,
+  G = {game: GID, cfg: cfgOver || effCfg(classId || curId()), player, classId, qStart: 0, score: 0, wrong: 0, points: 0, streak: 0, best: 0, mistakes: [], q: null, input: '', end: 0,
     running: false, locked: true, timers: [], raf: 0, last: 0, onFrame: null};
   screen = 'play'; rerender = null;
   app.innerHTML = `<section class="screen">
@@ -1591,7 +1601,7 @@ function startGame(player, classId) {
     </header>${game.frame()}</section>`;
   game.setup();
   const me = G; const cd = document.createElement('div'); cd.className = 'count'; document.body.appendChild(cd);
-  let n = 3;
+  let n = LANE ? 0 : 3;
   const step = () => {
     if (G !== me) { cd.remove(); return; }
     if (n === 0) {
@@ -1618,7 +1628,7 @@ function tick() {
 }
 /* Pauze: na een fout staat de tijd stil tot de leerling zelf op Volgende tikt. De tijd meet zo alleen denktijd. */
 function pauseClock() {
-  if (!G || G.paused) return; G.paused = true;
+  if (!G || G.paused || LANE) return;   // bij Samen spelen loopt de gedeelde tijd door G.paused = true;
   const tm = $('#timer'); if (tm) tm.classList.add('paused');
   const tt = $('#ttext'); if (tt) tt.classList.add('paused');
 }
@@ -1630,6 +1640,7 @@ function resumeClock() {
 /* Punten: goed = basis + reeksbonus, fout = −5 en de reeks stopt */
 const PENALTY = 5;
 function showPoints(txt, good) {
+  if (LANE) laneMsg({type: 'lane-pts', points: G.points, good: G.score, wrong: G.wrong, streak: G.streak, best: G.best, txt, up: !!good});
   const sc = $('#score'); if (sc) sc.textContent = G.points;
   const st = $('#streak'); if (st) { st.innerHTML = G.streak >= 2 ? `🔥 ${G.streak} op rij` : ''; st.classList.toggle('hot', G.streak >= 5); }
   const pp = $('#ptpop'); if (pp && txt) { pp.textContent = txt; pp.className = 'ptpop ' + (good ? 'up' : 'down'); void pp.offsetWidth; pp.classList.add('go'); }
@@ -1658,6 +1669,7 @@ function stopGame() {
 }
 function finish() {
   if (!G || !G.running) return;
+  if (LANE) { stopGame(); laneDone(); return; }
   stopGame(); saveAns();
   const mk = modeKey(G.game, G.cfg); let prevBest = null, rec = false;
   if (!G.player.guest && G.classId) {
@@ -4145,13 +4157,13 @@ function duoStart() {
       <div class="timer" id="timer"><div class="timerfill" id="tfill"></div></div><div class="ttext" id="ttext">${DUO.time}</div></header>
     <div class="duo" style="grid-template-columns:repeat(${DUO.lanes.length},minmax(0,1fr))">${DUO.lanes.map(ln => `<div class="lane" id="lane${ln.i}" style="--lc:${LANE_COL[ln.i]}">
       <div class="lhead">${avatar(ln.p, 'sm')}<b class="lname">${esc(ln.p.name)}</b><span class="lstreak" id="lst${ln.i}"></span><span class="lpts"><b id="lpt${ln.i}">0</b> pt</span></div>
-      ${DUO.game === 'ballonnen' ? `<div class="sky lsky" id="lsky${ln.i}"></div><div class="lbq"><div class="lbqt" id="lq${ln.i}"></div></div>`
-        : `<div class="lq" id="lq${ln.i}"></div><div class="lexp" id="lex${ln.i}"></div><div class="lopts" id="lop${ln.i}"></div>`}</div>`).join('')}</div></section>`;
+      <iframe class="lframe" id="lfr${ln.i}" src="${location.pathname}?lane=${ln.i}" title="Speelveld ${esc(ln.p.name)}"></iframe></div>`).join('')}</div></section>`;
   const cd = document.createElement('div'); cd.className = 'count'; document.body.appendChild(cd);
-  let n = 3;
+  let n = 3, wait = 0;
   const step = () => {
     if (screen !== 'duo') { cd.remove(); return; }
-    if (n === 0) { cd.remove(); DUO.running = true; DUO.end = performance.now() + DUO.time * 1000; DUO.lanes.forEach(duoNext); DUO.raf = requestAnimationFrame(duoTick); return; }
+    if (n === 3 && DUO.lanes.some(ln => !ln.ready) && wait++ < 60) { cd.innerHTML = '<span style="font-size:3rem">…</span>'; DUO.timers.push(setTimeout(step, 100)); return; }
+    if (n === 0) { cd.remove(); DUO.running = true; DUO.end = performance.now() + DUO.time * 1000; DUO.lanes.forEach(laneGo); DUO.raf = requestAnimationFrame(duoTick); return; }
     cd.innerHTML = `<span>${n}</span>`; beep(true); n--; DUO.timers.push(setTimeout(step, 800));
   };
   step();
@@ -4159,16 +4171,14 @@ function duoStart() {
 function duoTick() {
   if (!DUO.running) return;
   const now = performance.now(), dt = Math.min(0.05, (now - (DUO.last || now)) / 1000); DUO.last = now;
-  if (DUO.game === 'ballonnen') DUO.lanes.forEach(ln => dbFrame(ln, dt, now));
   const left = Math.max(0, DUO.end - performance.now());
   const f = $('#tfill'); if (f) f.style.width = (left / (DUO.time * 1000) * 100) + '%';
   const tt = $('#ttext'); if (tt) tt.textContent = Math.ceil(left / 1000);
   const tm = $('#timer'); if (tm) tm.classList.toggle('low', left < 5000);
-  if (left <= 0) { duoFinish(); return; }
+  if (left <= 0) { DUO.running = false; DUO.lanes.forEach(ln => laneSend(ln, {type: 'stop'})); DUO.timers.push(setTimeout(duoFinish, 250)); return; }
   DUO.raf = requestAnimationFrame(duoTick);
 }
 function duoNext(ln) {
-  if (DUO.game === 'ballonnen') { dbNext(ln); return; }
   ln.q = duoQuestion(DUO.game, DUO.cfg); ln.locked = false; ln.readyAt = performance.now() + 350;
   $('#lq' + ln.i).innerHTML = ln.q.prompt; $('#lex' + ln.i).innerHTML = '';
   const op = $('#lop' + ln.i); op.className = 'lopts' + (ln.q.big ? ' big' : '');
@@ -4176,83 +4186,31 @@ function duoNext(ln) {
   $('#lane' + ln.i).classList.remove('good', 'bad');
 }
 
-/* --- Samen spelen: Ballonnen, met per speler een eigen hemel --- */
-function dbDims(ln) {
-  const sky = $('#lsky' + ln.i); if (!sky) return false;
-  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 20;
-  ln.W = sky.clientWidth; ln.H = sky.clientHeight; ln.BW = 6.2 * rem; ln.BH = 7.8 * rem;
-  ln.nCols = Math.max(2, Math.floor(ln.W / (ln.BW * 1.2)));
-  return true;
-}
-function dbNext(ln) {
-  if (!ln.bal) { ln.bal = []; ln.cols = []; dbDims(ln); }
-  ln.q = makeQ(DUO.cfg, ln.q); ln.pool = wrongAnswers(ln.q); ln.locked = false; ln.qStart = performance.now();
-  $('#lq' + ln.i).innerHTML = `${ln.q.text} = ?`;
-  if (!ln.started) { ln.started = true; shuffle([ln.q.ans, ...ln.pool.slice(0, 2)]).forEach(v => dbSpawn(ln, v, ln.H * (0.2 + 0.6 * Math.random()))); }
-  ln.nextSpawn = 0;
-}
-function dbSpawn(ln, v, y0) {
-  const sp = BAL_SPEED[DUO.cfg.speed] || BAL_SPEED[2];
-  const free = []; for (let c = 0; c < ln.nCols; c++) if (!ln.cols.includes(c)) free.push(c);
-  const col = free.length ? free[rnd(0, free.length - 1)] : rnd(0, ln.nCols - 1);
-  ln.cols.push(col); if (ln.cols.length > Math.max(1, Math.floor(ln.nCols / 2))) ln.cols.shift();
-  const xMax = Math.max(0, ln.W - ln.BW), x = ln.nCols > 1 ? col / (ln.nCols - 1) * xMax : xMax / 2;
-  const color = BALLOON_COLORS[rnd(0, BALLOON_COLORS.length - 1)], txt = fmt(v), el = document.createElement('div');
-  el.className = 'balloon'; el.dataset.lane = ln.i; el.style.setProperty('--c', color);
-  el.innerHTML = `<div class="b ${txt.length >= 4 ? 'long' : ''}">${txt}</div>`;
-  $('#lsky' + ln.i).appendChild(el);
-  const b = {el, v, x, y: y0 !== undefined ? y0 : ln.H + 10, vy: (ln.H + ln.BH) / sp.rise * (0.85 + 0.3 * Math.random()),
-    ph: Math.random() * 6.28, amp: ln.BW * (0.04 + 0.05 * Math.random()), f: 0.8 + Math.random() * 0.8, dead: false, color};
-  ln.bal.push(b); dbPlace(ln, b, performance.now());
-}
-function dbPlace(ln, b, now) {
-  b.px = Math.min(Math.max(0, b.x + Math.sin(now / 1000 * b.f + b.ph) * b.amp), Math.max(0, ln.W - ln.BW));
-  b.el.style.transform = `translate(${b.px}px,${b.y}px)`;
-}
-function dbFrame(ln, dt, now) {
-  const sky = $('#lsky' + ln.i); if (!sky || !ln.bal) return;
-  if (Math.abs(sky.clientWidth - ln.W) > 2 || Math.abs(sky.clientHeight - ln.H) > 2) dbDims(ln);
-  const sp = BAL_SPEED[DUO.cfg.speed] || BAL_SPEED[2];
-  if (now >= ln.nextSpawn && ln.bal.length < 8) {
-    const vis = ln.bal.filter(b => !b.dead && b.v === ln.q.ans && b.y > ln.BH * 0.3).length;
-    let v = ln.q.ans;
-    if (!(vis === 0 || (vis < 2 && Math.random() < 0.22))) {
-      const on = new Set(ln.bal.filter(b => !b.dead).map(b => b.v)), fresh = ln.pool.filter(x => !on.has(x)), from = fresh.length ? fresh : ln.pool;
-      v = from[rnd(0, Math.min(from.length, 6) - 1)];
-    }
-    dbSpawn(ln, v); ln.nextSpawn = now + sp.spawn * 1.15 * (0.8 + 0.4 * Math.random());
+/* --- Samen spelen: elke baan speelt het echte spel in een eigen venster --- */
+function laneSend(ln, m) { const f = $('#lfr' + ln.i); try { f && f.contentWindow && f.contentWindow.postMessage(m, '*'); } catch (e) {} }
+function laneGo(ln) { laneSend(ln, {type: 'go', gid: DUO.game, cfg: DUO.cfg, player: ln.p, classId: DUO.classId}); }
+window.addEventListener('message', e => {
+  const m = e.data; if (!m || typeof m !== 'object' || !m.type) return;
+  if (LANE) {
+    if (e.source !== parent) return;
+    if (m.type === 'go' && GAMES[m.gid]) { GID = m.gid; startGame(m.player, m.classId, m.cfg); }
+    else if (m.type === 'stop') { if (G && G.running) { stopGame(); laneDone(); } }
+    return;
   }
-  for (const b of ln.bal) { if (!b.dead || b.el.classList.contains('nope')) b.y -= b.vy * dt; dbPlace(ln, b, now); }
-  for (const b of ln.bal.filter(b => b.y < -ln.BH)) dbRemove(ln, b);
-}
-function dbRemove(ln, b) { b.el.remove(); const k = ln.bal.indexOf(b); if (k >= 0) ln.bal.splice(k, 1); }
-function dbHit(el, e) {
-  if (!DUO.running) return;
-  const ln = DUO.lanes[+el.dataset.lane]; if (!ln || !ln.bal || ghostTouch(e)) return;
-  const b = ln.bal.find(x => x.el === el); if (!b || b.dead) return;
-  b.dead = true; const q = ln.q, ok = b.v === q.ans;
-  if (!ln.p.guest && DUO.classId) A.push([Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'b', OP_ORDER.indexOf(q.op), q.a, q.b, b.v, Math.round(performance.now() - ln.qStart), DUO.cfg.level]);
-  const lane = $('#lane' + ln.i); lane.classList.remove('good', 'bad');
-  if (ok) {
-    el.classList.add('pop'); dbBurst(ln, b); setTimeout(() => dbRemove(ln, b), 240);
-    ln.good++; ln.streak++; ln.best = Math.max(ln.best, ln.streak);
-    const pts = 10 + Math.min(ln.streak - 1, 10) * 2; ln.points += pts; duoPts(ln, '+' + pts, true); beep(true);
-    lane.classList.add('good'); DUO.timers.push(setTimeout(() => lane.classList.remove('good'), 350));
-    dbNext(ln);
-  } else {
-    el.classList.add('nope'); setTimeout(() => { el.classList.add('pop'); setTimeout(() => dbRemove(ln, b), 240); }, 380);
-    ln.wrong++; ln.streak = 0; ln.points -= PENALTY; duoPts(ln, '−' + PENALTY, false); beep(false);
-    lane.classList.add('bad'); DUO.timers.push(setTimeout(() => lane.classList.remove('bad'), 450));
+  if (screen !== 'duo' && screen !== 'duores') return;
+  const ln = DUO.lanes && DUO.lanes[m.lane]; if (!ln) return;
+  const fr = $('#lfr' + ln.i); if (!fr || e.source !== fr.contentWindow) return;
+  if (m.type === 'lane-ready') ln.ready = true;
+  else if (m.type === 'lane-ans') { if (!ln.p.guest && DUO.classId) A.push(m.row); }
+  else if (m.type === 'lane-pts' && DUO.running) {
+    Object.assign(ln, {points: m.points, good: m.good, wrong: m.wrong, streak: m.streak, best: m.best});
+    if (m.txt) { duoPts(ln, m.txt, m.up); const lane = $('#lane' + ln.i); if (lane) { lane.classList.remove('good', 'bad'); lane.classList.add(m.up ? 'good' : 'bad'); DUO.timers.push(setTimeout(() => lane.classList.remove('good', 'bad'), 400)); } }
+    else { const pt = $('#lpt' + ln.i); if (pt) pt.textContent = ln.points; }
   }
-}
-function dbBurst(ln, b) {
-  const sky = $('#lsky' + ln.i); if (!sky) return; const cx = b.px + ln.BW / 2, cy = b.y + ln.BH * 0.43;
-  for (let k = 0; k < 10; k++) {
-    const s = document.createElement('div'); s.className = 'spark'; const a = k / 10 * 6.283;
-    s.style.left = cx + 'px'; s.style.top = cy + 'px'; s.style.setProperty('--c', b.color);
-    s.style.setProperty('--dx', Math.cos(a) * ln.BW * 0.8 + 'px'); s.style.setProperty('--dy', Math.sin(a) * ln.BW * 0.8 + 'px');
-    sky.appendChild(s); setTimeout(() => s.remove(), 600);
-  }
+});
+function laneDone() {
+  laneMsg({type: 'lane-pts', points: G.points, good: G.score, wrong: G.wrong, streak: G.streak, best: G.best});
+  app.innerHTML = `<section class="screen lanewait"><div class="lwbig">⏱</div><div class="lwtxt">Tijd is om!</div></section>`;
 }
 function duoPts(ln, txt, up) {
   $('#lpt' + ln.i).textContent = ln.points;
@@ -4661,9 +4619,12 @@ app.addEventListener('click', e => { const b = e.target.closest('[data-act]'); i
 /* Veilige aanraking bij Samen spelen. Een infrarood-touchframe kan bij meerdere vingers tegelijk 'spookaanrakingen' melden
    op het kruispunt van de echte aanrakingen. Daarom: een antwoord telt pas bij loslaten op dezelfde knop, niet bij een
    handpalm, niet als het precies op het kruispunt van twee andere aanrakingen ligt, en niet vlak nadat een nieuwe vraag verscheen. */
-const TOUCH = new Map(), DPEND = new Map();
-document.addEventListener('pointerdown', e => TOUCH.set(e.pointerId, {x: e.clientX, y: e.clientY, t: performance.now()}), true);
-const touchEnd = e => { TOUCH.delete(e.pointerId); };
+const TOUCH = (LANE && (() => { try { return parent.__TOUCH; } catch (e) { return null; } })()) || new Map(), DPEND = new Map();
+window.__TOUCH = TOUCH;
+const tKey = e => (LANE ? LANE_I + ':' : '') + e.pointerId;
+function tXY(e) { if (!LANE) return [e.clientX, e.clientY]; try { const r = frameElement.getBoundingClientRect(); return [e.clientX + r.left, e.clientY + r.top]; } catch (x) { return [e.clientX, e.clientY]; } }
+document.addEventListener('pointerdown', e => { const [x, y] = tXY(e); TOUCH.set(tKey(e), {x, y, t: performance.now()}); }, true);
+const touchEnd = e => { TOUCH.delete(tKey(e)); };
 document.addEventListener('pointerup', e => {
   const pd = DPEND.get(e.pointerId); DPEND.delete(e.pointerId);
   if (pd && !pd.bad) {
@@ -4676,19 +4637,21 @@ document.addEventListener('pointerup', e => {
 document.addEventListener('pointercancel', e => { DPEND.delete(e.pointerId); touchEnd(e); }, true);
 function ghostTouch(e) {
   if (e.pointerType === 'touch' && (e.width > 90 || e.height > 90)) return true; // handpalm of onderarm
-  const o = [...TOUCH.entries()].filter(([id]) => id !== e.pointerId).map(([, p]) => p);
+  const k = tKey(e), [ex, ey] = tXY(e), now = performance.now();
+  const o = [...TOUCH.entries()].filter(([id, p]) => id !== k && now - p.t < 4000).map(([, p]) => p);
   if (o.length < 2) return false;
   const tol = 30;
-  for (const a of o) for (const b of o) if (a !== b && Math.abs(e.clientX - a.x) < tol && Math.abs(e.clientY - b.y) < tol) return true;
+  for (const a of o) for (const b of o) if (a !== b && Math.abs(ex - a.x) < tol && Math.abs(ey - b.y) < tol) return true;
   return false;
 }
 app.addEventListener('pointerdown', e => {
+  if (LANE && ghostTouch(e)) { e.preventDefault(); e.stopImmediatePropagation(); LASTFAST = {el: e.target.closest('[data-fast]'), t: performance.now()}; return; }
   const db = e.target.closest('[data-fast="dans"]');
   if (db) { e.preventDefault(); LASTFAST = {el: db, t: performance.now()}; DPEND.set(e.pointerId, {btn: db, t: performance.now(), x: e.clientX, y: e.clientY, bad: ghostTouch(e)}); return; }
   const tg = e.target.closest('svg.tapgraph');
   if (tg) { e.preventDefault(); grTap(tg, e); return; }
   const bal = e.target.closest('.balloon');
-  if (bal) { e.preventDefault(); if (bal.dataset.lane !== undefined) dbHit(bal, e); else balHit(bal); return; }
+  if (bal) { e.preventDefault(); balHit(bal); return; }
   const b = e.target.closest('[data-fast]'); if (!b) return; e.preventDefault();
   LASTFAST = {el: b, t: performance.now()}; fastAct(b);
 });
@@ -4748,7 +4711,11 @@ document.addEventListener('contextmenu', e => { if (!e.target.closest('input,tex
 function zoomLv() { return D.zoom || 0.85; }
 function applyZoom() { document.documentElement.style.setProperty('--zoom', zoomLv()); }
 applyZoom();
-showHome();
+if (LANE) {
+  document.documentElement.classList.add('lanemode'); document.documentElement.style.setProperty('--zoom', 1.12);
+  app.innerHTML = `<section class="screen lanewait"><div class="lwtxt">Klaar voor de start…</div></section>`;
+  laneMsg({type: 'lane-ready'});
+} else showHome();
 </script>
 </body>
 </html>
