@@ -692,6 +692,15 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .hlpause #wopts{display:none}.hlpause .hcard{padding:.6rem 1rem;flex:0 0 auto}.hlpause .hgiven{font-size:clamp(1.6rem,3.6vmin,2.6rem)}.hlpause .hask{font-size:1.1rem}.hlpause .oorule{display:none}
 .hlgood{font-size:1.3rem;font-weight:700;color:var(--good)}.hlgood .hterm{color:#B9F6D8}
 .klexp .hsteps{justify-content:center;text-align:left;margin:0 auto;width:max-content;max-width:100%}
+.bdans{margin-top:1.2rem;font-family:var(--fd);font-weight:900;font-size:clamp(2rem,5vmin,3.4rem);display:flex;align-items:baseline;gap:.5rem;justify-content:center}
+.bdans i{font-family:"Cambria Math","Times New Roman",serif}
+.bdinp{min-width:4.5rem;border-bottom:.25rem solid var(--sub);text-align:center;padding:0 .4rem}.bdinp.right{color:var(--good);border-color:var(--good)}.bdinp.wrong{color:var(--bad);border-color:var(--bad)}
+.moves:has(.bdpad){display:block;width:100%}
+.bdpad{display:grid;grid-template-columns:repeat(13,minmax(0,1fr));gap:.5rem;width:100%}.bdpad .key{min-height:4.2rem;font-size:1.8rem}.bdpad .key.ok{background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--ctaInk);font-weight:900}
+.lanemode .bdpad,.bdpad{max-width:72rem;margin:0 auto}
+.lanemode .bdpad,.narrowpad .bdpad{grid-template-columns:repeat(4,1fr);max-width:30rem}.lanemode .bdpad .key{min-height:3.4rem;font-size:1.6rem}.lanemode .bdpad .key.ok{grid-column:1/-1;grid-row:4}
+@media (max-aspect-ratio:1/1){.bdpad{grid-template-columns:repeat(4,1fr);max-width:30rem}.bdpad .key.ok{grid-column:1/-1;grid-row:4}}
+.bdyou{font-size:1.3rem;margin-bottom:.6rem}.bdyou s{color:#FF97AA}.bdyou b{color:var(--good)}
 .wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
 #weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
 .ddesc mark{background:rgba(255,210,63,.3);color:inherit;border-radius:.3rem;padding:0 .2rem}
@@ -767,6 +776,7 @@ const OPTDEFS = {
   hnot: {label: 'Hoeknotatie', choices: [{v: 'een', name: '∠G', sub: 'één letter'}, {v: 'drie', name: '∠HGI', sub: 'drie letters'}, {v: 'mix', name: 'Afwisselend', sub: 'extra uitdaging'}]},
   hoekr: {label: 'Afronden', choices: [{v: 1, name: 'Hoek: 1 decimaal', sub: 'zijden altijd 1 decimaal'}, {v: 0, name: 'Hoek: hele graden', sub: 'zijden altijd 1 decimaal'}]},
   stap: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'verhouding kiezen, gegeven en gevraagd, rekenen'}, {v: 'direct', name: 'Direct rekenen', sub: 'alleen het antwoord intypen'}]},
+  baan: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'zelf elke balansstap kiezen'}, {v: 'direct', name: 'Direct oplossen', sub: 'alleen het antwoord intypen'}]},
   hulp: {label: 'Hulp', choices: [{v: 'ja', name: 'Met hulp', sub: 'zijden gekleurd + sin cos tan'}, {v: 'nee', name: 'Zonder hulp', sub: 'zelf bepalen'}]},
   vt: {label: 'Soort', multi: true, allName: 'alle stappen', choices: [
     {v: 's1', name: '3 + 4 × 5', sub: 'stap 1: × gaat voor +', long: 'stap 1'}, {v: 's2', name: '12 − 8 : 2 + 3', sub: 'stap 2: met delen', long: 'stap 2'},
@@ -1394,8 +1404,8 @@ const GAMES = {
   },
   balans: {
     section: 'lin', title: 'Balansmethode', sub: 'Los vergelijkingen op met de weegschaal',
-    opts: ['bt', 'var', 'time'], choices: {time: [30, 60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
-    defaults: {bt: ['t1'], var: 'x', time: 180},
+    opts: ['bt', 'baan', 'var', 'time'], choices: {time: [30, 60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))},
+    defaults: {bt: ['t1'], baan: 'stappen', var: 'x', time: 180},
     scoreLabel: 'opgelost', wrongLabel: 'onhandige stappen',
     example: c => `Voorbeeld: <b>${stHTML(genBal(c.bt[c.bt.length - 1]).st, c.var === 'mix' ? 'x' : c.var)}</b>`,
     tile: () => `<div class="mini-bal"><span class="env"><i>x</i></span><span class="env"><i>x</i></span><span class="coin">€1</span><b>=</b><span class="note d5">€5</span><span class="debt d1">−€1</span></div>`,
@@ -2212,6 +2222,7 @@ const ERR = {
   anders: {name: 'Andere fout', desc: 'Past niet in een van de andere soorten', tip: ''}
 };
 const BAL_ERR = {
+  antwoord: {name: 'Fout antwoord (direct)', desc: 'Bij direct oplossen een verkeerde oplossing ingetypt', tip: 'Laat leerlingen hun antwoord controleren door het in te vullen in de vergelijking.'},
   richting: {name: 'Verkeerd teken', desc: 'Bijv. + 5 i.p.v. − 5, of : 3 i.p.v. : −3', tip: 'Benadruk: doe het tegenovergestelde, aan beide kanten.'},
   kant: {name: 'Verkeerde kant op', desc: 'x-en niet naar links of getallen niet naar rechts gebracht', tip: 'Herhaal de afspraak: x-en naar links, getallen naar rechts.'},
   haakjes: {name: 'Haakjes fout weggewerkt', desc: 'Niet elke term vermenigvuldigd, of een tekenfout', tip: 'Laat leerlingen de boogjes tekenen: de factor keer élke term.'},
@@ -2307,7 +2318,7 @@ const STAT_TOPICS = {
       {id: 'phi', name: 'Oordeel φ', short: 'φ', color: '#22D3EE'}, {id: 'vcp', name: 'Oordeel max VCP', short: 'VCP', color: '#F472B6'}, {id: 'e', name: 'Oordeel E', short: 'E', color: '#A3E635'}, {id: 'box', name: 'Oordeel boxplots', short: 'Box', color: '#FB923C'}]},
   bal: {name: 'Balansmethode', g: ['l'], unit: 'stappen', fast: 8000, errs: BAL_ERR, noLevel: true,
     cats: [{id: 'haakjes', name: 'Haakjes wegwerken', short: 'Haakjes', color: 'var(--gold)'}, {id: 'xweg', name: 'x naar links', short: 'x links', color: 'var(--div)'},
-      {id: 'getalweg', name: 'Getallen naar rechts', short: 'Getal rechts', color: 'var(--sub)'}, {id: 'breukweg', name: 'Breuken wegwerken', short: 'Breuk', color: 'var(--add)'}, {id: 'delen', name: 'Delen', short: 'Delen', color: 'var(--mul)'}]},
+      {id: 'getalweg', name: 'Getallen naar rechts', short: 'Getal rechts', color: 'var(--sub)'}, {id: 'breukweg', name: 'Breuken wegwerken', short: 'Breuk', color: 'var(--add)'}, {id: 'delen', name: 'Delen', short: 'Delen', color: 'var(--mul)'}, {id: 'direct', name: 'Direct oplossen', short: 'Direct', color: '#F472B6'}]},
   graf: {name: 'Grafiek & formule', g: ['f'], unit: 'vragen', fast: 10000, errs: GRAF_ERR, noLevel: true,
     cats: [{id: 'kiesgraf', name: 'Grafiek kiezen', short: 'Grafiek', color: 'var(--sub)'}, {id: 'kiesform', name: 'Formule kiezen', short: 'Formule', color: 'var(--div)'},
       {id: 'rico', name: 'Hellingsgetal', short: 'Helling', color: 'var(--mul)'}, {id: 'snijy', name: 'Snijpunt', short: 'Snijpunt', color: 'var(--add)'},
@@ -2636,6 +2647,7 @@ function blNext() {
   const v = G.cfg.var === 'mix' ? BAL_VARS[rnd(0, BAL_VARS.length - 1)] : (G.cfg.var || 'x');
   const bmin = (isBr(st.L) ? 1 : 0) + (isBr(st.R) ? 1 : 0) + minSteps(toE(expandAll(st)));
   Object.assign(G, {bst: st, bstart: st, bs: s, bv: v, bstack: [], bhist: [], bmin, locked: false, qStart: performance.now(), chipKey: null});
+  if (G.cfg.baan === 'direct') { G.binput = ''; G.after = null; bdRender(); return; }
   blRender('');
 }
 function blChips() {
@@ -2667,6 +2679,58 @@ function blRender(hint, anim) {
   h.innerHTML = hint || (br ? `Werk de haakjes weg: <b>${brHTML(st[G.bside], v)}</b> = …` : `${v}-en naar links, getallen naar rechts. Wat doe je aan béide kanten?`);
   h.className = 'bhint' + (hint ? ' warn2' : '');
   if (anim) document.querySelectorAll('.pan').forEach(p => { const f = document.createElement('div'); f.className = 'fl'; f.innerHTML = anim; p.appendChild(f); setTimeout(() => f.remove(), 1000); });
+}
+
+/* --- Balansmethode: direct oplossen (alleen het antwoord intypen) --- */
+function bdRender() {
+  const st = G.bst, v = G.bv;
+  const pan = (cls, sd) => `<div class="pan ${cls}"><div class="tray">${sideTokens(sd, v)}</div></div>`;
+  $('#scale').innerHTML = pan('l', st.L) + pan('r', st.R) + `<div class="beam"></div><div class="post"></div><div class="base"></div>
+    <div class="legend"><span class="env"><i>x</i></span> envelop met onbekend bedrag <span class="note d5">€5</span> geld <span class="debt d5">−€5</span> schuld</div>`;
+  $('#hist').innerHTML = `<div class="heq cur"><span>${sideOf(st.L, v)}</span><span>=</span><span>${sideOf(st.R, v)}</span></div>
+    <div class="bdans"><i>${v}</i> = <span class="bdinp">${G.binput || '&nbsp;'}</span></div>`;
+  $('#bhint').innerHTML = 'Los de vergelijking op en typ het antwoord.'; $('#bhint').className = 'bhint';
+  $('#moves').innerHTML = `<div class="bdpad">${(document.documentElement.classList.contains('lanemode') || innerWidth < innerHeight ? ['7', '8', '9', 'del', '4', '5', '6', '−', '1', '2', '3', '0'] : ['7', '8', '9', '4', '5', '6', '1', '2', '3', '−', '0', 'del']).map(k => `<button class="key ${k === 'del' ? 'del' : ''}" data-fast="bkey" data-arg="${k}">${k === 'del' ? '⌫' : k}</button>`).join('')}<button class="key ok" data-fast="bkey" data-arg="ok">OK</button></div>`;
+}
+function bdKey(k) {
+  if (!G || !G.running || G.locked || G.cfg.baan !== 'direct') return;
+  if (k === 'ok') { bdSubmit(); return; }
+  if (k === 'del') G.binput = G.binput.slice(0, -1);
+  else if (k === '−' || k === '-') G.binput = G.binput.startsWith('−') ? G.binput.slice(1) : '−' + G.binput;
+  else if (G.binput.replace('−', '').length < 4) G.binput += k;
+  const el = $('.bdinp'); if (el) el.innerHTML = G.binput || '&nbsp;';
+}
+// Uitwerking volgens de afspraak: x-en naar links, getallen naar rechts; de stap staat onder beide kanten
+function bdSolution(st0, v) {
+  const rows = [], eq = q => `<div class="heq"><span>${sideOf(q.L, v)}</span><span>=</span><span>${sideOf(q.R, v)}</span></div>`;
+  rows.push(eq(st0));
+  let st = st0;
+  if (isBr(st.L) || isBr(st.R)) { st = expandAll(st); rows.push(`<div class="heq hop"><span>haakjes wegwerken</span><span></span><span></span></div>`, eq(st)); }
+  let e = toE(st);
+  for (let n = 0; n < 8 && !bSolved(e); n++) {
+    const bm = balMoves(e); if (!bm.good.length) break;
+    const pr = {x: 0, n: 1, m: 2, d: 3}, m = bm.good.slice().sort((a, b) => pr[a.t] - pr[b.t])[0], op = moveHTML(m, v);
+    rows.push(`<div class="heq hop"><span>${op}</span><span></span><span>${op}</span></div>`);
+    e = m.after; rows.push(eq(fromE(e)));
+  }
+  return rows.join('');
+}
+function bdSubmit() {
+  const v = G.bv, raw = G.binput.replace('−', '-'); if (!raw || raw === '-') return;
+  const given = +raw, ok = given === G.bs; G.locked = true;
+  recordGen('l', 'direct', ok, ok ? null : 'antwoord', plainTxt(stHTML(G.bstart, v)), `${v} = ${G.bs}`, `${v} = ${G.binput}`);
+  const el = $('.bdinp');
+  if (ok) {
+    award(10); beep(true); flash('good', 400); if (el) el.classList.add('right');
+    G.timers.push(setTimeout(() => { if (G && G.running) blNext(); }, 700)); return;
+  }
+  penalty(); beep(false); flash('bad', 500); if (el) el.classList.add('wrong');
+  G.mistakes.push({q: plainTxt(stHTML(G.bstart, v)), given: `${v} = ${G.binput}`});
+  pauseClock();
+  $('#hist').innerHTML = `<div class="bdyou">Jouw antwoord: <s><i>${v}</i> = ${G.binput}</s> · goed is <b><i>${v}</i> = ${fmt(G.bs)}</b></div>${bdSolution(G.bstart, v)}`;
+  $('#bhint').innerHTML = `${LANE ? '' : '<span class="muted">❚❚ De tijd staat stil. Bekijk de uitwerking.</span> '}<button class="btn primary wnx" data-act="wNext">Volgende ▶</button>`;
+  $('#moves').innerHTML = '';
+  G.after = blNext;
 }
 function blMove(i) {
   if (!G || !G.running || G.locked) return;
@@ -4423,7 +4487,7 @@ function showSettings() {
           <div class="lvrow" style="margin-top:0"><b>Leerlingen tonen als</b><div class="seg">${[['karakter', 'Karakter', 'eigen figuur'], ['pixel', 'Pixel-foto', 'bewerkte foto'], ['foto', 'Foto', 'echte foto']].map(([v, n, sub]) => `<button class="${avMode() === v ? 'on' : ''}" data-act="avMode" data-arg="${v}">${n}<small>${sub}</small></button>`).join('')}</div></div>
           ${avMode() !== 'foto' ? `<div class="lvrow"><b>Stijl van de karakters</b><div class="seg avstyles">${[['street', 'Streetwear'], ['held', 'Helden'], ['dier', 'Dieren'], ['strak', 'Strak'], ['monster', 'Monsters'], ['robot', 'Robots'], ['pixel', 'Pixel']].map(([v, n]) => `<button class="${avStyle() === v ? 'on' : ''}" data-act="avStyle" data-arg="${v}"><span class="av char sm">${charSVG(4242, v)}</span>${n}</button>`).join('')}</div></div>` : ''}
           <div class="lvrow"><b>Weergavegrootte</b><div class="seg">${[[0.75, 'Klein'], [0.85, 'Normaal'], [1, 'Groot']].map(([v, n]) => `<button class="${zoomLv() === v ? 'on' : ''}" data-act="zoom" data-arg="${v}">${n}</button>`).join('')}</div></div>
-          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 4-11-2026</span></div>
+          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 9-11-2026</span></div>
           <div class="row between"><span>Kleuren stempelkaarten <small class="muted">(tik om te wisselen)</small></span><div class="kcrow">${kCards().map((k, i) => `<button class="kcbtn" style="--kc:${KCOL[k]}" data-act="kcol" data-arg="${i}"><b>${'ABCD'[i]}</b>${k}</button>`).join('')}</div></div>
           <div class="row between"><span>Geluid</span><button class="switch ${D.sound ? 'on' : ''}" data-act="sound" aria-label="Geluid"><i></i></button></div>
           <div class="row"><button class="btn" data-act="exportB">💾 Back-up opslaan</button><button class="btn" data-act="importB">📂 Back-up terugzetten</button></div>
@@ -4667,6 +4731,7 @@ function fastAct(b) {
   if (f === 'ans') rrAnswer(parseInt(b.dataset.arg, 10), b);
   else if (f === 'key') rrKey(b.dataset.arg);
   else if (f === 'bmove') blMove(b.dataset.arg);
+  else if (f === 'bkey') bdKey(b.dataset.arg);
   else if (f === 'bundo') blUndo();
   else if (f === 'gans') grAnswer(b.dataset.arg);
   else if (f === 'vop') vrOp(b.dataset.arg);
@@ -4689,6 +4754,10 @@ app.addEventListener('change', e => { const el = e.target.closest('[data-change]
 app.addEventListener('input', e => { if (e.target.dataset.change === 'impName') CHANGE.impName(e.target.dataset.arg, e.target); });
 app.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.id === 'newcls') ACT.addClass(); });
 document.addEventListener('keydown', e => {
+  if (screen === 'play' && G && G.running && G.game === 'balans' && G.cfg.baan === 'direct') {
+    if (/^[0-9]$/.test(e.key)) bdKey(e.key); else if (e.key === '-') bdKey('−'); else if (e.key === 'Backspace') bdKey('del'); else if (e.key === 'Enter') { e.preventDefault(); if (G.after) ACT.wNext(); else bdKey('ok'); }
+    return;
+  }
   if (screen === 'play' && G && G.running && G.game === 'gonio') {
     if (/^[0-9]$/.test(e.key)) gnKey(e.key);
     else if (e.key === ',' || e.key === '.') gnKey(',');
