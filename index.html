@@ -729,6 +729,57 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .fzexp{min-height:0}.fzmsg{font-size:1.2rem;padding:.6rem 1rem;border-radius:.8rem;margin-top:.5rem}.fzmsg.good{background:rgba(46,229,157,.12);color:var(--good)}.fzmsg.bad{background:rgba(255,77,109,.1);color:#FFB3C0}
 .lanemode .fswrap,.lanemode .fzgrid{grid-template-columns:1fr;grid-template-rows:auto auto}.lanemode .fzwrap{height:34vh;flex:none}.lanemode .fzpad{grid-template-columns:repeat(3,3.8rem);grid-auto-rows:3.4rem}
 .lanemode .screen:has(.fzgrid){overflow-y:auto}
+/* klas 1 · Mystery Graph */
+.mgwrap{display:flex;gap:1.2rem;flex:1;min-height:0}
+.mgboard{height:100%;aspect-ratio:1;flex:none;background:#fff;border-radius:1rem;padding:.35rem;touch-action:none;cursor:crosshair;box-shadow:0 .4rem 1.4rem rgba(0,0,0,.35)}
+.mgsvg{width:100%;height:100%;display:block;user-select:none}
+.mgl{stroke:#d5dae6;stroke-width:.03}.mgl.ax{stroke:#14213d;stroke-width:.09}.mgh{stroke:#e8ecf4;stroke-width:.015}
+.mgn{font-size:.55px;fill:#6b7385;font-family:system-ui,sans-serif}.mgax{font-size:.7px;font-weight:700;fill:#14213d;font-style:italic}
+.mgln{stroke:#14213d;stroke-width:.15;stroke-linecap:round}.mgdot{fill:#2f6fed}.mgpen{fill:none;stroke:#2f6fed;stroke-width:.08;stroke-dasharray:.2 .15}
+.mghelp{fill:none;stroke:#0a8f68;stroke-width:.14;stroke-dasharray:.35 .2}.mggood{fill:rgba(10,143,104,.25);stroke:#0a8f68;stroke-width:.1}.mgbad{stroke:#e0344f;stroke-width:.16;stroke-linecap:round}
+.mglab{font-size:.9px;font-weight:800;fill:#e0344f;font-family:system-ui,sans-serif}
+.mgside{flex:1;min-width:0;display:flex;flex-direction:column;gap:1rem;justify-content:center}
+.mgcard{text-align:center}.mgcard .wlab{font-size:1.2rem}
+.mgtg{font-family:var(--fd);font-weight:900;font-size:clamp(2.6rem,8vmin,5.5rem);color:var(--gold);margin:.4rem 0;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mgbar{height:.6rem;background:rgba(255,255,255,.1);border-radius:.3rem;overflow:hidden;margin:.6rem 0}.mgbar i{display:block;height:100%;background:linear-gradient(90deg,var(--sub),var(--good));transition:width .3s}
+.mgsteps{font-size:1.35rem;line-height:1.6}.mgsteps b{color:var(--gold);font-family:var(--fd)}
+.mgdwrap{display:flex;align-items:center;gap:2.5rem;justify-content:center}.mgduo .mgsvg{width:auto;height:min(50vh,40rem);background:#fff;border-radius:1rem;padding:.3rem}.mgdq{font-size:clamp(1.8rem,4.5vmin,3.2rem);max-width:34rem;text-align:left}.mgdq b{color:var(--gold);white-space:nowrap}
+.lanemode .mgwrap{flex-direction:column;gap:.6rem}.lanemode .mgboard{height:auto;width:100%}.lanemode .mgtg{font-size:2.4rem;margin:.1rem 0}.lanemode .mgside{justify-content:flex-start;gap:.5rem}.lanemode .mgcard{padding:.6rem}
+.lanemode .screen:has(.mgwrap),.lanemode .screen:has(.bwwrap){overflow-y:auto}
+/* klas 1 · De Bouwmeesters */
+.bwwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1rem;flex:1;min-height:0}
+.bwleft{display:flex;flex-direction:column;gap:.7rem;min-height:0}
+.bwpark{flex:none;border-radius:1rem;overflow:hidden;background:linear-gradient(#5bb8ff,#d6f1ff 58%,#4caf50 58%);position:relative}.bwpark svg{display:block;width:100%;height:auto;max-height:26vh}
+.bwpi{position:absolute;left:.5rem;bottom:.4rem;background:rgba(14,20,48,.82);border-radius:.6rem;padding:.2rem .7rem;font-size:1rem;font-weight:700}
+.bwfig{flex:1;min-height:0;overflow:auto;background:#fff;color:#16334d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;padding:.6rem}
+.bwhd{align-self:flex-start;font-family:var(--fd);font-style:italic;color:#0d4f8b;font-size:1.1rem}
+.bwfig svg{width:100%;max-height:30vh}.bwfig .bwf5{width:100%}.bwfig .bwf5 svg{height:34vh;max-height:34vh;touch-action:none;cursor:grab}
+.bwfig .fa{fill:#a5df8b;stroke:#2e7d32;stroke-width:3}.bwfig .ds{stroke:#e5484d;stroke-width:3;stroke-dasharray:6;fill:none}.bwfig .rr{stroke:#f57c14;stroke-width:5}
+.bwfig .lb,.bwdfig .lb{font:700 15px sans-serif;fill:#16334d}
+.bwfig .w{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);transition:transform 1.8s ease-out}.bwfig .w.on{transform:scaleY(1)}
+.bwfig .lad{background:#fff7d6;color:#3a2b00;border-radius:.8rem;padding:.6rem 1rem;font-weight:700;line-height:1.7;font-size:1.1rem}
+.bwchips{display:flex;gap:.6rem;justify-content:center}.bwchip{min-height:3.2rem;padding:0 1.2rem;border-radius:.8rem;border:3px solid #f57c14;background:#fff;color:#16334d;font-weight:800;font-size:1.05rem}
+.bwright{display:flex;flex-direction:column;gap:.7rem;min-height:0;overflow:auto}
+.bwcard{flex:none}.bwq{font-size:clamp(1.3rem,3vmin,2.1rem)}.bwq small{display:block;font-size:.62em;font-weight:500;color:#C9CFEA;margin-top:.5rem;line-height:1.45}
+.bwtools{display:flex;flex-direction:column;gap:.6rem}
+.bwans{display:flex;align-items:baseline;gap:.6rem;justify-content:center;font-family:var(--fd);font-weight:900;font-size:clamp(1.8rem,4.4vmin,3rem)}
+.bwinp{min-width:6rem;border-bottom:.25rem solid var(--sub);text-align:center;padding:0 .5rem}.bwinp.right{color:var(--good);border-color:var(--good)}.bwinp.wrong{color:var(--bad);border-color:var(--bad)}
+.bwu{color:var(--muted);font-size:.6em}
+.bwpad{grid-auto-rows:3.3rem}
+.bwrow{display:flex;gap:.6rem;justify-content:center}.bwrow .btn{min-height:3.4rem;font-size:1.15rem;padding:.3rem 1.6rem}
+.bwopts{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}.bwopt{min-height:5rem;font-size:clamp(1.1rem,2.4vmin,1.6rem);text-transform:none}.bwopt svg{height:clamp(4rem,11vh,8rem);width:auto;background:#fff;border-radius:.5rem;padding:.2rem}
+.bwcalc{background:#0E1430;border-radius:1rem;padding:.6rem;display:flex;flex-direction:column;gap:.4rem}
+.bwcd{background:#dff3ff;color:#16334d;font-size:1.6rem;font-weight:800;text-align:right;padding:.2rem .6rem;border-radius:.6rem;min-height:2.3rem;overflow-x:auto;font-variant-numeric:tabular-nums}
+.bwcg{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}.bwcg .key{min-height:2.9rem;font-size:1.3rem;border-radius:.6rem}.bwcg .key.eq{grid-column:span 2;background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--ctaInk);font-weight:900}
+.bwok{background:rgba(46,229,157,.12);color:var(--good);border-radius:1rem;padding:.7rem 1.1rem;font-size:1.3rem;font-weight:800}.bwok .bwe{color:#DCE1F7;font-weight:500;font-size:1.1rem;margin-top:.2rem}
+.bwe{font-size:1.25rem}.bwe b{color:var(--good)}
+.bwhint{background:rgba(255,210,63,.12);color:var(--gold);border-radius:1rem;padding:.6rem 1rem;font-size:1.2rem;font-weight:700}
+.bwpause .bwtools{display:none}
+.bwres .bwrespark svg{width:100%;max-width:34rem;max-height:30vh;border-radius:1rem;display:block;margin:.4rem 0 .8rem}
+.bwduo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:1.4rem;align-items:center;text-align:left}.bwdfig{background:#fff;border-radius:1rem;padding:.6rem}.bwdfig svg{width:100%;max-height:42vh}.bwdq small{display:block;font-size:.6em;color:#C9CFEA;margin-top:.6rem}.hlhead svg{height:3.2rem;width:auto;background:#fff;border-radius:.3rem;vertical-align:middle}
+.bwdopt svg{height:clamp(4rem,12vh,8rem);width:auto;background:#fff;border-radius:.5rem;padding:.2rem;vertical-align:middle}
+.lanemode .bwwrap{grid-template-columns:1fr;grid-template-rows:auto auto;flex:none;gap:.5rem}.lanemode .bwleft{gap:.4rem}.lanemode .bwfig{padding:.3rem}.lanemode .bwfig svg{max-height:17vh}.lanemode .bwfig .bwf5 svg{height:20vh;max-height:20vh}.lanemode .bwpark svg{max-height:9vh}.lanemode .bwchip{min-height:2.4rem;font-size:.9rem}.lanemode .bwfig .lad{font-size:.9rem;padding:.3rem .6rem}.lanemode .bwcg .key{min-height:2.3rem;font-size:1.1rem}.lanemode .bwcalc .small{display:none}.lanemode .bwcd{font-size:1.2rem;min-height:1.8rem}.lanemode .bwopt{min-height:4rem}.lanemode .bwopt svg{height:3.8rem}.lanemode .bwhd{font-size:.9rem}.lanemode .bwcard{padding:.6rem .9rem}.lanemode .bwrow .btn{min-height:2.8rem}.lanemode .bwpi{font-size:.8rem}.lanemode .bwright{overflow:visible}.lanemode .bwq{font-size:1.15rem}.lanemode .bwpad{grid-auto-rows:2.9rem}
+
 .lanemode .fzgrid{flex:none;gap:.5rem}.lanemode .fzleft{overflow:visible;gap:.45rem}.lanemode .fzwrap{height:36vh}.lanemode .fzc{padding:.55rem .8rem}.lanemode .fzc .muted.small{display:none}.lanemode .fzf{font-size:1.15rem;line-height:1.4}.lanemode .fzrow .btn{padding:.5rem .8rem;font-size:.95rem}.lanemode .fzsc .key{min-height:2.6rem;font-size:.85rem}
 .wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
 #weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
@@ -805,6 +856,9 @@ const OPTDEFS = {
   hnot: {label: 'Hoeknotatie', choices: [{v: 'een', name: '∠G', sub: 'één letter'}, {v: 'drie', name: '∠HGI', sub: 'drie letters'}, {v: 'mix', name: 'Afwisselend', sub: 'extra uitdaging'}]},
   hoekr: {label: 'Afronden', choices: [{v: 1, name: 'Hoek: 1 decimaal', sub: 'zijden altijd 1 decimaal'}, {v: 0, name: 'Hoek: hele graden', sub: 'zijden altijd 1 decimaal'}]},
   stap: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'verhouding kiezen, gegeven en gevraagd, rekenen'}, {v: 'direct', name: 'Direct rekenen', sub: 'alleen het antwoord intypen'}]},
+  mgl: {label: 'Niveau', choices: [{v: 0, name: 'Makkelijk', sub: '●'}, {v: 1, name: 'Gemiddeld', sub: '●●'}, {v: 2, name: 'Moeilijk', sub: '●●●'}, {v: 3, name: 'Expert', sub: 'met decimalen'}]},
+  bm: {label: 'Missies', multi: true, allName: 'alle missies', choices: [{v: 'meet', name: '📏 Meetmeesters', sub: 'maten omrekenen', long: 'omrekenen'}, {v: 'opp', name: '📐 Grondleggers', sub: 'oppervlakte', long: 'oppervlakte'}, {v: 'cirkel', name: '⭕ Cirkelkampioenen', sub: 'omtrek en oppervlakte', long: 'cirkels'}, {v: 'inhoud', name: '🏊 Zwembadbouwers', sub: 'inhoud', long: 'inhoud'}, {v: 'aanzicht', name: '🧊 Architecten', sub: 'aanzichten', long: 'aanzichten'}]},
+  bml: {label: 'Niveau', choices: [{v: 0, name: 'Bouwleerling', sub: 'eenvoudige getallen'}, {v: 1, name: 'Bouwexpert', sub: 'meerdere stappen'}, {v: 2, name: 'Hoofdbouwmeester', sub: 'meer denkwerk'}]},
   fal: {label: 'Moeilijkheid', choices: [{v: 1, name: 'Makkelijk'}, {v: 2, name: 'Gemiddeld'}, {v: 3, name: 'Pittig'}]},
   fg1: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'snij', name: 'Snijpunten', sub: 'y = a(x − d)(x − e)', long: 'snijpunten'}, {v: 'top', name: 'Top', sub: 'y = a(x − p)² + q', long: 'top'}, {v: 'abc', name: 'Top van ax² + bx + c', sub: 'x_top = −b / 2a', long: 'abc-vorm'}]},
   fg2: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'wortel', name: 'Machtsvergelijkingen', sub: 'hogeremachtswortels', long: 'machtswortels'}, {v: 'ontb', name: 'Ontbinden', sub: 'x buiten haakjes', long: 'ontbinden'}, {v: 'subst', name: 'Substitutie', sub: 'x² = u', long: 'substitutie'}, {v: 'ong', name: 'Ongelijkheden', sub: 'algebraïsch oplossen', long: 'ongelijkheden'}]},
@@ -1407,6 +1461,22 @@ const GAMES = {
     frame: () => `<div class="qcard wq hcard" id="qcard"><div class="hlq" id="hlq"></div><div class="oorule" id="hlrule"></div></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
     setup: () => {}, begin: () => hlNext()
   },
+  mystery: {
+    section: 'coord', title: 'Mystery Graph', sub: 'Tik de punten aan in het assenstelsel. Welk plaatje verschijnt er?', scoreLabel: 'punten goed',
+    opts: ['mgl', 'time'], choices: {time: [120, 180, 300, 480].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {mgl: 0, time: 180},
+    example: c => `Voorbeeld: trek een lijn naar <b>${c.mgl === 3 ? '(4,5; −2)' : '(3, −2)'}</b>`,
+    tile: () => `<div class="mini-w"><span>Trek een lijn naar (3, −2)</span><b>🏠 ★ Huis ★</b></div>`,
+    frame: () => `<div class="mgwrap"><div class="mgboard" id="mgboard"></div><div class="mgside"><div class="qcard wq mgcard" id="qcard"><div class="wlab" id="mglab"></div><div class="mgtg" id="mgtg"></div><div id="mgprog"></div></div><div id="mgexp"></div></div></div>`,
+    setup: () => { $('#mgboard').onpointerdown = mgTap; }, begin: () => mgNext()
+  },
+  bouw: {
+    section: 'bouw', title: 'De Bouwmeesters', sub: 'Bouw je eigen pretpark: maten, oppervlakte, cirkels, inhoud en aanzichten', scoreLabel: 'opdrachten goed',
+    opts: ['bm', 'bml', 'time'], choices: {time: [180, 300, 480, 600].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {bm: ['meet', 'opp', 'cirkel', 'inhoud', 'aanzicht'], bml: 0, time: 300},
+    example: c => { const mi = BW_MIS.findIndex(m => m[0] === (c.bm[0] || 'opp')); return `Voorbeeld: ${bwPlain(BW.gen(mi, 0, c.bml).t)}`; },
+    tile: () => `<div class="mini-w"><span>Zwembad 12 × 5 × 2 m</span><b>🎢 120 m³ ✓</b></div>`,
+    frame: () => `<div class="bwwrap" id="bwwrap"><div class="bwleft"><div class="bwpark" id="bwpark"></div><div class="bwfig card" id="bwfig"></div></div><div class="bwright"><div class="qcard wq bwcard" id="qcard"><div class="faqt bwq" id="bwq"></div></div><div id="bwexp"></div><div id="bwtools" class="bwtools"></div></div></div>`,
+    setup: () => {}, begin: () => { G.bwBuilt = 0; bwNext(); }, resultExtra: () => bwResultExtra()
+  },
   fapar: {
     section: 'fa', title: 'Parabool-Parade', sub: '§1 Kwadratische formules: snijpunten, toppen en formules',
     opts: ['fg1', 'fal', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {fg1: ['snij', 'top', 'abc'], fal: 2, time: 180},
@@ -1491,7 +1561,7 @@ const GAMES = {
 };
 // Jaarlagen en hoofdstukken. Nieuw hoofdstuk: voeg een regel toe aan SECTIONS met de jaarlaag erbij.
 const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D'], [4, 'Havo 4', '#FF5C8A'], [5, 'Havo 5', '#FF9F1C']];
-const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5], ['herl', 'Herleiden (§ 11.2)', 5], ['fa', 'H4 Werken met formules (Formule-Arena)', 4]];
+const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['coord', 'H3 Assenstelsel en coördinaten', 1], ['bouw', 'H7 Meten en ruimte', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5], ['herl', 'Herleiden (§ 11.2)', 5], ['fa', 'H4 Werken met formules (Formule-Arena)', 4]];
 const gamesIn = sid => Object.entries(GAMES).filter(([, g]) => g.section === sid);
 const gradeOf = gid => { const sc = SECTIONS.find(x => x[0] === (GAMES[gid] || {}).section); return sc ? sc[2] : null; };
 let GRADE = null;
@@ -2373,7 +2443,24 @@ const FA_TH = {
   '3A': ['4.3 Theorie A: Gebroken functies (asymptoten en translatie)', 'blz. 156 en 157'], '3B': ['4.3 Theorie B: Gebroken vergelijkingen', 'blz. 158 tot 160'],
   '4A': ['4.4 Theorie A: Extreme waarden', 'blz. 162'], '4B': ['4.4 Theorie B: Extreme waarden berekenen', 'blz. 163'], '4C': ['4.4 Theorie C: Wiskundig model', 'blz. 165 en 166']};
 const FA_ERR = Object.fromEntries(Object.entries(FA_TH).map(([k, [t, b]]) => [k, {name: t.replace(/^.*Theorie [A-D]: /, ''), desc: t + ' · ' + b, tip: 'Laat leerlingen ' + t.split(':')[0] + ' (' + b + ') nog eens doornemen.'}]));
+const MG_ERR = {
+  omgedraaid: {name: 'x en y omgedraaid', desc: '(3, 5) getikt als (5, 3)', tip: 'Eerst x (links/rechts), dan y (omhoog/omlaag).'},
+  teken: {name: 'Minteken fout', desc: 'Links/rechts of boven/onder verwisseld', tip: 'Negatieve x: naar links. Negatieve y: naar beneden.'},
+  mis: {name: 'Net naast', desc: 'Eén hokje of half hokje verkeerd geteld', tip: 'Tel de hokjes vanaf de oorsprong (0, 0).'},
+  anders: {name: 'Andere fout', desc: '', tip: ''}};
+const BW_ERR = {
+  omrekenen: {name: 'Verkeerd omgerekend', desc: 'Antwoord 10, 100 of 1000 keer te groot of te klein', tip: 'Gebruik de omreken-trap: bij m² en m³ is elke stap ×100 of ×1000.'},
+  factor2: {name: 'Factor 2 fout', desc: 'Straal/diameter verwisseld of ½ vergeten', tip: 'Diameter = 2 × straal. Driehoek: ½ × basis × hoogte.'},
+  afronden: {name: 'Afronden', desc: 'Bijna goed, verkeerd afgerond of met 3,14', tip: 'Gebruik de π-toets en rond pas aan het eind af op 2 decimalen.'},
+  aanzicht: {name: 'Verkeerd aanzicht', desc: 'Ander aanzicht of gespiegeld gekozen', tip: 'Voor: per kolom de hoogste stapel. Boven: elk stapeltje is één vierkantje.'},
+  formule: {name: 'Verkeerde formule', desc: 'Omtrek- en oppervlakteformule verwisseld', tip: 'Omtrek = π × diameter, oppervlakte = π × straal × straal.'},
+  reken: {name: 'Rekenfout', desc: '', tip: 'Schrijf de berekening op en reken stap voor stap.'},
+  anders: {name: 'Andere fout', desc: '', tip: ''}};
 const STAT_TOPICS = {
+  coord: {name: 'Klas 1 · Coördinaten', g: ['C'], unit: 'punten', fast: 8000, errs: MG_ERR, noLevel: true,
+    cats: [{id: 'k1', name: 'Positieve coördinaten', short: '(+, +)', color: 'var(--add)'}, {id: 'neg', name: 'Met negatieve getallen', short: 'negatief', color: 'var(--sub)'}, {id: 'as', name: 'Punt op een as', short: 'op as', color: 'var(--gold)'}, {id: 'dec', name: 'Met decimalen', short: 'decimaal', color: 'var(--mul)'}]},
+  bouw: {name: 'Klas 1 · De Bouwmeesters', g: ['U'], unit: 'opdrachten', fast: 30000, errs: BW_ERR, noLevel: true,
+    cats: [{id: 'meet', name: 'Maten omrekenen', short: 'Maten', color: 'var(--gold)'}, {id: 'opp', name: 'Oppervlakte', short: 'Oppervl.', color: 'var(--add)'}, {id: 'cirkel', name: 'Cirkels', short: 'Cirkels', color: 'var(--sub)'}, {id: 'inhoud', name: 'Inhoud', short: 'Inhoud', color: 'var(--div)'}, {id: 'aanzicht', name: 'Aanzichten', short: 'Aanzicht', color: 'var(--mul)'}]},
   fa: {name: 'Havo 4 · H4 Formules', g: ['P', 'S', 'Z', 'K', 'T'], unit: 'vragen', fast: 15000, errs: FA_ERR, noLevel: true,
     cats: Object.keys(FA_TH).filter(k => k !== '2D').map((k, i) => ({id: k, name: FA_ERR[k].name, short: k, color: ['var(--sub)', 'var(--div)', 'var(--add)', 'var(--mul)', 'var(--gold)', '#F472B6'][i % 6]}))},
   herl: {name: 'Herleiden', g: ['h'], unit: 'vragen', fast: 20000, errs: HL_ERR, noLevel: true,
@@ -2560,7 +2647,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {P: 'Parabool-Parade', S: 'Stappenspel', Z: 'Schuifpuzzel', K: 'Breukenbreker', T: 'Toppenjacht', h: 'Herleiden', m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {C: 'Mystery Graph', U: 'De Bouwmeesters', P: 'Parabool-Parade', S: 'Stappenspel', Z: 'Schuifpuzzel', K: 'Breukenbreker', T: 'Toppenjacht', h: 'Herleiden', m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -4241,6 +4328,311 @@ function faDuo(gid, cfg) {
   return {prompt: `<div class="dsub">${FA_HINT[no]}</div><div class="ddesc faqt">${q.q}</div>`, opts: q.o.map((h, j) => ({html: h, ok: j === q.a, err: q.tag})), explain: q.ex, full: `${q.ex}${faTheory(q.tag)}`};
 }
 
+/* ===================== Klas 1 · De Bouwmeesters (H7) — opdrachten van een collega ===================== */
+const BW = (() => {
+const R=a=>a[Math.random()*a.length|0],ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),n=x=>(+(+x).toFixed(4)).toLocaleString('nl-NL',{maximumFractionDigits:4}),sh=a=>a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const T=(x,y,t,r)=>`<text x="${x}" y="${y}" text-anchor="middle" class="lb"${r?` transform="rotate(-90 ${x} ${y})"`:''}>${t}</text>`;
+function fg(t,a,b,c,d){const s=Math.min(240/a,130/b),w=a*s,h=b*s,x=(300-w)/2,y=16;let o;
+ if(t=='t')o=`<polygon points="${x},${y+h} ${x+w},${y+h} ${x+w*.3},${y}" class="fa"/><line x1="${x+w*.3}" y1="${y}" x2="${x+w*.3}" y2="${y+h}" class="ds"/>`+T(x+w/2,y+h+24,'basis '+n(a)+' m')+T(x+w*.3+52,y+h/2,'hoogte '+n(b)+' m');
+ else{o=t=='L'?`<polygon points="${x},${y} ${x+w},${y} ${x+w},${y+(b-d)*s} ${x+(a-c)*s},${y+(b-d)*s} ${x+(a-c)*s},${y+h} ${x},${y+h}" class="fa"/><rect x="${x+(a-c)*s}" y="${y+(b-d)*s}" width="${c*s}" height="${d*s}" class="ds"/>`+T(x+w-c*s/2,y+h-d*s/2+5,n(c)+'×'+n(d)):`<rect x="${x}" y="${y}" width="${w}" height="${h}" class="fa"/>`;
+  if(t=='v')o+=`<rect x="${x+(w-c*s)/2}" y="${y+(h-d*s)/2}" width="${c*s}" height="${d*s}" rx="8" fill="#4aa8ff"/>`+T(x+w/2,y+h/2+5,'vijver '+n(c)+'×'+n(d));
+  o+=T(x+w/2,t=='L'?y-3:y+h+24,n(a)+' m')+T(x-10,y+h/2,n(b)+' m',1)}
+ return`<svg viewBox="0 0 300 185">${o}</svg>`}
+const cf=()=>`<svg viewBox="0 0 300 200"><circle cx="150" cy="100" r="80" style="fill:#9fd6ff;stroke:#1e7fd8;stroke-width:4"/><line id="ld" x1="70" y1="100" x2="230" y2="100" class="ds"/><line id="lr" x1="150" y1="100" x2="230" y2="100" class="rr"/><circle cx="150" cy="100" r="5"/>${T(192,90,'straal')}${T(108,122,'diameter')}</svg><div class="bwchips"><button class="bwchip" data-fast="bwhl" data-arg="lr">Straal</button><button class="bwchip" data-fast="bwhl" data-arg="ld">Diameter</button></div>`;
+const hl=id=>{const e=document.getElementById(id);e.style.strokeWidth=12;setTimeout(()=>e.style.strokeWidth='',900)};
+const bf=(l,b,h,u)=>`<svg viewBox="0 0 290 190"><polygon points="30,60 80,30 210,30 160,60" fill="#bfe6ff"/><polygon points="160,60 210,30 210,120 160,150" fill="#5aaee8"/><rect x="30" y="60" width="130" height="90" fill="#9fd6ff"/><rect class="w" x="30" y="75" width="130" height="75" fill="#1e7fd8" opacity=".85"/><rect x="30" y="60" width="130" height="90" fill="none" stroke="#16334d" stroke-width="3"/>${T(95,172,'lengte '+n(l)+' '+u)}${T(246,100,'breedte '+n(b)+' '+u)}${T(18,105,'hoogte '+n(h)+' '+u,1)}</svg>`;
+const lad=a=>`<div class="lad"><b>Omreken-trap</b><br>${a.includes('²')?'m² →×100→ dm² →×100→ cm²':'km →×1000→ m →×10→ dm →×10→ cm'}<br><small>Naar rechts: vermenigvuldigen · naar links: delen</small></div>`;
+const vg=g=>`<svg viewBox="0 0 84 84">`+g.map((r,i)=>r.map((v,j)=>`<rect x="${j*28}" y="${i*28}" width="26" height="26" rx="3" fill="${v?'#ff9f3d':'none'}" stroke="#7a9" stroke-dasharray="${v?0:3}"/>`).join('')).join('')+`</svg>`;
+const vw={top:H=>[2,1,0].map(r=>H[r].map(v=>v>0?1:0)),front:H=>{const F=[0,1,2].map(c=>Math.max(H[0][c],H[1][c],H[2][c]));return[2,1,0].map(z=>F.map(f=>f>z?1:0))},side:H=>{const F=[0,1,2].map(r=>Math.max(...H[r]));return[2,1,0].map(z=>F.map(f=>f>z?1:0))}};
+const fig5=H=>`<div id="f5" class="bwf5">${iso(H,-.6)}</div><div class="bwchips"><button class="bwchip" data-fast="bwrot" data-arg="-.5">⟲ Draai</button><button class="bwchip" data-fast="bwrot" data-arg=".5">Draai ⟳</button></div>`;
+function park(D,bg,PC){PC=PC||'#e0735a';const h=i=>D.includes(i),X=()=>'',tree=x=>`<rect x="${x-4}" y="262" width="8" height="26" fill="#7a4b22"/><circle cx="${x}" cy="252" r="22" fill="#2f9e44"/>`;
+ let o=`<svg viewBox="0 0 800 400" class="park" preserveAspectRatio="xMidYMid ${bg?'slice':'meet'}"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5bb8ff"/><stop offset="1" stop-color="#d6f1ff"/></linearGradient></defs><rect width="800" height="400" fill="url(#sk)"/><circle cx="720" cy="60" r="34" fill="#ffd23f"/><ellipse cx="150" cy="70" rx="60" ry="18" fill="#fff"/><ellipse cx="460" cy="50" rx="50" ry="14" fill="#fff"/><path d="M0 240 Q200 170 400 230 T800 220 V400 H0Z" fill="#79cc68"/><rect y="270" width="800" height="130" fill="#4caf50"/>`+[40,250,520,775].map(tree).join('');
+ o+=`<path d="M-10 385 Q200 320 400 350 T810 330" fill="none" stroke="${h(0)?PC:'#ffffff99'}" stroke-width="28" ${h(0)?'':'stroke-dasharray="14 12"'}/>`;
+ o+=h(1)?`<rect x="60" y="290" width="120" height="50" rx="8" fill="#e8d3a2"/><polygon points="50,290 120,235 190,290" fill="#f57c14"/><rect x="105" y="305" width="30" height="35" fill="#8a5a2b"/><text x="120" y="228" font-size="26" text-anchor="middle">🚩</text>`:X(120,325);
+ o+=h(2)?`<polygon points="400,160 360,290 440,290" fill="none" stroke="#555" stroke-width="5"/><g style="transform-origin:400px 160px;animation:spin 24s linear infinite"><circle cx="400" cy="160" r="85" fill="none" stroke="#e5484d" stroke-width="6"/>`+[0,1,2,3,4,5,6,7].map(k=>{const t=k*Math.PI/4,x=400+85*Math.cos(t),y=160+85*Math.sin(t);return`<line x1="400" y1="160" x2="${x}" y2="${y}" stroke="#e5484d" stroke-width="3"/><rect x="${x-8}" y="${y-6}" width="16" height="14" rx="3" fill="#ffc928"/>`}).join('')+`</g>`:X();o+=h(5)?`<ellipse cx="290" cy="338" rx="54" ry="13" fill="#c9a46a"/><rect x="287" y="268" width="6" height="70" fill="#8a6a3a"/>`+[250,270,310,330].map(x=>`<rect x="${x}" y="296" width="3" height="42" fill="#ffc928"/>`).join('')+[0,1,2,3,4,5].map(k=>`<polygon points="290,258 ${238+k*17.33},296 ${255.33+k*17.33},296" fill="${k%2?'#fff':'#e5484d'}" stroke="#c62828"/>`).join('')+`<circle cx="290" cy="256" r="5" fill="#ffd23f"/><text x="258" y="334" font-size="20" text-anchor="middle">🐴</text><text x="322" y="334" font-size="20" text-anchor="middle">🦄</text>`:'';o+=h(6)?`<ellipse cx="480" cy="336" rx="42" ry="12" fill="#cfd8dc" stroke="#90a4ae" stroke-width="3"/><ellipse cx="480" cy="334" rx="34" ry="9" fill="#4fc3f7"/><rect x="476" y="300" width="8" height="34" fill="#b0bec5"/><g stroke="#b3e5fc" stroke-width="3" fill="none" stroke-linecap="round"><path d="M480 300V268"/><path d="M480 300Q462 270 450 328"/><path d="M480 300Q498 270 510 328"/><path d="M480 300Q470 275 462 330"/><path d="M480 300Q490 275 498 330"/><animate attributeName="opacity" values="1;.55;1" dur="1.1s" repeatCount="indefinite"/></g><circle cx="480" cy="264" r="4" fill="#e1f5fe"/>`:'';
+ o+=h(3)?`<rect x="580" y="298" width="150" height="72" rx="14" fill="#ffffffdd"/><rect x="590" y="308" width="130" height="52" rx="10" fill="#29b6f6"/><path d="M595 332q10-8 20 0t20 0t20 0t20 0t20 0t20 0" stroke="#fff" fill="none" stroke-width="3"/>`:X(650,345);
+ o+=h(4)?`<path d="M520 250Q560 90 620 200T700 130T790 250" fill="none" stroke="#e5484d" stroke-width="7"/><path d="M545 250V200M620 200V270M700 130V270M770 190V270" stroke="#777" stroke-width="4"/>`:X(660,215);
+ o+=h(7)?[[30,330],[60,340],[205,372],[235,378]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="7" fill="#ff5fa2"/><circle cx="${p[0]+12}" cy="${p[1]+4}" r="7" fill="#ffd23f"/>`).join(''):'';o+=h(8)?`<rect x="205" y="292" width="34" height="26" fill="#fff" stroke="#e5484d" stroke-width="3"/><polygon points="200,292 222,274 244,292" fill="#e5484d"/>`:'';o+=h(9)?[330,540,760].map(x=>`<rect x="${x}" y="318" width="4" height="40" fill="#555"/><circle cx="${x+2}" cy="314" r="9" fill="#ffd23f"/>`).join(''):'';return o+'</svg>'}
+const T1=[['Een achtbaan is # lang. Hoeveel cm is dat?','m','cm',100,[[250,300,150],[125,480,36],[12.5,.85,7.25]]],['Een wandelpad is # lang. Hoeveel meter is dat?','km','m',1000,[[3.5,2,4],[2.75,.4,6.2],[.045,12.08,.9]]],['Een grasveld heeft een oppervlakte van #. Hoeveel dm² is dat?','m²','dm²',100,[[4,3,5],[7.5,12,.6],[.25,3.14,15.5]]],['Een bouwterrein heeft een oppervlakte van #. Hoeveel m² is dat?','cm²','m²',1e-4,[[25000,50000,10000],[375000,12500,80000],[6250,2250000,450]]],['Hoeveel cm² is #?','dm²','cm²',100,[[3,5,2],[7.5,12,.4],[.06,25.5,130]]]];
+const GEN=[
+(i,L)=>{const[t,a,b,f,V]=T1[i],v=R(V[L]),A=+(v*f).toFixed(6);return{t:t.replace('#',`<b>${n(v)} ${a}</b>`),a:A,u:b,f:lad(a),h:'Wordt de eenheid kleiner? Dan wordt het getal groter (vermenigvuldigen). Gebruik de omreken-trap.',e:f>1?`1 ${a} = ${n(f)} ${b}, dus ${n(v)} × ${n(f)} = <b>${n(A)} ${b}</b>.`:`1 ${b} = ${n(1/f)} ${a}, dus ${n(v)} : ${n(1/f)} = <b>${n(A)} ${b}</b>.`}},
+(i,L)=>{const A=ri(8+4*L,14+8*L),B=ri(6+3*L,10+5*L),s=ri(3+4*L,9+10*L),m=x=>`<b>${n(x)} m</b>`;
+ if(i==0)return{t:`Een rechthoekig grasveld is ${m(A)} lang en ${m(B)} breed. Bereken de oppervlakte.`,a:A*B,u:'m²',f:fg('r',A,B),h:'Oppervlakte rechthoek = lengte × breedte.',e:`${n(A)} × ${n(B)} = <b>${n(A*B)} m²</b>.`};
+ if(i==1)return{t:`Een vierkant plein heeft zijden van ${m(s)}. Bereken de oppervlakte.`,a:s*s,u:'m²',f:fg('r',s,s),h:'Bij een vierkant zijn alle zijden even lang.',e:`${n(s)} × ${n(s)} = <b>${n(s*s)} m²</b>.`};
+ if(i==2){const b=L<2?2*ri(2+3*L,6+6*L):ri(5,15),h=ri(3+2*L,8+5*L);return{t:`Een driehoekig terrein heeft een basis van ${m(b)} en een hoogte van ${m(h)}. Bereken de oppervlakte.`,a:b*h/2,u:'m²',f:fg('t',b,h),h:'Oppervlakte driehoek = ½ × basis × hoogte.',e:`½ × ${n(b)} × ${n(h)} = <b>${n(b*h/2)} m²</b>.`}}
+ if(i==3){if(!L)return{t:`Een rechthoekig terrein is ${m(A)} lang en ${m(B)} breed. Hoeveel m² bestrating is nodig?`,a:A*B,u:'m²',f:fg('r',A,B),h:'Bestrating bedekt de hele oppervlakte.',e:`${n(A)} × ${n(B)} = <b>${n(A*B)} m²</b>.`};
+  const c=ri(3,5+L),d=ri(2,4+L);return{t:`Een terrein van ${m(A)} bij ${m(B)} krijgt bestrating, behalve een vijver van ${m(c)} bij ${m(d)}. Hoeveel m² bestrating is nodig?`,a:A*B-c*d,u:'m²',f:fg('v',A,B,c,d),h:'Terrein min vijver.',e:`${n(A)} × ${n(B)} − ${n(c)} × ${n(d)} = ${n(A*B)} − ${n(c*d)} = <b>${n(A*B-c*d)} m²</b>.`}}
+ const c=ri(2,A-4),d=ri(2,B-3);return{t:`Een L-vormig terrein is een rechthoek van ${m(A)} bij ${m(B)} waar een hoek van ${m(c)} bij ${m(d)} af is. Bereken de oppervlakte.`,a:A*B-c*d,u:'m²',f:fg('L',A,B,c,d),h:'Grote rechthoek min het stuk dat ontbreekt.',e:`${n(A)} × ${n(B)} − ${n(c)} × ${n(d)} = <b>${n(A*B-c*d)} m²</b>.`}},
+(i,L)=>{const P=3.14,m=x=>`<b>${n(x)} m</b>`,o={f:cf(),tol:.06,u:'m'};
+ if(i==0){if(L<2){const d=L?ri(11,30):R([10,20,5,8]);return{...o,t:`Een ronde fontein heeft een diameter van ${m(d)}. Bereken de omtrek (π = 3,14).`,a:P*d,h:'Omtrek = 3,14 × diameter.',e:`3,14 × ${n(d)} = <b>${n(P*d)} m</b>.`}}
+  const r=ri(10,30);return{...o,t:`Een draaimolen heeft een straal van ${m(r)}. Bereken de omtrek (π = 3,14).`,a:2*P*r,h:'Eerst de diameter: 2 × straal.',e:`d = 2 × ${r} = ${2*r}; omtrek = 3,14 × ${2*r} = <b>${n(2*P*r)} m</b>.`}}
+ if(i==1){if(L<2){const r=L?ri(5,30)+R([0,.5]):R([4,6,7,9]);return{...o,t:`Een draaimolen heeft een straal van ${m(r)}. Bereken de diameter.`,a:2*r,h:'De diameter is twee keer de straal.',e:`2 × ${n(r)} = <b>${n(2*r)} m</b>.`}}
+  const d=ri(10,40);return{...o,t:`Een cirkelvormig pad heeft een omtrek van ${m(P*d)}. Bereken de diameter.`,a:d,h:'Omtrek : 3,14 = diameter.',e:`${n(P*d)} : 3,14 = <b>${d} m</b>.`}}
+ if(i==2){if(L<2){const r=L?ri(7,15):ri(2,6);return{...o,u:'m²',t:`Een cirkelvormig plein heeft een straal van ${m(r)}. Bereken de oppervlakte.`,a:P*r*r,h:'Oppervlakte = 3,14 × straal × straal.',e:`3,14 × ${r} × ${r} = <b>${n(P*r*r)} m²</b>.`}}
+  const r=ri(4,10);return{...o,u:'m²',t:`Een cirkelvormig bassin heeft een diameter van ${m(2*r)}. Bereken de oppervlakte.`,a:P*r*r,h:'Eerst de straal: diameter : 2.',e:`r = ${2*r} : 2 = ${r}; 3,14 × ${r} × ${r} = <b>${n(P*r*r)} m²</b>.`}}
+ if(i==3){if(L<2){const d=L?ri(11,41):2*ri(3,10);return{...o,t:`Een reuzenrad heeft een diameter van ${m(d)}. Wat is de straal?`,a:d/2,h:'De straal is de helft van de diameter.',e:`${n(d)} : 2 = <b>${n(d/2)} m</b>.`}}
+  const r=ri(3,9);return{...o,u:'m²',t:`Rond een ronde fontein met straal ${m(r)} komt een pad van <b>1 m</b> breed. Hoeveel m² is het pad?`,a:P*(2*r+1),h:'Oppervlakte grote cirkel min oppervlakte fontein.',e:`3,14 × ${r+1} × ${r+1} − 3,14 × ${r} × ${r} = ${n(P*(r+1)**2)} − ${n(P*r*r)} = <b>${n(P*(2*r+1))} m²</b>.`}}
+ const r=ri(2,9),k=R([0,1]),c=k?`3,14 × ${r} × ${r}`:`2 × 3,14 × ${r}`,w=k?['2 × 3,14 × '+r,'3,14 × '+r,'2 × '+r+' × '+r]:['3,14 × '+r+' × '+r,'3,14 × '+r,'2 × '+r+' × '+r],A=sh([[c,1],...w.map(x=>[x,0])]);
+ return{...o,t:`Een cirkel heeft een straal van <b>${r} m</b>. Welke berekening geeft de <b>${k?'oppervlakte':'omtrek'}</b>?`,o:A.map(z=>z[0]),c:A.findIndex(z=>z[1]),h:k?'Oppervlakte: straal × straal × 3,14.':'Omtrek: 3,14 × diameter, en diameter = 2 × straal.',e:k?`Oppervlakte = 3,14 × r × r = <b>${n(P*r*r)} m²</b>.`:`Omtrek = 3,14 × 2 × r = <b>${n(2*P*r)} m</b>.`}},
+(i,L)=>{const m=(x,u)=>`<b>${n(x)} ${u}</b>`,l=ri(6+4*L,10+10*L),b=ri(3+2*L,6+5*L),h=ri(2,2+L),v=l*b*h;
+ if(i<2){const[a,c,d]=i?[ri(2,3+4*L),ri(2,3+3*L),ri(1,2+L)]:[l,b,h];return{t:`${i?'Een waterbak is':'Een zwembad is'} ${m(a,'m')} lang, ${m(c,'m')} breed en ${m(d,'m')} ${i?'hoog':'diep'}. Bereken de inhoud.`,a:a*c*d,u:'m³',f:bf(a,c,d,'m'),h:'Inhoud = lengte × breedte × hoogte.',e:`${n(a)} × ${n(c)} × ${n(d)} = <b>${n(a*c*d)} m³</b>.`}}
+ if(i==2){const a=L?R([80,60,90]):R([50,60,40]),c=L?R([40,35,50]):R([30,25,20]),d=L?R([50,45,60]):R([40,30,35]),V=a*c*d;return L==2?{t:`Een aquarium heeft de afmetingen ${m(a,'cm')} × ${m(c,'cm')} × ${m(d,'cm')}. Hoeveel <b>liter</b> water past erin? (1 liter = 1000 cm³)`,a:V/1000,u:'liter',f:bf(a,c,d,'cm'),h:'Eerst cm³, dan delen door 1000.',e:`${n(a)} × ${n(c)} × ${n(d)} = ${n(V)} cm³ = <b>${n(V/1000)} liter</b>.`}:{t:`Een aquarium heeft de afmetingen ${m(a,'cm')} × ${m(c,'cm')} × ${m(d,'cm')}. Bereken de inhoud in cm³.`,a:V,u:'cm³',f:bf(a,c,d,'cm'),h:'Inhoud = lengte × breedte × hoogte.',e:`${n(a)} × ${n(c)} × ${n(d)} = <b>${n(V)} cm³</b>.`}}
+ if(i==3){const e=L==2?R([1.5,2.5,.5]):L?ri(7,15):ri(2,6),u=L==2?'m':'cm',V=+(e**3).toFixed(6);return{t:`Een kubus heeft ribben van ${m(e,u)}. Bereken de inhoud.`,a:V,u:u+'³',f:bf(e,e,e,u),h:'Bij een kubus zijn lengte, breedte en hoogte gelijk.',e:`${n(e)} × ${n(e)} × ${n(e)} = <b>${n(V)} ${u}³</b>.`}}
+ return{t:`Een zwembad is ${m(l,'m')} lang en ${m(b,'m')} breed en heeft een inhoud van ${m(v,'m³')}. Hoe diep is het zwembad?`,a:h,u:'m',f:bf(l,b,'?','m'),h:'Inhoud : (lengte × breedte) = hoogte.',e:`${n(v)} : (${n(l)} × ${n(b)}) = ${n(v)} : ${n(l*b)} = <b>${n(h)} m</b>.`}},
+(i,L)=>{const k=['top','front','side','top','front'][i],N=[5,7,9][L],nm={top:'bovenaanzicht',front:'vooraanzicht',side:'zijaanzicht'};let H,s,V,t=0;
+ do{H=[0,1,2].map(()=>[0,1,2].map(()=>R(L?[0,0,1,1,2,3]:[0,0,1,1,2])));s=H.flat().reduce((a,b)=>a+b);V=Object.keys(vw).map(x=>JSON.stringify(vw[x](H)))}while(t++<900&&(Math.abs(s-N)>1||new Set(V).size<3));
+ const C=vw[k](H),O=[C],al=[...Object.keys(vw).filter(x=>x!=k).map(x=>vw[x](H)),C.map(r=>[...r].reverse()),[...C].reverse()];
+ for(const g of sh(al))if(O.length<4&&!O.some(o=>JSON.stringify(o)==JSON.stringify(g)))O.push(g);
+ const A=sh(O.map((g,j)=>[g,!j]));
+ return{t:`Dit bouwwerk bestaat uit <b>${s} kubussen</b>. Welk plaatje is het <b>${nm[k]}</b>?<br><small>Het groene vlak op de grond is de voorkant. Voor: kijk vanaf de voorkant. Zij: kijk vanaf de rechterkant (gezien vanaf de voorkant). Boven: kijk van boven (onderkant van het plaatje = voorkant). Draai het bouwwerk met je vinger!</small>`,H,f:fig5(H),o:A.map(z=>vg(z[0])),c:A.findIndex(z=>z[1]),h:k=='top'?'Van boven zie je elke stapel als één vierkantje.':'Kijk per kolom of rij naar de hoogste stapel.',e:k=='top'?'Van boven zie je elke stapel als één vierkantje, hoe hoog hij ook is.':k=='front'?'Van voren telt per kolom de hoogste stapel.':'Van rechts telt per rij de hoogste stapel.'}}];
+function iso(H,t){const S2=36,cs=Math.cos(t),sn=Math.sin(t),P=(x,y,z)=>[140+(x*cs-y*sn)*S2,175-((x*sn+y*cs)*.57+z*.82)*S2],pg=(p,f)=>`<polygon points="${p.map(q=>P(...q).map(v=>v.toFixed(1)).join()).join(' ')}" fill="${f}" stroke="#fff" stroke-width="1.5"/>`;
+ let o=pg([[-1.5,-1.5,0],[1.5,-1.5,0],[1.5,1.5,0],[-1.5,1.5,0]],'#cfe9c8')+pg([[-1.5,-1.9,0],[1.5,-1.9,0],[1.5,-1.5,0],[-1.5,-1.5,0]],'#2fa84a');const q=P(0,-1.75,0);o+=`<text x="${q[0]}" y="${q[1]+4}" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">VOOR</text>`;
+ const C=[];for(let r=0;r<3;r++)for(let c=0;c<3;c++)for(let z=0;z<H[r][c];z++)C.push([c-1,r-1,z]);C.sort((a,b)=>(b[0]*sn+b[1]*cs)-(a[0]*sn+a[1]*cs)||a[2]-b[2]);
+ for(const[x,y,z]of C){for(const[nx,ny]of[[0,-1],[1,0],[0,1],[-1,0]])if(nx*sn+ny*cs<0){const px=x+nx*.5,py=y+ny*.5,tx=-ny*.5,ty=nx*.5;o+=pg([[px-tx,py-ty,z],[px+tx,py+ty,z],[px+tx,py+ty,z+1],[px-tx,py-ty,z+1]],`hsl(28,90%,${52+14*(nx*cs-ny*sn)}%)`)}o+=pg([[x-.5,y-.5,z+1],[x+.5,y-.5,z+1],[x+.5,y+.5,z+1],[x-.5,y+.5,z+1]],'#ffd966')}
+ return`<svg id="sv" viewBox="0 0 280 230">${o}</svg>`}
+GEN[2]=(i,L)=>{const P=Math.PI,m=x=>`<b>${n(x)} m</b>`,r2=x=>+x.toFixed(2),o={f:cf(),calc:1,tol:.0101,u:'m'},rd=' Rond af op 2 decimalen.',E=(s,v,u)=>`${s} ≈ <b>${n(r2(v))} ${u}</b>.`;
+ if(i==0){const r=L>1,d=r?ri(10,30):L?ri(11,30):R([10,20,5,8]);return{...o,t:r?`Een draaimolen heeft een straal van ${m(d)}. Bereken de omtrek.${rd}`:`Een ronde fontein heeft een diameter van ${m(d)}. Bereken de omtrek.${rd}`,a:r2(r?2*P*d:P*d),h:r?'Omtrek = π × diameter, en diameter = 2 × straal.':'Omtrek = π × diameter. Gebruik de π-toets.',e:r?E(`2 × π × ${n(d)}`,2*P*d,'m'):E(`π × ${n(d)}`,P*d,'m')}}
+ if(i==1){if(L<2){const r=L?ri(5,30)+R([0,.5]):R([4,6,7,9]);return{...o,t:`Een draaimolen heeft een straal van ${m(r)}. Bereken de diameter.`,a:2*r,h:'De diameter is twee keer de straal.',e:`2 × ${n(r)} = <b>${n(2*r)} m</b>.`}}const d=ri(10,40);return{...o,t:`Een cirkelvormig pad heeft een omtrek van ${m(r2(P*d))} (afgerond). Bereken de diameter.${rd}`,a:d,h:'Omtrek : π = diameter.',e:`${n(r2(P*d))} : π ≈ <b>${d} m</b>.`}}
+ if(i==2){const d2=L>1,r=d2?ri(4,10):L?ri(7,15):ri(2,6);return{...o,u:'m²',t:d2?`Een cirkelvormig bassin heeft een diameter van ${m(2*r)}. Bereken de oppervlakte.${rd}`:`Een cirkelvormig plein heeft een straal van ${m(r)}. Bereken de oppervlakte.${rd}`,a:r2(P*r*r),h:d2?'Eerst de straal: diameter : 2. Oppervlakte = π × r × r.':'Oppervlakte = π × straal × straal.',e:(d2?`r = ${2*r} : 2 = ${r}; `:'')+E(`π × ${r} × ${r}`,P*r*r,'m²')}}
+ if(i==3){if(L<2){const d=L?ri(11,41):2*ri(3,10);return{...o,t:`Een reuzenrad heeft een diameter van ${m(d)}. Wat is de straal?`,a:d/2,h:'De straal is de helft van de diameter.',e:`${n(d)} : 2 = <b>${n(d/2)} m</b>.`}}const r=ri(3,9);return{...o,u:'m²',t:`Rond een ronde fontein met straal ${m(r)} komt een pad van <b>1 m</b> breed. Hoeveel m² is het pad?${rd}`,a:r2(P*(2*r+1)),h:'Oppervlakte grote cirkel min oppervlakte fontein.',e:E(`π × ${r+1} × ${r+1} − π × ${r} × ${r}`,P*(2*r+1),'m²')}}
+ const r=ri(2,9),k=R([0,1]),c=k?`π × ${r} × ${r}`:`2 × π × ${r}`,w=k?[`2 × π × ${r}`,`π × ${r}`,`2 × ${r} × ${r}`]:[`π × ${r} × ${r}`,`π × ${r}`,`2 × ${r} × ${r}`],A=sh([[c,1],...w.map(x=>[x,0])]);
+ return{...o,t:`Een cirkel heeft een straal van <b>${r} m</b>. Welke berekening geeft de <b>${k?'oppervlakte':'omtrek'}</b>?`,o:A.map(z=>z[0]),c:A.findIndex(z=>z[1]),h:k?'Oppervlakte: straal × straal × π.':'Omtrek: π × diameter, en diameter = 2 × straal.',e:k?E(`Oppervlakte = π × ${r} × ${r}`,P*r*r,'m²'):E(`Omtrek = 2 × π × ${r}`,2*P*r,'m')}};
+const IT=[[0,'Pad','🛤️'],[1,'Kiosk met tent','🎪'],[7,'Bloemperk','🌷'],[6,'Fontein','⛲'],[8,'Ijskraam','🍦'],[9,'Lantaarns','💡'],[5,'Draaimolen','🎠'],[3,'Zwembad','🏊'],[2,'Reuzenrad','🎡'],[4,'Achtbaan','🎢']];
+return {gen: (m, i, L) => GEN[m](i, L), park, iso, n, IT, hl};
+})();
+
+/* ===================== Klas 1 · Mystery Graph (H3 coördinaten) — idee van een collega ===================== */
+const MG_PICS = [
+{n:"Huis",l:0,t:"Hier woon je",c:"#e8833a",s:[[[-6,-6],[6,-6],[6,2],[0,8],[-6,2],[-6,-6]],[[-1,-6],[-1,-1],[2,-1],[2,-6]],[[-5,-2],[-3,-2],[-3,0],[-5,0],[-5,-2]]]},
+{n:"Ster",l:0,t:"Aan de hemel, ’s nachts",c:"#f2b807",s:[[[0,9],[2,3],[9,3],[3,-1],[6,-8],[0,-4],[-6,-8],[-3,-1],[-9,3],[-2,3],[0,9]]]},
+{n:"Vis",l:1,t:"Zwemt zonder benen",c:"#2fa8d8",s:[[[-8,0],[-4,4],[2,4],[7,0],[2,-4],[-4,-4],[-8,0]],[[7,0],[10,4],[10,-4],[7,0]],[[-1,4],[0,7],[2,4]],[[-5,1],[-4,1],[-4,2],[-5,2],[-5,1]]]},
+{n:"Raket",l:1,t:"Op naar de maan!",c:"#d64545",s:[[[-2,-4],[-2,5],[0,9],[2,5],[2,-4],[-2,-4]],[[-2,-1],[-5,-6],[-2,-4]],[[2,-1],[5,-6],[2,-4]],[[-1,3],[1,3],[1,1],[-1,1],[-1,3]],[[-1,-4],[0,-8],[1,-4]]]},
+{n:"Zeilboot",l:1,t:"Wind in de zeilen",c:"#8a5cd6",s:[[[-8,-2],[8,-2],[5,-6],[-5,-6],[-8,-2]],[[0,-2],[0,9]],[[0,9],[6,0],[0,0],[0,9]],[[-1,6],[-1,0],[-5,0],[-1,6]]]},
+{n:"Vlinder",l:2,t:"Eerst was ik een rups",c:"#e0559b",d:[0],s:[[[0,5],[-1,4],[-1,-4],[0,-6],[1,-4],[1,4],[0,5]],[[-1,3],[-4,8],[-8,9],[-9,6],[-8,2],[-5,0],[-1,0],[-1,3]],[[-1,-1],[-5,-2],[-8,-6],[-6,-9],[-3,-8],[-1,-4],[-1,-1]],[[1,3],[4,8],[8,9],[9,6],[8,2],[5,0],[1,0],[1,3]],[[1,-1],[5,-2],[8,-6],[6,-9],[3,-8],[1,-4],[1,-1]],[[0,5],[-2,8]],[[0,5],[2,8]]]},
+{n:"Kasteel",l:2,t:"Hier woont een ridder",c:"#c98a4b",d:[1,2,3],s:[[[-9,-8],[-9,6],[-7,6],[-7,4],[-5,4],[-5,6],[-3,6],[-3,2],[-1,2],[-1,4],[1,4],[1,2],[3,2],[3,6],[5,6],[5,4],[7,4],[7,6],[9,6],[9,-8],[-9,-8]],[[-2,-8],[-2,-3],[-1,-2],[1,-2],[2,-3],[2,-8],[-2,-8]],[[-8,0],[-8,2],[-6,2],[-6,0],[-8,0]],[[6,0],[6,2],[8,2],[8,0],[6,0]],[[-8,6],[-8,10],[-5,9],[-8,8]],[[8,6],[8,10],[5,9],[8,8]]]},
+{n:"Kat",l:2,t:"Miauw! Wie ben ik?",c:"#8d8f99",d:[1,2,3],s:[[[-7,-5],[-8,0],[-7,4],[-7,9],[-3,7],[3,7],[7,9],[7,4],[8,0],[7,-5],[3,-8],[-3,-8],[-7,-5]],[[-5,2],[-3,4],[-1,2],[-3,0],[-5,2]],[[1,2],[3,4],[5,2],[3,0],[1,2]],[[-1,-1],[1,-1],[0,-2],[-1,-1]],[[0,-2],[0,-3],[-2,-4]],[[0,-3],[2,-4]],[[-10,0],[-4,-1]],[[-10,-3],[-4,-3]],[[4,-1],[10,0]],[[4,-3],[10,-3]]]},
+{n:"Pompoen",l:2,t:"Griezelen in oktober",c:"#f08a24",d:[2,3,4,5],s:[[[0,-8],[-3,-8],[-6,-7],[-8,-4],[-9,0],[-8,4],[-6,7],[-3,8],[0,7],[3,8],[6,7],[8,4],[9,0],[8,-4],[6,-7],[3,-8],[0,-8]],[[-1,7],[-1,10],[2,10],[1,7]],[[-5,2],[-3,5],[-2,2],[-5,2]],[[5,2],[3,5],[2,2],[5,2]],[[-1,0],[1,0],[0,2],[-1,0]],[[-5,-2],[-3,-1],[-1,-3],[0,-2],[1,-3],[3,-1],[5,-2],[4,-5],[2,-4],[0,-5],[-2,-4],[-4,-5],[-5,-2]]]},
+{n:"Hart",l:0,t:"Voor wie je lief hebt",c:"#e0405a",s:[[[0,-9],[-5,-4],[-9,0],[-9,4],[-7,8],[-4,8],[-2,6],[0,4],[2,6],[4,8],[7,8],[9,4],[9,0],[5,-4],[0,-9]]]},
+{n:"Boom",l:0,t:"Hier groeien blaadjes aan",c:"#3a9a4a",k:{0:"#7b4a1e"},s:[[[-1,-9],[-1,-3],[1,-3],[1,-9],[-1,-9]],[[-7,-3],[7,-3],[0,3],[-7,-3]],[[-5,1],[5,1],[0,6],[-5,1]],[[-3,4],[3,4],[0,9],[-3,4]]]},
+{n:"Auto",l:1,t:"Toeter! Rijden maar",c:"#d64545",k:{1:"#8fd0f0",2:"#8fd0f0",3:"#333",4:"#333"},s:[[[-9,-3],[-9,0],[-6,1],[-4,4],[3,4],[6,1],[9,0],[9,-3],[-9,-3]],[[-3,1],[-3,3],[0,3],[0,1],[-3,1]],[[1,1],[1,3],[3,3],[4,1],[1,1]],[[-7,-3],[-7,-5],[-6,-6],[-4,-6],[-3,-5],[-3,-3],[-7,-3]],[[3,-3],[3,-5],[4,-6],[6,-6],[7,-5],[7,-3],[3,-3]]]},
+{n:"Robot",l:2,t:"Piep piep, ik ben geen mens",c:"#8d9bb0",d:[1,2,6],s:[[[-4,5],[-4,9],[4,9],[4,5],[-4,5]],[[-3,7],[-3,8],[-1,8],[-1,7],[-3,7]],[[1,7],[1,8],[3,8],[3,7],[1,7]],[[0,9],[0,10],[1,10]],[[-1,5],[-1,4],[1,4],[1,5]],[[-6,4],[6,4],[6,-4],[-6,-4],[-6,4]],[[-3,2],[3,2],[3,-2],[-3,-2],[-3,2]],[[-6,3],[-9,3],[-9,-2],[-6,-2]],[[6,3],[9,3],[9,-2],[6,-2]],[[-4,-4],[-4,-9],[-1,-9],[-1,-4]],[[1,-4],[1,-9],[4,-9],[4,-4]],[[-2,6],[2,6]]]},
+{n:"Kroon",l:3,dec:1,t:"Gedragen door een koning",c:"#f2b807",k:{1:"#d93a3a",2:"#2f6fed",3:"#2f6fed"},s:[[[-8,-6],[8,-6],[9,4],[4.5,0],[0,8],[-4.5,0],[-9,4],[-8,-6]],[[0,-1.5],[1.5,-3.5],[0,-5.5],[-1.5,-3.5],[0,-1.5]],[[-5,-2.5],[-4,-3.5],[-5,-4.5],[-6,-3.5],[-5,-2.5]],[[5,-2.5],[6,-3.5],[5,-4.5],[4,-3.5],[5,-2.5]]]},
+{n:"IJsje",l:3,dec:1,t:"Lekker in de zomer",c:"#d9a35b",k:{3:"#f5a0c0",4:"#d93a3a"},s:[[[-4,0],[4,0],[0,-9],[-4,0]],[[-2,-4.5],[2,-4.5]],[[-3,-2.25],[3,-2.25]],[[-4,0],[-5,1.5],[-5.5,3.5],[-5,5.5],[-3.5,7],[-1.5,8],[0,8.5],[1.5,8],[3.5,7],[5,5.5],[5.5,3.5],[5,1.5],[4,0],[2.5,1],[1,-0.5],[0,1],[-1.5,-0.5],[-2.5,1],[-4,0]],[[0,8.5],[-1,9],[0,10],[1,9],[0,8.5]]]},
+{n:"Tulp",l:3,dec:1,t:"Typisch Hollands",c:"#e0405a",k:{1:"#3a9a4a",2:"#3a9a4a",3:"#3a9a4a"},s:[[[-5,3],[-5,8],[-2.5,6],[0,9],[2.5,6],[5,8],[5,3],[2.5,0],[-2.5,0],[-5,3]],[[-0.5,0],[-0.5,-9],[0.5,-9],[0.5,0],[-0.5,0]],[[-0.5,-6],[-2.5,-2.5],[-5.5,-1.5],[-5,-4.5],[-3,-6.5],[-0.5,-6]],[[0.5,-5.5],[2.5,-2],[5.5,-1],[5,-4],[3,-6],[0.5,-5.5]],[[0,9],[0,3.5]]]}];
+const mgC = v => String(v).replace('-', '−').replace('.', ',');
+const mgPt = (x, y, dec) => `(${mgC(x)}${dec ? '; ' : ', '}${mgC(y)})`;
+function mgGrid(dec) {
+  let s = '';
+  if (dec) for (let i = -11; i < 11; i++) s += `<line x1="${i + .5}" y1="-11" x2="${i + .5}" y2="11" class="mgh"/><line x1="-11" y1="${i + .5}" x2="11" y2="${i + .5}" class="mgh"/>`;
+  for (let i = -11; i <= 11; i++) {
+    const c = i ? 'mgl' : 'mgl ax';
+    s += `<line x1="${i}" y1="-11" x2="${i}" y2="11" class="${c}"/><line x1="-11" y1="${i}" x2="11" y2="${i}" class="${c}"/>`;
+    if (i && Math.abs(i) <= 10) s += `<text class="mgn" x="${i}" y=".75" text-anchor="middle">${mgC(i)}</text><text class="mgn" x="-.3" y="${-i + .2}" text-anchor="end">${mgC(i)}</text>`;
+  }
+  return s + `<text class="mgax" x="11.2" y="-.35">x</text><text class="mgax" x=".35" y="-10.9">y</text>`;
+}
+function mgSvg(m, extra) {
+  const {P, steps, idx} = m; let L = '', Dt = '', F = '';
+  for (let i = 0; i < idx; i++) {
+    const s = steps[i];
+    if (!s.f) L += `<line x1="${steps[i - 1].x}" y1="${-steps[i - 1].y}" x2="${s.x}" y2="${-s.y}" class="mgln"/>`;
+    Dt += `<circle cx="${s.x}" cy="${-s.y}" r=".2" class="mgdot"/>`;
+  }
+  if (idx === steps.length) P.s.forEach((s, i) => {
+    const dk = (P.d || []).includes(i), cl = s.length > 3 && s[0][0] === s[s.length - 1][0] && s[0][1] === s[s.length - 1][1];
+    if (cl) F += `<polygon points="${s.map(p => p[0] + ',' + -p[1]).join(' ')}" fill="${(P.k || {})[i] || (dk ? '#222' : P.c)}" fill-opacity="${dk ? .8 : .65}"/>`;
+  });
+  else if (idx > 0 && !steps[idx].f) Dt += `<circle cx="${steps[idx - 1].x}" cy="${-steps[idx - 1].y}" r=".45" class="mgpen"/>`;
+  return `<svg viewBox="-11.6 -11.6 23.2 23.2" class="mgsvg" id="mgsvg" role="img" aria-label="assenstelsel">${mgGrid(P.dec)}<g>${F}</g><g>${L}</g><g>${Dt}</g>${extra || ''}</svg>`;
+}
+function mgCat(t, P) { return P.dec ? 'dec' : (t.x === 0 || t.y === 0) ? 'as' : (t.x > 0 && t.y > 0) ? 'k1' : 'neg'; }
+function mgErr(t, x, y) {
+  if (x === t.x && y === t.y) return null;
+  if ((x !== t.x || y !== t.y) && Math.abs(x) === Math.abs(t.y) && Math.abs(y) === Math.abs(t.x) && Math.abs(t.x) !== Math.abs(t.y)) return 'omgedraaid';
+  if (Math.abs(x) === Math.abs(t.x) && Math.abs(y) === Math.abs(t.y)) return 'teken';
+  if (Math.abs(x - t.x) + Math.abs(y - t.y) <= 1) return 'mis';
+  return 'anders';
+}
+const mgDir = (v, ax) => v === 0 ? (ax === 'x' ? 'blijf op de y-as' : 'blijf op de x-as') : `${mgC(Math.abs(v))} naar ${ax === 'x' ? (v > 0 ? 'rechts' : 'links') : (v > 0 ? 'boven' : 'beneden')}`;
+const MG_TIP = {omgedraaid: 'Je hebt x en y omgedraaid. Eerst x (links of rechts), dan y (omhoog of omlaag).', teken: 'Let op het minteken: een negatieve x is naar links, een negatieve y is naar beneden.', mis: 'Bijna! Tel de hokjes vanaf de oorsprong (0, 0) nog eens na.', anders: 'Begin bij de oorsprong (0, 0). Eerst x (links of rechts), dan y (omhoog of omlaag).'};
+function mgPick() {
+  const pool = MG_PICS.map((p, i) => i).filter(i => MG_PICS[i].l === G.cfg.mgl);
+  if (!G.mgBag || !G.mgBag.length) G.mgBag = shuffle(pool.slice());
+  return G.mgBag.pop();
+}
+function mgNext() {
+  const pi = mgPick(), P = MG_PICS[pi], steps = [];
+  P.s.forEach((s, si) => s.forEach((p, k) => steps.push({x: p[0], y: p[1], f: k === 0, si})));
+  G.mg = {pi, P, steps, idx: 0, err: 0}; G.after = null; G.locked = false; flash('');
+  $('#mgexp').innerHTML = ''; mgRender();
+}
+function mgRender(extra) {
+  const m = G.mg, t = m.steps[m.idx], fin = m.idx === m.steps.length;
+  $('#mgboard').innerHTML = mgSvg(m, extra);
+  $('#mglab').textContent = fin ? 'Het plaatje is…' : t.f ? (m.idx ? 'Pen optillen! Begin opnieuw op:' : 'Zet je pen op:') : 'Trek een lijn naar:';
+  $('#mgtg').innerHTML = fin ? `★ ${m.P.n} ★` : mgPt(t.x, t.y, m.P.dec);
+  $('#mgprog').innerHTML = `<div class="mgbar"><i style="width:${Math.round(m.idx / m.steps.length * 100)}%"></i></div><div class="muted">${fin ? 'Klaar!' : `Punt ${m.idx + 1} van ${m.steps.length}`} · Raadsel: <i>${m.P.t}</i></div>`;
+  G.qStart = performance.now();
+}
+function mgTap(e) {
+  const m = G && G.mg; if (!G || !G.running || G.locked || G.after || !m || m.idx >= m.steps.length) return;
+  const svg = $('#mgsvg'); if (!svg) return; e.preventDefault();
+  const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  const q = pt.matrixTransform(svg.getScreenCTM().inverse()), u = m.P.dec ? 2 : 1, x = Math.round(q.x * u) / u, y = Math.round(-q.y * u) / u, t = m.steps[m.idx];
+  if (Math.abs(x) > 11 || Math.abs(y) > 11) return;
+  const err = mgErr(t, x, y), want = mgPt(t.x, t.y, m.P.dec), got = mgPt(x, y, m.P.dec);
+  recordGen('C', mgCat(t, m.P), !err, err, `${m.P.n}: zet een punt op ${want}`, want, got);
+  if (!err) {
+    m.idx++; G.score++; G.streak++; G.best = Math.max(G.best, G.streak); G.points += 2; showPoints('+2', true);
+    if (m.idx < m.steps.length) { mgRender(); return; }
+    G.locked = true; mgRender(); beep(true); flash('good', 900);
+    bonusPoints(m.err ? 10 : 20, m.err ? 'plaatje af' : 'foutloos plaatje');
+    G.timers.push(setTimeout(() => { if (G && G.running && G.mg === m) mgNext(); }, 2600)); return;
+  }
+  penalty(); beep(false); flash('bad', 500); m.err++;
+  G.mistakes.push({q: `Punt ${want} (${m.P.n.toLowerCase()})`, given: got});
+  const help = `<path d="M0 0H${t.x}V${-t.y}" class="mghelp"/><circle cx="${t.x}" cy="${-t.y}" r=".45" class="mggood"/><path d="M${x - .4} ${-y - .4}l.8 .8m0 -.8l-.8 .8" class="mgbad"/>`;
+  mgRender(help); pauseClock();
+  G.after = () => { m.idx++; $('#mgexp').innerHTML = ''; if (m.idx < m.steps.length) mgRender(); else { G.locked = true; mgRender(); bonusPoints(10, 'plaatje af'); G.timers.push(setTimeout(() => { if (G && G.running && G.mg === m) mgNext(); }, 2600)); } };
+  $('#mgexp').innerHTML = `<div class="hlwork"><div class="hlhead"><span class="hlbad">✗ Jij tikte ${got}</span><span class="hlgood">✓ Gezocht: ${want}</span></div>
+    <div class="mgsteps"><div><b>x = ${mgC(t.x)}</b>: ${mgDir(t.x, 'x')}</div><div><b>y = ${mgC(t.y)}</b>: ${mgDir(t.y, 'y')}</div></div>
+    <div class="faex">${MG_TIP[err]} Het groene pad laat de weg zien. Het punt wordt nu voor je gezet.</div>
+    <div class="hlfoot"><span class="muted">${LANE ? '' : '❚❚ De tijd staat stil.'}</span><button class="btn primary big wnx" data-act="wNext">Volgende ▶</button></div></div>`;
+}
+function mgDuo(cfg) {
+  const dec = cfg.mgl === 3, u = dec ? 2 : 1, rv = () => { let v; do v = rnd(-8 * u, 8 * u) / u; while (!v || (!dec && false)); return v; };
+  let x = rv(), y = rv(); while (Math.abs(x) === Math.abs(y)) y = rv();
+  const pts = [[x, y, 1], [y, x], [-x, y], [x, -y]], sh = shuffle(pts.slice()), want = mgPt(x, y, dec);
+  const expl = `x = ${mgC(x)}: ${mgDir(x, 'x')}; y = ${mgC(y)}: ${mgDir(y, 'y')}.`;
+  const grid = (q, extra) => `<div class="mgdwrap"><div class="mgduo"><svg viewBox="-11.6 -11.6 23.2 23.2" class="mgsvg">${mgGrid(dec)}${extra}</svg></div><div class="dsub mgdq">${q}</div></div>`;
+  if (Math.random() < .5) {
+    const lab = 'ABCD', dots = sh.map((p, i) => `<circle cx="${p[0]}" cy="${-p[1]}" r=".3" class="mgdot"/><text x="${p[0] + .4}" y="${-p[1] - .35}" class="mglab">${lab[i]}</text>`).join('');
+    return {prompt: grid(`Welk punt is <b>${want}</b>?`, dots), opts: sh.map((p, i) => ({html: lab[i], ok: !!p[2], err: p[2] ? null : (p[0] === y ? 'omgedraaid' : 'teken')})), explain: `Punt ${want}: ${expl}`};
+  }
+  return {prompt: grid('Welke coördinaten heeft punt <b>P</b>?', `<circle cx="${x}" cy="${-y}" r=".3" class="mgdot"/><text x="${x + .4}" y="${-y - .35}" class="mglab">P</text>`),
+    opts: sh.map(p => ({html: mgPt(p[0], p[1], dec), ok: !!p[2], err: p[2] ? null : (p[0] === y ? 'omgedraaid' : 'teken')})), explain: `P = ${want}: ${expl}`};
+}
+
+/* --- De Bouwmeesters: spel --- */
+const BW_MIS = [['meet', 'De Meetmeesters', 'Lengte- en oppervlaktematen omrekenen', '📏'], ['opp', 'De Grondleggers', 'Oppervlakte van vlakke figuren', '📐'], ['cirkel', 'De Cirkelkampioenen', 'Omtrek en oppervlakte van cirkels', '⭕'], ['inhoud', 'De Zwembadbouwers', 'Inhoud berekenen', '🏊'], ['aanzicht', 'De Ruimtelijke Architecten', 'Aanzichten en ruimtelijk inzicht', '🧊']];
+const BW_LVL = ['Bouwleerling', 'Bouwexpert', 'Hoofdbouwmeester'];
+const bwPlain = h => String(h).replace(/<small>[\s\S]*<\/small>/g, '').replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+function bwErr(mi, q, x) {
+  if (q.o) return mi === 4 ? 'aanzicht' : 'formule';
+  const a = q.a, r = x / a;
+  if (a && x && [10, 100, 1000, 10000, .1, .01, .001, .0001].some(f => Math.abs(r / f - 1) < 1e-6)) return 'omrekenen';
+  if (a && x && (Math.abs(r - 2) < .02 || Math.abs(r - .5) < .01)) return 'factor2';
+  if (Math.abs(x - a) <= Math.max(.06, Math.abs(a) * .012)) return 'afronden';
+  return 'reken';
+}
+function bwPickKind() {
+  const sel = G.cfg.bm && G.cfg.bm.length ? G.cfg.bm : BW_MIS.map(m => m[0]);
+  if (!G.bwBag || !G.bwBag.length) G.bwBag = shuffle(sel.flatMap(id => [0, 1, 2, 3, 4].map(i => [BW_MIS.findIndex(m => m[0] === id), i])));
+  return G.bwBag.pop();
+}
+function bwParkSvg() { return BW.park(BW.IT.slice(0, G.bwBuilt || 0).map(x => x[0])); }
+function bwNext(kind) {
+  const [mi, i] = kind || bwPickKind(), q = BW.gen(mi, i, G.cfg.bml);
+  G.bq = {mi, i, q, hint: 0}; G.input = ''; G.bce = ''; G.bth = -.6; G.after = null; G.locked = false; G.qStart = performance.now(); flash('');
+  $('#bwwrap').classList.remove('bwpause');
+  $('#bwfig').innerHTML = `<div class="bwhd">${BW_MIS[mi][3]} ${BW_MIS[mi][1]}</div>${q.f || ''}`;
+  $('#bwq').innerHTML = q.t;
+  $('#bwexp').innerHTML = '';
+  const tools = q.o ? `<div class="bwopts">${q.o.map((h, j) => `<button class="ans wopt bwopt" data-fast="bwo" data-arg="${j}">${h}</button>`).join('')}</div>`
+    : `<div class="bwans"><span id="bwval" class="bwinp">&nbsp;</span><span class="bwu">${q.u}</span></div>` +
+      (q.calc ? bwCalcHTML() : `<div class="gnpad bwpad">${['7', '8', '9', '4', '5', '6', '1', '2', '3', ',', '0', 'del'].map(k => `<button class="key" data-fast="bwkey" data-arg="${k}">${k === 'del' ? '⌫' : k}</button>`).join('')}</div>`) +
+      `<div class="bwrow"><button class="btn" data-fast="bwhint">💡 Hint</button><button class="btn primary" data-fast="bwkey" data-arg="ok">Controleer ✔</button></div>`;
+  $('#bwtools').innerHTML = tools + (q.o ? `<div class="bwrow"><button class="btn" data-fast="bwhint">💡 Hint</button></div>` : '');
+  const f5 = $('#f5'); if (f5) f5.onpointerdown = bwDrag;
+  bwParkInfo();
+}
+function bwParkInfo() {
+  const n = G.bwBuilt || 0, el = $('#bwpark'); if (!el) return;
+  el.innerHTML = `${bwParkSvg()}<div class="bwpi">🎢 Jouw pretpark: ${n} van ${BW.IT.length} gebouwd${n < BW.IT.length ? ` · volgende: ${BW.IT[n][2]} ${BW.IT[n][1]}` : ' · compleet!'}</div>`;
+}
+function bwCalcHTML() {
+  return `<div class="bwcalc"><div class="bwcd" id="bwcd">0</div><div class="bwcg">${['7', '8', '9', '÷', '4', '5', '6', '×', '1', '2', '3', '-', '0', ',', 'π', '+', '(', ')', 'B', 'C'].map(k => `<button class="key" data-fast="bwck" data-arg="${k}">${k === 'B' ? '⌫' : k === '-' ? '−' : k}</button>`).join('')}<button class="key eq" data-fast="bwck" data-arg="=">=</button><button class="key eq" data-fast="bwcu">→ antwoord</button></div><div class="muted small">Reken met de π-toets en zet je uitkomst met <b>→ antwoord</b> in het antwoordvak (afgerond op 2 decimalen).</div></div>`;
+}
+function bwCk(k) {
+  let ce = G.bce === 'Fout' ? '' : (G.bce || '');
+  if (k === 'C') ce = ''; else if (k === 'B') ce = ce.slice(0, -1);
+  else if (k === '=') {
+    try {
+      if (!/^[0-9+\-×÷().,π ]*$/.test(ce)) throw 0;
+      const v = Function('"use strict";return(' + ce.replace(/,/g, '.').replace(/×/g, '*').replace(/÷/g, '/').replace(/(\d|\))π/g, '$1*π').replace(/π(\d|\()/g, 'π*$1').replace(/π/g, 'Math.PI') + ')')();
+      if (!isFinite(v)) throw 0; ce = String(+v.toFixed(6)).replace('.', ',');
+    } catch (e) { ce = 'Fout'; }
+  } else if (ce.length < 24) ce += k;
+  G.bce = ce; const d = $('#bwcd'); if (d) d.textContent = (ce || '0').replace(/-/g, '−');
+}
+function bwCu() { const v = parseFloat((G.bce || '').replace(',', '.')); if (!isNaN(v)) { G.input = String(+v.toFixed(2)).replace('.', ','); bwShow(); } }
+function bwShow() { const v = $('#bwval'); if (v) v.innerHTML = G.input ? G.input.replace('-', '−') : '&nbsp;'; }
+function bwKey(k) {
+  if (!G || !G.running || G.locked || G.after || !G.bq || G.bq.q.o) return;
+  if (k === 'ok') { if (G.input) bwCheck(parseFloat(G.input.replace(',', '.')), G.input); return; }
+  if (k === 'del') G.input = G.input.slice(0, -1);
+  else if (k === ',') { if (G.input.includes(',')) return; G.input = (G.input || '0') + ','; }
+  else if (G.input.length < 9) G.input += k;
+  bwShow();
+}
+function bwHint() {
+  const b = G && G.bq; if (!b || G.locked || G.after) return; b.hint = 1;
+  $('#bwexp').innerHTML = `<div class="bwhint">💡 ${b.q.h}${b.q.f && b.q.f.includes('class="lad"') ? '' : ''}</div>`;
+}
+function bwPick(j) {
+  const b = G && G.bq; if (!G || !G.running || G.locked || G.after || !b || !b.q.o) return;
+  j = +j; const btns = document.querySelectorAll('#bwtools .bwopt'); btns[b.q.c].classList.add('right'); if (j !== b.q.c) btns[j].classList.add('wrong');
+  bwCheck(j === b.q.c ? 'MC_OK' : 'MC_NO', j);
+}
+function bwCheck(x, given) {
+  const b = G.bq, q = b.q, mc = !!q.o;
+  const ok = mc ? x === 'MC_OK' : Math.abs(x - q.a) <= (q.tol || 1e-6) + 1e-9;
+  const mcTxt = j => /<svg/.test(q.o[j]) ? `plaatje ${'ABCD'[j]}` : bwPlain(q.o[j]);
+  const ansTxt = mc ? mcTxt(q.c) : `${BW.n(q.a)} ${q.u}`, givTxt = mc ? mcTxt(given) : `${String(given).replace('-', '−')} ${q.u}`;
+  const err = ok ? null : bwErr(b.mi, q, x);
+  recordGen('U', BW_MIS[b.mi][0], ok, err, bwPlain(q.t), ansTxt, givTxt);
+  G.locked = true;
+  if (ok) {
+    award([10, 15, 20][G.cfg.bml] || 10); beep(true); flash('good', 600);
+    if (!b.hint) bonusPoints(5, 'zonder hint');
+    if (b.mi === 3) { const w = document.querySelector('#bwfig .w'); if (w) w.classList.add('on'); }
+    const v = $('#bwval'); if (v) v.classList.add('right');
+    let built = '';
+    if ((G.bwBuilt || 0) < BW.IT.length) { const it = BW.IT[G.bwBuilt || 0]; G.bwBuilt = (G.bwBuilt || 0) + 1; built = ` ${it[2]} ${it[1]} gebouwd!`; bwParkInfo(); }
+    $('#bwexp').innerHTML = `<div class="bwok">✓ Goed gebouwd!${built}<div class="bwe">${q.e}</div></div>`;
+    G.timers.push(setTimeout(() => { if (G && G.running && G.bq === b) bwNext(); }, 2200)); return;
+  }
+  penalty(); beep(false); flash('bad', 500);
+  const v = $('#bwval'); if (v) v.classList.add('wrong');
+  G.mistakes.push({q: bwPlain(q.t) + ' → ' + ansTxt, given: givTxt});
+  G.bwW = G.bwW || {}; G.bwW[err] = (G.bwW[err] || 0) + 1;
+  pauseClock(); G.after = () => bwNext([b.mi, b.i]);
+  $('#bwwrap').classList.add('bwpause');
+  $('#bwexp').innerHTML = `<div class="hlwork"><div class="hlhead">${mc ? `<span class="hlbad">✗ Jij koos: ${q.o[given]}</span><span class="hlgood">✓ Goed: ${q.o[q.c]}</span>` : `<span class="hlbad">✗ Jij: ${givTxt}</span><span class="hlgood">✓ Goed: ${ansTxt}</span>`}</div>
+    <div class="bwe"><b>Zo moet het:</b> ${q.e}</div><div class="faex">💡 ${q.h} ${BW_ERR[err] && BW_ERR[err].tip && err !== 'reken' ? BW_ERR[err].tip : ''}</div>
+    <div class="hlfoot"><span class="muted">${LANE ? '' : '❚❚ De tijd staat stil. Daarna krijg je een nieuwe opdracht van dezelfde soort.'}</span><button class="btn primary big wnx" data-act="wNext">Volgende ▶</button></div></div>`;
+}
+function bwRot(d) { if (!G || !G.bq || !G.bq.q.H) return; G.bth += +d; const s = $('#sv'); if (s) s.outerHTML = BW.iso(G.bq.q.H, G.bth); }
+function bwDrag(e) {
+  const g = e.currentTarget, H = G && G.bq && G.bq.q.H; if (!H) return; let x = e.clientX; g.setPointerCapture(e.pointerId);
+  g.onpointermove = m => { G.bth += (m.clientX - x) * .015; x = m.clientX; const s = $('#sv'); if (s) s.outerHTML = BW.iso(H, G.bth); };
+  g.onpointerup = g.onpointercancel = () => { g.onpointermove = null; };
+}
+function bwResultExtra() {
+  const n = G.bwBuilt || 0, w = Object.entries(G.bwW || {}).sort((a, b) => b[1] - a[1]);
+  return `<div class="mist bwres"><h4>🎢 Jouw pretpark: ${n} van ${BW.IT.length} attracties gebouwd</h4><div class="bwrespark">${bwParkSvg()}</div>
+    ${w.length ? '<h4>Let op</h4>' + w.map(([k, c]) => `<div>⚠️ <b>${BW_ERR[k].name}</b> <span class="muted">${BW_ERR[k].tip}</span> <b class="bad">${c}×</b></div>`).join('') : ''}</div>`;
+}
+function bwDuo(cfg) {
+  const sel = cfg.bm && cfg.bm.length ? cfg.bm : BW_MIS.map(m => m[0]), mi = BW_MIS.findIndex(m => m[0] === sel[rnd(0, sel.length - 1)]), q = BW.gen(mi, rnd(0, 4), cfg.bml);
+  const fig = q.H ? BW.iso(q.H, -.6) : (q.f || '').replace(/<div class="bwchips">[\s\S]*?<\/div>/, '');
+  const prompt = `<div class="bwduo"><div class="bwfig bwdfig">${fig}</div><div class="ddesc bwdq">${q.t}</div></div>`;
+  if (q.o) return {prompt, opts: q.o.map((h, j) => ({html: `<span class="bwdopt">${h}</span>`, ok: j === q.c, err: mi === 4 ? 'aanzicht' : 'formule'})), explain: q.e, full: `${q.e}<br><small>💡 ${q.h}</small>`};
+  const r2 = v => +(+v).toFixed(2), a = r2(q.a), cand = shuffle([a * 2, a / 2, a * 10, a / 10, a * 100, a + (a >= 20 ? 10 : 1), a - (a >= 20 ? 10 : 1)].map(r2).filter(v => v > 0 && v !== a));
+  const vals = [a]; for (const v of cand) if (vals.length < 4 && !vals.includes(v)) vals.push(v);
+  return {prompt, opts: shuffle(vals).map(v => ({html: `${BW.n(v)} ${q.u}`, ok: v === a, err: v === a ? null : bwErr(mi, q, v)})), explain: q.e, full: `${q.e}<br><small>💡 ${q.h}</small>`};
+}
+
 /* ===================== Voorrangsregels ===================== */
 // Tokens: {t:'n', v} | {t:'op', v:'+'|'−'|'×'|':'} | {t:'('} | {t:')'}
 const VR_LEVELS = [['×', ':'], ['+', '−']];
@@ -4459,6 +4851,8 @@ const LANE_COL = ['#3DA5FF', '#FF4D6D', '#2EE59D'];
 const DUO = {played: new Set(), sel: [], game: null, lanes: [], running: false, end: 0, raf: 0, timers: [], cfg: null, classId: null, time: 60};
 const DUO_TOPIC = {rekenrace: 'neg', ballonnen: 'neg', voorrang: 'vr', balans: 'bal', grafiek: 'graf'};
 function duoQuestion(gid, cfg) {
+  if (gid === 'mystery') return mgDuo(cfg);
+  if (gid === 'bouw') return bwDuo(cfg);
   const ms0 = performance.now();
   const push = (ln, row) => { if (!ln.p.guest && DUO.classId) A.push(row); };
   if (gid === 'rekenrace' || gid === 'ballonnen') {
@@ -5098,6 +5492,13 @@ function fastAct(b) {
   else if (f === 'bkey') bdKey(b.dataset.arg);
   else if (f === 'fa') { if (G && G.game === 'fastap') fsPick(b.dataset.arg); else faPick(b.dataset.arg); }
   else if (f && f.startsWith('fz')) fzAct(f, b.dataset.arg || '');
+  else if (f === 'bwkey') bwKey(b.dataset.arg);
+  else if (f === 'bwo') bwPick(b.dataset.arg);
+  else if (f === 'bwck') bwCk(b.dataset.arg);
+  else if (f === 'bwcu') bwCu();
+  else if (f === 'bwhint') bwHint();
+  else if (f === 'bwrot') bwRot(b.dataset.arg);
+  else if (f === 'bwhl') BW.hl(b.dataset.arg);
   else if (f === 'bundo') blUndo();
   else if (f === 'gans') grAnswer(b.dataset.arg);
   else if (f === 'vop') vrOp(b.dataset.arg);
