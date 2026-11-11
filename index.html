@@ -701,6 +701,35 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .lanemode .bdpad,.narrowpad .bdpad{grid-template-columns:repeat(4,1fr);max-width:30rem}.lanemode .bdpad .key{min-height:3.4rem;font-size:1.6rem}.lanemode .bdpad .key.ok{grid-column:1/-1;grid-row:4}
 @media (max-aspect-ratio:1/1){.bdpad{grid-template-columns:repeat(4,1fr);max-width:30rem}.bdpad .key.ok{grid-column:1/-1;grid-row:4}}
 .bdyou{font-size:1.3rem;margin-bottom:.6rem}.bdyou s{color:#FF97AA}.bdyou b{color:var(--good)}
+.facard{display:flex;flex-direction:column;justify-content:center;gap:.6rem;overflow:auto}
+.faqt{font-size:clamp(1.5rem,3.6vmin,2.6rem);font-weight:700;line-height:1.5}.faqt b{color:#fff}
+.faopt{font-size:clamp(1.2rem,2.7vmin,1.9rem);text-transform:none;line-height:1.3}.faopt .nw,.faqt .nw{white-space:nowrap}
+.fath{margin-top:.2rem;color:#C9B8FF;font-size:1.1rem}.faex{font-size:1.2rem;color:#DCE1F7}
+.fath2 div{margin:.25rem 0}
+.fswrap{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:1rem;flex:1;min-height:0}
+.fsleft{justify-content:flex-start;overflow:auto}.fsright{display:flex;flex-direction:column;gap:.8rem;justify-content:center;min-height:0}
+.fsopts{grid-template-columns:1fr}.fsopt{min-height:4rem;text-align:left;justify-content:flex-start}
+.fseq{font-size:clamp(1.5rem,3.4vmin,2.4rem);font-weight:800;font-variant-numeric:tabular-nums}.fsop{color:var(--sub);font-size:1.15rem;margin-top:.4rem}
+.fsask{margin-top:.8rem;color:var(--muted);font-size:1.1rem}.fsdone{margin-top:.8rem;color:var(--good);font-family:var(--fd);font-style:italic;font-size:1.6rem}
+.fzgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1rem;flex:1;min-height:0}
+.fzleft{display:flex;flex-direction:column;gap:.7rem;min-height:0;overflow:auto}.fzc{padding:.9rem 1.2rem}
+.fzf{font-size:clamp(1.3rem,3vmin,2rem);line-height:1.6}
+.fzsc{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem}.fzsc .key{font-size:1rem;min-height:3.2rem}
+.fzpad{display:grid;grid-template-columns:repeat(3,4.6rem);grid-auto-rows:4.2rem;gap:.4rem;justify-content:center}.fzpad .key{font-size:1.7rem}
+.fzrow{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}
+.fzright{display:flex;flex-direction:column;gap:.5rem;min-height:0}
+.fzwrap{flex:1;min-height:0;display:flex;justify-content:center}
+.fzplot{height:100%;max-width:100%;aspect-ratio:1;background:#fff;border-radius:1rem}
+.fzplot .gl{stroke:#d9e8f6;stroke-width:.05}.fzplot .gl.ax{stroke:#14213d;stroke-width:.1}.fzplot .gh{fill:none;stroke:#8a98ad;stroke-width:.08;stroke-dasharray:.3 .2}
+.fzplot .tgt{fill:none;stroke:#0a8f68;stroke-width:.12;stroke-dasharray:.45 .25;opacity:.85}.fzplot .cur{fill:none;stroke:#e0344f;stroke-width:.17;stroke-linecap:round}
+.fzplot .as{stroke:#1f6fd6;stroke-width:.07;stroke-dasharray:.3 .2}.fzplot .tn{font-size:.55px;fill:#14213d}
+.fzleg{display:flex;gap:1rem;justify-content:center;font-size:.95rem;color:var(--muted);align-items:center}.fzleg span{display:inline-block;width:1.4rem;height:.25rem;border-radius:.2rem;margin-right:-.6rem}
+.fzleg .lc{background:#e0344f}.fzleg .lt{background:#0a8f68}.fzleg .lg{background:#8a98ad}
+.fzhist{font-size:1rem;max-height:5.5rem;overflow:auto}
+.fzexp{min-height:0}.fzmsg{font-size:1.2rem;padding:.6rem 1rem;border-radius:.8rem;margin-top:.5rem}.fzmsg.good{background:rgba(46,229,157,.12);color:var(--good)}.fzmsg.bad{background:rgba(255,77,109,.1);color:#FFB3C0}
+.lanemode .fswrap,.lanemode .fzgrid{grid-template-columns:1fr;grid-template-rows:auto auto}.lanemode .fzwrap{height:34vh;flex:none}.lanemode .fzpad{grid-template-columns:repeat(3,3.8rem);grid-auto-rows:3.4rem}
+.lanemode .screen:has(.fzgrid){overflow-y:auto}
+.lanemode .fzgrid{flex:none;gap:.5rem}.lanemode .fzleft{overflow:visible;gap:.45rem}.lanemode .fzwrap{height:36vh}.lanemode .fzc{padding:.55rem .8rem}.lanemode .fzc .muted.small{display:none}.lanemode .fzf{font-size:1.15rem;line-height:1.4}.lanemode .fzrow .btn{padding:.5rem .8rem;font-size:.95rem}.lanemode .fzsc .key{min-height:2.6rem;font-size:.85rem}
 .wefig{display:flex;justify-content:center;margin-top:.5rem}.wefig .boxsvg{max-width:min(560px,100%)}
 #weopts.verb{grid-template-columns:1fr}.wverb{font-size:clamp(1.05rem,2.3vmin,1.5rem);min-height:3.6rem;text-align:left;justify-content:flex-start}
 .ddesc mark{background:rgba(255,210,63,.3);color:inherit;border-radius:.3rem;padding:0 .2rem}
@@ -776,6 +805,12 @@ const OPTDEFS = {
   hnot: {label: 'Hoeknotatie', choices: [{v: 'een', name: '∠G', sub: 'één letter'}, {v: 'drie', name: '∠HGI', sub: 'drie letters'}, {v: 'mix', name: 'Afwisselend', sub: 'extra uitdaging'}]},
   hoekr: {label: 'Afronden', choices: [{v: 1, name: 'Hoek: 1 decimaal', sub: 'zijden altijd 1 decimaal'}, {v: 0, name: 'Hoek: hele graden', sub: 'zijden altijd 1 decimaal'}]},
   stap: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'verhouding kiezen, gegeven en gevraagd, rekenen'}, {v: 'direct', name: 'Direct rekenen', sub: 'alleen het antwoord intypen'}]},
+  fal: {label: 'Moeilijkheid', choices: [{v: 1, name: 'Makkelijk'}, {v: 2, name: 'Gemiddeld'}, {v: 3, name: 'Pittig'}]},
+  fg1: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'snij', name: 'Snijpunten', sub: 'y = a(x − d)(x − e)', long: 'snijpunten'}, {v: 'top', name: 'Top', sub: 'y = a(x − p)² + q', long: 'top'}, {v: 'abc', name: 'Top van ax² + bx + c', sub: 'x_top = −b / 2a', long: 'abc-vorm'}]},
+  fg2: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'wortel', name: 'Machtsvergelijkingen', sub: 'hogeremachtswortels', long: 'machtswortels'}, {v: 'ontb', name: 'Ontbinden', sub: 'x buiten haakjes', long: 'ontbinden'}, {v: 'subst', name: 'Substitutie', sub: 'x² = u', long: 'substitutie'}, {v: 'ong', name: 'Ongelijkheden', sub: 'algebraïsch oplossen', long: 'ongelijkheden'}]},
+  fg3: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'hyp', name: 'Hyperbolen', sub: 'verschuiven', long: 'hyperbolen'}, {v: 'par', name: 'Parabolen', sub: 'verschuiven', long: 'parabolen'}, {v: 'verm', name: 'Vermenigvuldigen', sub: 't.o.v. x-as en y-as', long: 'vermenigvuldigen'}]},
+  fg4: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'lees', name: 'Herkennen en noteren', sub: 'min. is f(x) = …', long: 'noteren'}, {v: 'gr', name: 'Berekenen (GR)', sub: 'extreme waarden', long: 'GR'}, {v: 'model', name: 'Modellen', sub: 'opstellen en gebruiken', long: 'modellen'}]},
+  fg5: {label: 'Leerdoelen', multi: true, allName: 'alle leerdoelen', choices: [{v: 'nul', name: 'A/B = 0'}, {v: 'const', name: 'A/B = C'}, {v: 'kruis', name: 'A/B = C/D', sub: 'kruislings'}, {v: 'geln', name: 'A/B = C/B', sub: 'gelijke noemers'}, {v: 'gelt', name: 'A/B = A/C', sub: 'gelijke tellers'}]},
   baan: {label: 'Aanpak', choices: [{v: 'stappen', name: 'Met stappen', sub: 'zelf elke balansstap kiezen'}, {v: 'direct', name: 'Direct oplossen', sub: 'alleen het antwoord intypen'}]},
   hulp: {label: 'Hulp', choices: [{v: 'ja', name: 'Met hulp', sub: 'zijden gekleurd + sin cos tan'}, {v: 'nee', name: 'Zonder hulp', sub: 'zelf bepalen'}]},
   vt: {label: 'Soort', multi: true, allName: 'alle stappen', choices: [
@@ -1372,6 +1407,36 @@ const GAMES = {
     frame: () => `<div class="qcard wq hcard" id="qcard"><div class="hlq" id="hlq"></div><div class="oorule" id="hlrule"></div></div><div class="wexp" id="wexp"></div><div class="wopts" id="wopts"></div>`,
     setup: () => {}, begin: () => hlNext()
   },
+  fapar: {
+    section: 'fa', title: 'Parabool-Parade', sub: '§1 Kwadratische formules: snijpunten, toppen en formules',
+    opts: ['fg1', 'fal', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {fg1: ['snij', 'top', 'abc'], fal: 2, time: 180},
+    example: c => `Voorbeeld: ${faPlain(FA.gen(1, c.fal, c.fg1[0]).q)}`, tile: () => `<div class="mini-w"><span>y = 2(x − 3)² + 1</span><b>top (3, 1) ✓</b></div>`,
+    frame: () => `<div class="qcard wq facard" id="qcard"><div id="faq"></div></div><div id="faexp"></div><div class="wopts" id="faopts"></div>`, setup: () => {}, begin: () => faNext(), resultExtra: () => faResultExtra()
+  },
+  fastap: {
+    section: 'fa', title: 'Stappenspel', sub: '§2 Hogeregraadsvergelijkingen stap voor stap oplossen', scoreLabel: 'goede stappen',
+    opts: ['fg2', 'fal', 'time'], choices: {time: [120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {fg2: ['wortel', 'ontb', 'subst', 'ong'], fal: 2, time: 300},
+    example: c => `Voorbeeld: ${faPlain(FA.gen(2, c.fal, c.fg2[0]).steps[0].s)}`, tile: () => `<div class="mini-w"><span>x³ − 5x² + 4x = 0</span><b>x buiten haakjes ✓</b></div>`,
+    frame: () => `<div class="fswrap"><div class="qcard wq facard fsleft" id="qcard"><div id="faq"></div></div><div class="fsright"><div id="faexp"></div><div class="wopts fsopts" id="faopts"></div></div></div>`, setup: () => {}, begin: () => faNext(), resultExtra: () => faResultExtra()
+  },
+  faschuif: {
+    section: 'fa', title: 'Schuifpuzzel', sub: '§3 Parabolen en hyperbolen verschuiven en vermenigvuldigen',
+    opts: ['fg3', 'fal', 'time'], choices: {time: [120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {fg3: ['hyp', 'par'], fal: 2, time: 300},
+    example: c => `Voorbeeld: verschuif een ${c.fg3.includes('hyp') ? 'hyperbool' : 'parabool'} naar de doelgrafiek`, tile: () => `<div class="mini-w"><span>y = 1/x → y = 1/(x − 2) + 3</span><b>▶ ▶ ▲ ▲ ▲</b></div>`,
+    frame: () => `<div class="fzgrid"><div class="fzleft" id="fzleft"></div><div class="fzright" id="fzright"></div></div><div id="faexp" class="fzexp"></div>`, setup: () => {}, begin: () => faNext(), resultExtra: () => faResultExtra()
+  },
+  fabreuk: {
+    section: 'fa', title: 'Breukenbreker', sub: '§3 Gebroken vergelijkingen: welke vergelijking volgt hieruit?',
+    opts: ['fg5', 'fal', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {fg5: ['nul', 'const', 'kruis', 'geln', 'gelt'], fal: 2, time: 120},
+    example: c => `Voorbeeld: ${faPlain(FA.gen(5, c.fal, c.fg5[0]).q)}`, tile: () => `<div class="mini-w"><span>A/B = C/D</span><b>A · D = B · C ✓</b></div>`,
+    frame: () => `<div class="qcard wq facard" id="qcard"><div id="faq"></div></div><div id="faexp"></div><div class="wopts" id="faopts"></div>`, setup: () => {}, begin: () => faNext(), resultExtra: () => faResultExtra()
+  },
+  fatop: {
+    section: 'fa', title: 'Toppenjacht', sub: '§4 Extreme waarden en wiskundige modellen',
+    opts: ['fg4', 'fal', 'time'], choices: {time: [60, 120, 180, 300].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {fg4: ['lees', 'gr', 'model'], fal: 2, time: 180},
+    example: c => `Voorbeeld: ${faPlain(FA.gen(4, c.fal, c.fg4[0]).q)}`, tile: () => `<div class="mini-w"><span>laagste punt (2, −3)</span><b>min. is f(2) = −3 ✓</b></div>`,
+    frame: () => `<div class="qcard wq facard" id="qcard"><div id="faq"></div></div><div id="faexp"></div><div class="wopts" id="faopts"></div>`, setup: () => {}, begin: () => faNext(), resultExtra: () => faResultExtra()
+  },
   fout: {
     section: 'wia', title: 'Foutje zoeken', sub: 'Vind de fout en kies de beste verbetering',
     opts: ['hst', 'time'], choices: {time: [120, 180, 300, 480].map(t => ({v: t, name: timeLabel(t)}))},
@@ -1425,8 +1490,8 @@ const GAMES = {
   }
 };
 // Jaarlagen en hoofdstukken. Nieuw hoofdstuk: voeg een regel toe aan SECTIONS met de jaarlaag erbij.
-const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D'], [5, 'Havo 5', '#FF9F1C']];
-const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5], ['herl', 'Herleiden (§ 11.2)', 5]];
+const GRADES = [[1, 'Klas 1', '#3DA5FF'], [2, 'Klas 2', '#B26BFF'], [3, 'Klas 3', '#2EE59D'], [4, 'Havo 4', '#FF5C8A'], [5, 'Havo 5', '#FF9F1C']];
+const SECTIONS = [['neg', 'Negatieve getallen', 1], ['vr', 'Voorrangsregels', 1], ['lin', 'Lineaire formules en vergelijkingen', 2], ['gon', 'Goniometrie', 3], ['wia', 'Wiskunde A · Statistiek: begrippen en formuleren', 5], ['herl', 'Herleiden (§ 11.2)', 5], ['fa', 'H4 Werken met formules (Formule-Arena)', 4]];
 const gamesIn = sid => Object.entries(GAMES).filter(([, g]) => g.section === sid);
 const gradeOf = gid => { const sc = SECTIONS.find(x => x[0] === (GAMES[gid] || {}).section); return sc ? sc[2] : null; };
 let GRADE = null;
@@ -1708,6 +1773,7 @@ function showResults(rec, prevBest) {
         ${p.guest ? `<div class="muted small">Gastscore wordt niet bewaard.</div>` : ''}
         <div class="row"><button class="btn primary big" data-act="again">↻ Nog een keer</button><button class="btn big" data-act="toPlayers">Andere speler</button></div>
         ${mist ? `<div class="mist"><h4>Deze gingen fout (goed, jouw keuze doorgestreept):</h4>${mist}</div>` : ''}
+        ${gm.resultExtra ? gm.resultExtra() : ''}
       </div>
       <div class="card"><h3>Top 10${cls ? ' · ' + esc(cls.name) : ''}</h3>
         ${cls ? boardHTML(cls.id, mk, p.id) : '<p class="empty">Speel met je eigen foto om op de ranglijst te komen.</p>'}</div>
@@ -2299,7 +2365,17 @@ const HL_ERR = {
   vrij: {name: 'Verkeerd vrijgemaakt', desc: 'Omgekeerde bewerking of volgorde fout', tip: 'Werk van buiten naar binnen en doe aan beide kanten de omgekeerde bewerking.'},
   anders: {name: 'Andere fout', desc: '', tip: ''}
 };
+const FA_TH = {
+  '1A': ['4.1 Theorie A: De parabool y = a(x − d)(x − e)', 'blz. 139'], '1B': ['Voorkennis Theorie B en 4.1 Theorie B: De formule y = a(x − p)² + q', 'blz. 138 en 141'],
+  '1C': ['4.1 Theorie C: De top van de parabool y = ax² + bx + c', 'blz. 144'], '2A': ['4.2 Theorie A: Hogeremachtswortels', 'blz. 147 tot 149'],
+  '2B': ['4.2 Theorie B: Hogeregraadsvergelijkingen en ontbinden in factoren', 'blz. 150 en 151'], '2C': ['4.2 Theorie C: Ongelijkheden algebraïsch oplossen', 'blz. 152'],
+  '2D': ['4.2 Theorie D: Vergelijkingen en ongelijkheden grafisch-numeriek oplossen', 'blz. 153 en 154'], '3V': ['Voorkennis Theorie A: Verticaal en horizontaal verschuiven', 'blz. 137'],
+  '3A': ['4.3 Theorie A: Gebroken functies (asymptoten en translatie)', 'blz. 156 en 157'], '3B': ['4.3 Theorie B: Gebroken vergelijkingen', 'blz. 158 tot 160'],
+  '4A': ['4.4 Theorie A: Extreme waarden', 'blz. 162'], '4B': ['4.4 Theorie B: Extreme waarden berekenen', 'blz. 163'], '4C': ['4.4 Theorie C: Wiskundig model', 'blz. 165 en 166']};
+const FA_ERR = Object.fromEntries(Object.entries(FA_TH).map(([k, [t, b]]) => [k, {name: t.replace(/^.*Theorie [A-D]: /, ''), desc: t + ' · ' + b, tip: 'Laat leerlingen ' + t.split(':')[0] + ' (' + b + ') nog eens doornemen.'}]));
 const STAT_TOPICS = {
+  fa: {name: 'Havo 4 · H4 Formules', g: ['P', 'S', 'Z', 'K', 'T'], unit: 'vragen', fast: 15000, errs: FA_ERR, noLevel: true,
+    cats: Object.keys(FA_TH).filter(k => k !== '2D').map((k, i) => ({id: k, name: FA_ERR[k].name, short: k, color: ['var(--sub)', 'var(--div)', 'var(--add)', 'var(--mul)', 'var(--gold)', '#F472B6'][i % 6]}))},
   herl: {name: 'Herleiden', g: ['h'], unit: 'vragen', fast: 20000, errs: HL_ERR, noLevel: true,
     cats: [{id: 'macht', name: 'Machten', short: 'Machten', color: 'var(--sub)'}, {id: 'wortel', name: 'Wortels', short: 'Wortels', color: 'var(--add)'}, {id: 'breuk', name: 'Breuken', short: 'Breuken', color: 'var(--mul)'},
       {id: 'verg', name: 'Vergelijkingen', short: 'Vergel.', color: '#F472B6'}, {id: 'subst', name: 'Substitutie', short: 'Subst.', color: 'var(--div)'}, {id: 'vrij', name: 'Vrijmaken', short: 'Vrij', color: 'var(--gold)'}]},
@@ -2484,7 +2560,7 @@ function downloadCSV(name, rows) {
 const today = () => new Date().toISOString().slice(0, 10);
 const blank = v => v == null ? '' : v;
 const PERIOD_NAME = () => PERIODS.find(p => p[0] === ST.period)[1].toLowerCase();
-const GAME_NAME = {h: 'Herleiden', m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
+const GAME_NAME = {P: 'Parabool-Parade', S: 'Stappenspel', Z: 'Schuifpuzzel', K: 'Breukenbreker', T: 'Toppenjacht', h: 'Herleiden', m: 'Welke maat?', o: 'Gering of groot?', d: 'Foutendetective', w: 'Begrippen', e: 'Foutje zoeken', g: 'Goniometrie', v: 'Voorrangsregels', r: 'Rekenrace', b: 'Ballonnen', l: 'Balansmethode', f: 'Grafiek & formule'};
 function csvOverview() {
   const c = curClass(); if (!c) return;
   const T = STAT_TOPICS[ST.topic], rows = rowsFor(c.id), ek = Object.keys(T.errs);
@@ -3878,6 +3954,293 @@ function hlPick(i) {
     <div class="hlfoot"><span class="muted">❚❚ De tijd staat stil. Bekijk de uitwerking rustig en tik dan op Volgende.</span><button class="btn primary big wnx" data-act="wNext">Volgende ▶</button></div></div>`;
 }
 
+/* ===================== Havo 4 · H4 Werken met formules (Formule-Arena, idee en opgaven van een collega) ===================== */
+// De opgavengeneratoren komen uit Formule-Arena; ze staan in een eigen blok zodat namen niet botsen met de rest.
+const FA = (() => {
+let S = {l: 2};
+const $=s=>document.querySelector(s),R=(a,b)=>a+Math.floor(Math.random()*(b-a+1)),P=a=>a[R(0,a.length-1)],ab=Math.abs;
+const SH=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){let j=R(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+const m=n=>String(n).replace('-','−').replace('.',','),dc=v=>m(String(v).replace('.',',')),sup=n=>String(n).split('').map(c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join('');
+const T=(c,v)=>c?(c<0?' − ':' + ')+(ab(c)==1&&v?'':dc(ab(c)))+v:'',F=(c,v)=>(c<0?'−':'')+(ab(c)==1&&v?'':ab(c))+v;
+const cf=a=>a==1?'':a==-1?'−':m(a),xp=p=>p==0?'x':'x'+(p<0?' + ':' − ')+dc(ab(p)),pr=p=>p?'('+xp(p)+')':'x';
+const quad=(a,b,c)=>F(a,'x²')+T(b,'x')+T(c,''),pt=(x,y)=>'<span class="nw">('+m(x)+', '+m(y)+')</span>';
+const fr=(n,d)=>`<span class="hfr"><span>${n}</span><span>${d}</span></span>`;
+const RT={3:'derdemachtswortel',4:'vierdemachtswortel',5:'vijfdemachtswortel',6:'zesdemachtswortel'};
+function mk(q,c,w,tag,ex){w=[...new Set(w)].filter(x=>x!==c).slice(0,3);let o=SH([c,...w]);return{q,o,a:o.indexOf(c),tag,ex}}
+const pick=(pool,L,go)=>{for(;;){let A=pool.filter(g=>g.t==go),c=A.filter(g=>g.l<=L&&g.l>=L-1);if(!c.length){let d=Math.min(...A.map(g=>ab(g.l-L)));c=A.filter(g=>ab(g.l-L)==d)}let q=P(c).f();if(!q.o||q.o.length==4)return q}};
+
+const TH={
+'1A':['4.1 Theorie A: De parabool y = a(x − d)(x − e)','blz. 139'],
+'1B':['Voorkennis Theorie B en 4.1 Theorie B: De formule y = a(x − p)² + q','blz. 138 en 141'],
+'1C':['4.1 Theorie C: De top van de parabool y = ax² + bx + c','blz. 144'],
+'2A':['4.2 Theorie A: Hogeremachtswortels','blz. 147 tot 149'],
+'2B':['4.2 Theorie B: Hogeregraadsvergelijkingen en ontbinden in factoren','blz. 150 en 151'],
+'2C':['4.2 Theorie C: Ongelijkheden algebraïsch oplossen','blz. 152'],
+'2D':['4.2 Theorie D: Vergelijkingen en ongelijkheden grafisch-numeriek oplossen','blz. 153 en 154'],
+'3V':['Voorkennis Theorie A: Verticaal en horizontaal verschuiven','blz. 137'],
+'3A':['4.3 Theorie A: Gebroken functies (asymptoten en translatie)','blz. 156 en 157'],
+'3B':['4.3 Theorie B: Gebroken vergelijkingen','blz. 158 tot 160'],
+'4A':['4.4 Theorie A: Extreme waarden','blz. 162'],
+'4B':['4.4 Theorie B: Extreme waarden berekenen','blz. 163'],
+'4C':['4.4 Theorie C: Wiskundig model','blz. 165 en 166']};
+
+/* §1 */
+const A1=()=>{let d=P([-6,-5,-4,-3,-2,-1,1,2,3,4,5,6]),e=d,a=P([1,2,-1,-2,3]);while(e==d||!e||e==-d)e=R(-6,6);
+ return mk(`Wat zijn de snijpunten met de x-as van<br><b>y = ${cf(a)}${pr(d)}${pr(e)}</b> ?`,pt(d,0)+' en '+pt(e,0),[pt(-d,0)+' en '+pt(-e,0),pt(0,d)+' en '+pt(0,e),pt(d,0)+' en '+pt(-e,0),pt(-d,0)+' en '+pt(e,0)],'1A','Bij y = a(x − d)(x − e) zijn de snijpunten (d, 0) en (e, 0).')};
+const A2=()=>{let d=R(-6,2),e=d+2*R(1,4),a=P([1,2,-1,-2,3]);if(d+e==0)e+=2;let v=(d+e)/2;
+ return mk(`De parabool <b>y = ${cf(a)}${pr(d)}${pr(e)}</b> snijdt de x-as in ${pt(d,0)} en ${pt(e,0)}.<br>Wat is x<sub>top</sub>?`,m(v),[m(d+e),m(-v),m((e-d)/2),m(v+1),m(v-1)],'1A','x_top = (d + e) / 2')};
+const A3=()=>{let d=R(-4,-1),e=R(1,4),a=P([1,2,-1,-2,3,-3]),x0=R(-5,6);while(x0==d||x0==e)x0=R(-5,6);
+ return mk(`Een parabool snijdt de x-as in ${pt(d,0)} en ${pt(e,0)} en gaat door ${pt(x0,a*(x0-d)*(x0-e))}.<br>Hoe groot is <i>a</i> in y = a(x ${d<0?'+':'−'} ${ab(d)})(x ${e<0?'+':'−'} ${ab(e)}) ?`,m(a),[m(-a),m(2*a),m(a+1),m(a-1)],'1A','Vul het punt in: a · (x − d) · (x − e) = y, en los a op.')};
+const B1=()=>{let a=P([1,2,3,-1,-2,-3,4]),p=P([-5,-4,-3,-2,-1,1,2,3,4,5]),q=R(-8,8)||3;
+ return mk(`Wat is de top van de parabool<br><b>y = ${cf(a)}(${xp(p)})²${T(q,'')}</b> ?`,pt(p,q),[pt(-p,q),pt(p,-q),pt(-p,-q),pt(q,p)],'1B','De top van y = a(x − p)² + q is het punt (p, q).')};
+const B3=()=>{let a=P([1,2,3,-1,-2,-3]),p=R(-4,4),q=R(-6,6),x0=p+P([-3,-2,2,3]);
+ return mk(`Een parabool heeft top ${pt(p,q)} en gaat door ${pt(x0,a*(x0-p)**2+q)}.<br>Wat is <i>a</i> in y = a(${xp(p)})²${T(q,'')} ?`,m(a),[m(-a),m(2*a),m(a+1),m(a-1)],'1B','Vul het punt in y = a(x − p)² + q in en los a op.')};
+const C1=()=>{let a=P([1,2,-1,-2,3,-3,4,-4]),p=P([-5,-4,-3,-2,-1,1,2,3,4,5]),b=-2*a*p;
+ return mk(`Wat is x<sub>top</sub> van de parabool <b>y = ${quad(a,b,R(-9,9))}</b> ?`,m(p),[m(-p),m(2*p),m(-2*p),m(b),m(p+1)],'1C','x_top = −b / (2a)')};
+const Cy=()=>{let a=P([1,2,-1,-2,3]),b=P([-6,-4,-2,2,3,5]),c=P([-9,-7,-5,-3,3,4,6,8]);if(c==b)c=b+1;
+ return mk(`Wat is het snijpunt met de y-as van <b>y = ${quad(a,b,c)}</b> ?`,pt(0,c),[pt(c,0),pt(0,b),pt(b,0),pt(0,a)],'1A','Vul x = 0 in: dat geeft (0, c).')};
+const Ct=()=>{let a=P([1,2,-1,-2]),p=P([-3,-2,-1,1,2,3]),c=R(-9,9),y=c-a*p*p;
+ return mk(`Wat zijn de coördinaten van de top van <b>y = ${quad(a,-2*a*p,c)}</b> ?`,pt(p,y),[pt(p,c),pt(-p,y),pt(-p,c),pt(p,-y)],'1C','Bereken x_top = −b / (2a) en vul die x in voor y_top.')};
+const G1=[{l:1,t:'snij',f:A1},{l:1,t:'top',f:B1},{l:1,t:'abc',f:C1},{l:1,t:'snij',f:Cy},{l:2,t:'snij',f:A2},{l:2,t:'abc',f:Ct},{l:3,t:'snij',f:A3},{l:3,t:'top',f:B3}];
+
+/* §2 */
+const RT2=n=>RT[n]||'tweedemachtswortel';
+const stp=(eq,steps,tag)=>({type:'st',eq,steps,si:0,perr:0,tag}),ST=(s,o,w,n,ex)=>({s,o,w,n,ex});
+const W1=()=>{let n=P([2,3,4]),a=R(2,5),b=R(3,9),s=P([1,-1]),k=R(1,3),ev=n%2==0,v=a*k**n,X='x'+sup(n),rt=RT2(n);
+ let s1=`${a}${X}${T(s*b,'')} = ${m(v+s*b)}`,s2=`${a}${X} = ${v}`,s3=`${X} = ${k**n}`,s4=ev?`x = ${k} ∨ x = −${k}`:`x = ${k}`;
+ return stp(s1,[ST(s1,s>0?`Trek ${b} van beide kanten af`:`Tel ${b} bij beide kanten op`,[`Deel beide kanten door ${a}`,`Neem de ${rt} van beide kanten`,s>0?`Tel ${b} bij beide kanten op`:`Trek ${b} van beide kanten af`],s2,'Werk van buiten naar binnen: eerst optellen of aftrekken.'),
+ ST(s2,`Deel beide kanten door ${a}`,[`Neem de ${rt} van beide kanten`,`Trek ${a} van beide kanten af`,`Vermenigvuldig beide kanten met ${a}`],s3,'De factor voor de macht haal je weg door te delen.'),
+ ST(s3,ev?`Neem de ${rt} van beide kanten (± de wortel)`:`Neem de ${rt} van beide kanten`,ev?[`Neem de ${rt}, alleen de positieve waarde`,`Deel beide kanten door ${n}`,`Trek ${n} van beide kanten af`]:[`Neem de ${rt}: x = ±${k}`,`Deel beide kanten door ${n}`,`Trek ${n} van beide kanten af`],s4,ev?'Bij even n heeft xⁿ = p > 0 twee oplossingen.':'Bij oneven n is er precies één oplossing.')],'2A')};
+const W2a=()=>{let n=P([2,3,4]),a=R(2,4),b=P([-4,-3,-2,-1,1,2,3,4]),k=R(1,3),ev=n%2==0,rt=RT2(n);
+ let s1=`${a}${pr(b)}${sup(n)} = ${a*k**n}`,s2=`${pr(b)}${sup(n)} = ${k**n}`,s3=ev?`${xp(b)} = ${k} ∨ ${xp(b)} = −${k}`:`${xp(b)} = ${k}`,s4=ev?`x = ${m(k-b)} ∨ x = ${m(-k-b)}`:`x = ${m(k-b)}`,sb=b>0?`Trek ${b} van beide kanten af`:`Tel ${-b} bij beide kanten op`;
+ return stp(s1,[ST(s1,`Deel beide kanten door ${a}`,[`Neem de ${rt} van beide kanten`,'Werk de haakjes uit',`Trek ${ab(b)} van beide kanten af`],s2,'De factor ' + a + ' staat nog voor de macht: eerst delen.'),
+ ST(s2,ev?`Neem de ${rt} van beide kanten (± de wortel)`:`Neem de ${rt} van beide kanten`,[`Deel beide kanten door ${n}`,'Werk de haakjes uit',`Trek ${a} van beide kanten af`],s3,'Wortel trekken kan meteen, de haakjes blijven staan.'),
+ ST(s3,sb,[b>0?`Tel ${b} bij beide kanten op`:`Trek ${-b} van beide kanten af`,`Deel beide kanten door ${ab(b)}`,`Neem de ${rt} van beide kanten`],s4,'Maak x vrij.')],'2A')};
+function ontb(r,s,pre){let a=`x³${T(-(r+s),'x²')}${T(r*s,'x')} = 0`,b=`x(x²${T(-(r+s),'x')}${T(r*s,'')}) = 0`,c=`x(${xp(r)})(${xp(s)}) = 0`,d=`x = 0 ∨ x = ${r} ∨ x = ${s}`,L=[];
+ if(pre)L.push(ST(`x³ = ${F(r+s,'x²')}${T(-r*s,'x')}`,'Breng alle termen naar links, zodat rechts 0 staat',['Deel beide kanten door x','Neem de derdemachtswortel van beide kanten','Stel x² = u'],a,'Eerst 0 aan één kant maken, daarna ontbinden.'));
+ L.push(ST(a,'Breng x buiten haakjes',['Deel beide kanten door x','Stel x² = u','Neem de derdemachtswortel van beide kanten'],b,'Delen door x raakt een oplossing kwijt: haal x buiten haakjes.'),
+ ST(b,'Ontbind de factor tussen haakjes',['Deel beide kanten door x','Werk de haakjes uit','Stel x² = u'],c,'Zoek twee getallen met som en product.'),
+ ST(c,'Stel elke factor gelijk aan 0',['Deel beide kanten door x','Werk de haakjes uit','Neem de derdemachtswortel van beide kanten'],d,'Een product is nul als een van de factoren nul is.'));
+ return stp(L[0].s,L,'2B')}
+const W3=()=>{let r=R(1,3);return ontb(r,R(r+1,5),0)},W3b=()=>{let r=R(1,3);return ontb(r,R(r+1,5),1)};
+const W4=()=>{let[u,v]=P([[1,4],[1,9],[4,9]]),a=Math.sqrt(u),b=Math.sqrt(v),s1=`x⁴${T(-(u+v),'x²')}${T(u*v,'')} = 0`,s2=`u²${T(-(u+v),'u')}${T(u*v,'')} = 0`,s3=`(u − ${u})(u − ${v}) = 0`,s4=`u = ${u} ∨ u = ${v}`,s5=`x² = ${u} ∨ x² = ${v}`,s6=`x = ${a} ∨ x = −${a} ∨ x = ${b} ∨ x = −${b}`;
+ return stp(s1,[ST(s1,'Stel x² = u',['Breng x² buiten haakjes','Neem de vierdemachtswortel van beide kanten','Deel beide kanten door x²'],s2,'Omdat x⁴ = (x²)² = u².'),
+ ST(s2,'Ontbind in factoren',['Neem de vierdemachtswortel van beide kanten','Deel beide kanten door u','Stel nogmaals x² = u'],s3,'Gewone kwadratische vergelijking in u.'),
+ ST(s3,'Stel elke factor gelijk aan 0',['Deel beide kanten door u','Werk de haakjes uit','Neem de wortel van beide kanten'],s4,'Een product is nul als een van de factoren nul is.'),
+ ST(s4,'Vervang u weer door x²',['Neem de vierdemachtswortel van u','Deel beide kanten door x','Je bent al klaar'],s5,'Je zoekt x, niet u.'),
+ ST(s5,'Neem de wortel van beide kanten (± de wortel)',['Neem alleen de positieve wortel','Deel beide kanten door 2','Trek x af van beide kanten'],s6,'x² = p > 0 geeft twee oplossingen.')],'2B')};
+const RD=g=>`Lees af waar de grafiek van f ${g?'boven':'onder'} die van g ligt`,RDw=g=>[`Lees af waar de grafiek van f ${g?'onder':'boven'} die van g ligt`,'Los de vergelijking opnieuw op','Deel beide kanten door x'];
+const W5a=()=>{let c=P([4,9,16,25]),r=Math.sqrt(c),o=P(['&gt;','&lt;']),g=o=='&gt;',s1=`x² ${o} ${c}`,s2=`x² = ${c}`,s3=`x = ${r} ∨ x = −${r}`,s4=`f en g snijden bij x = −${r} en x = ${r}`,s5=g?`x &lt; −${r} ∨ x &gt; ${r}`:`−${r} &lt; x &lt; ${r}`;
+ return stp(s1,[ST(s1,`Los eerst de vergelijking x² = ${c} op`,['Neem de wortel van beide kanten en laat het teken staan','Deel beide kanten door x','Schets eerst de grafieken'],s2,'Werkschema: 1 los f(x) = g(x) op, 2 schets, 3 lees af.'),
+ ST(s2,'Neem de wortel van beide kanten (± de wortel)',['Neem alleen de positieve wortel','Deel beide kanten door 2',`Trek ${c} van beide kanten af`],s3,'x² = p > 0 geeft twee oplossingen.'),
+ ST(s3,'Schets de grafieken van f en g',['Lees het antwoord af zonder schets','Los de vergelijking opnieuw op','Deel beide kanten door x'],s4,'Na het oplossen volgt de schets.'),
+ ST(s4,RD(g),RDw(g),s5,'Bij f(x) > g(x) kijk je waar f boven g ligt, bij f(x) < g(x) waar f onder g ligt.')],'2C')};
+const W5=()=>{let r,s,o=P(['&gt;','&lt;']);do{r=R(-3,2);s=R(r+1,4)}while(r+s==0);let g=o=='&gt;',e=`${F(r+s,'x')}${T(-r*s,'')}`,
+ s1=`x² ${o} ${e}`,s2=`x² = ${e}`,s3=`x²${T(-(r+s),'x')}${T(r*s,'')} = 0`,s4=`(${xp(r)})(${xp(s)}) = 0`,s5=`x = ${m(r)} ∨ x = ${m(s)}`,s6=`f en g snijden bij x = ${m(r)} en x = ${m(s)}`,s7=g?`x &lt; ${m(r)} ∨ x &gt; ${m(s)}`:`${m(r)} &lt; x &lt; ${m(s)}`,B=['Deel beide kanten door x','Neem de wortel van beide kanten','Stel x² = u'];
+ return stp(s1,[ST(s1,'Los eerst de vergelijking f(x) = g(x) op',[B[0],B[1],'Schets eerst de grafieken'],s2,'Werkschema: 1 los f(x) = g(x) op, 2 schets, 3 lees af.'),
+ ST(s2,'Breng alle termen naar links, zodat rechts 0 staat',B,s3,'Eerst 0 aan één kant maken.'),
+ ST(s3,'Ontbind in factoren',[B[0],B[1],'Werk de haakjes uit'],s4,'Zoek twee getallen met som en product.'),
+ ST(s4,'Stel elke factor gelijk aan 0',[B[0],'Werk de haakjes uit',B[1]],s5,'Een product is nul als een van de factoren nul is.'),
+ ST(s5,'Schets de grafieken van f en g',['Lees het antwoord af zonder schets','Los de vergelijking opnieuw op',B[0]],s6,'Na het oplossen volgt de schets.'),
+ ST(s6,RD(g),RDw(g),s7,'Bij f(x) > g(x) kijk je waar f boven g ligt, bij f(x) < g(x) waar f onder g ligt.')],'2C')};
+const W=[{l:1,t:'wortel',f:W1},{l:2,t:'wortel',f:W2a},{l:2,t:'ontb',f:W3},{l:3,t:'ontb',f:W3b},{l:2,t:'subst',f:W4},{l:1,t:'ong',f:W5a},{l:3,t:'ong',f:W5}];
+/* §3 */
+const fm=(ty,p,q,k=1)=>{let a=ab(k),sg=k<0?'−':'',d=1/a,xs=p?'('+xp(p)+')':'x';
+ if(ty=='hyp')return`y = ${a>=1?fr(m(k),xp(p)):fr(sg+'1',d+xs)}${T(q,'')}`;
+ return`y = ${a>=1?cf(k)+xs+(p?'²':'²'):sg+fr(1,d)+xs+'²'}${T(q,'')}`};
+function ap(ty,s,o){let g=[2,.5,-1,2,.5][o];return o<3?{p:s.p,q:s.q*g,k:s.k*g}:{p:s.p*g,q:s.q,k:ty=='hyp'?s.k*g:s.k/g/g}}
+function bfs(ty,s,t,ops){let key=a=>a.p+','+a.q+','+a.k,seen=new Set([key(s)]),fq=[s],d=0;
+ while(fq.length&&d<14){let nx=[];for(const a of fq){if(a.p==t.p&&a.q==t.q&&a.k==t.k)return d;
+  for(const b of [{p:a.p+1,q:a.q,k:a.k},{p:a.p-1,q:a.q,k:a.k},{p:a.p,q:a.q+1,k:a.k},{p:a.p,q:a.q-1,k:a.k},...ops.map(o=>ap(ty,a,o))]){if(ab(b.p)>12||ab(b.q)>12||ab(b.k)>16||ab(b.k)<1/16)continue;let kk=key(b);if(!seen.has(kk)){seen.add(kk);nx.push(b)}}}
+  fq=nx;d++}
+ return 99}
+function genMove(L,go){for(;;){let ty=go=='hyp'?'hyp':go=='par'?'par':P(['hyp','par']),vm=go=='verm',s={p:0,q:0,k:1};if(L==3){s.p=R(-3,3);s.q=R(-3,3)}
+ let t={...s},ops=L==1?[0,1,2]:[0,1,2,3,4];for(let i=0;i<(vm?(L==3?2:1):0);i++)t=ap(ty,t,P(ops));
+ let dx=R(-4,4),dy=R(-4,4);if(L==1){if(R(0,1))dy=0;else dx=0}
+ t.p+=dx;t.q+=dy;if(ab(t.p)>6||ab(t.q)>6)continue;let mn=bfs(ty,s,t,vm?ops:[]);
+ if(mn>0&&mn<99)return{type:'mv',ty,verm:vm,p:s.p,q:s.q,k:1,sp:s.p,sq:s.q,tp:t.p,tq:t.q,tk:t.k,min:mn,log:[],stk:[],tag:ty=='hyp'?'3A':'3V'}}}
+/* breuken */
+const par=e=>/ [+−] /.test(e)?`(${e})`:e,pm=(a,b)=>par(a)+' · '+par(b),mul=(c,B)=>/ [+−] /.test(B)?`${c}(${B})`:`${c} · ${B}`;
+const xe=L=>{let a=R(1,7),b=R(2,5);return L==1?P([`x + ${a}`,`x − ${a}`,`${b}x + ${a}`,`${b}x − ${a}`]):L==2?P([`x² − ${a}`,`${b}x − ${a}`,`x² + ${a}`,`x² + ${b}x`,`${b}x² − ${a}`,`x + ${a}`]):P([`x² − ${b}x + ${a}`,`${b}x² + ${a}x`,`x² + x − ${a+b}`,`${b+1}x² − ${a}`,`x³ − ${a}x`,`2x − ${a}`])};
+const U=n=>{let r=[];while(r.length<n){let e=xe(S.l);if(!r.includes(e))r.push(e)}return r};
+const fl=(a,b)=>R(0,1)?[a,b]:[b,a];
+const Q0=()=>{let[A,B]=U(2),[l,r]=fl(fr(A,B),'0');return mk(`Welke vergelijking volgt uit ${l} = ${r} ?`,`${A} = 0`,SH([`${B} = 0`,`${A} = ${B}`,`${A} = 1`,`${A} = 0 ∨ ${B} = 0`]),'3B','Een breuk is nul als de teller nul is: A/B = 0 geeft A = 0.')};
+const Q1=()=>{let[A,B,C]=U(3),e=S.l==3&&R(0,1),c=e?C:P(['2','3','4','5','1½','2½']),[l,r]=fl(fr(A,B),c);
+ return mk(`Welke vergelijking volgt uit ${l} = ${r} ?`,e?`${A} = ${pm(B,C)}`:`${A} = ${mul(c,B)}`,SH(e?[`${A} = ${C}`,`${pm(A,C)} = ${B}`,`${A} = ${B} + ${C}`]:[`${A} = ${c}`,`${mul(c,A)} = ${B}`,`${A} = ${B} + ${c}`,`${A} + ${c} = ${B}`]),'3B','A/B = C geeft A = B · C.')};
+const Q2=()=>{let[A,B,C,D]=U(4);if(S.l==1&&R(0,1))C=P(['2','3','5','6','8']);
+ return mk(`Welke vergelijking volgt uit ${fr(A,B)} = ${fr(C,D)} ?`,`${pm(A,D)} = ${pm(B,C)}`,SH([`${pm(A,B)} = ${pm(C,D)}`,`${pm(A,C)} = ${pm(B,D)}`,`${A} + ${D} = ${B} + ${C}`]),'3B','A/B = C/D geeft A · D = B · C (kruislings vermenigvuldigen).')};
+const Q3=()=>{let[A,B,C]=U(3);return mk(`Welke vergelijking volgt uit ${fr(A,B)} = ${fr(C,B)} ?`,`${A} = ${C}`,SH([`${A} = ${B}`,`${A} = 0 ∨ ${B} = ${C}`,`${B} = ${C}`,`${A} = 0 ∧ ${C} = 0`]),'3B','Bij gelijke noemers zijn de tellers gelijk: A/B = C/B geeft A = C.')};
+const Q4=()=>{let[A,B,C]=U(3);return mk(`Welke vergelijking(en) volgt/volgen uit ${fr(A,B)} = ${fr(A,C)} ?`,`${A} = 0 ∨ ${B} = ${C}`,SH([`${A} = 0`,`${B} = ${C}`,`${A} = 0 ∧ ${B} = ${C}`,`${A} = ${B} ∨ ${A} = ${C}`]),'3B','Bij gelijke tellers: A/B = A/C geeft A = 0 ∨ B = C.')};
+const G5=[{l:2,t:'nul',f:Q0},{l:2,t:'const',f:Q1},{l:2,t:'kruis',f:Q2},{l:2,t:'geln',f:Q3},{l:2,t:'gelt',f:Q4}];
+/* §4 */
+const nw=s=>`<span class="nw">${s}</span>`,dd=(k,x,y)=>nw(`${k} is f(${m(x)}) = ${m(y)}`);
+const X1=()=>{let x1=R(-5,-1),y1=R(-6,-1),x2=R(1,5),y2=R(2,8);
+ return mk(`De grafiek van f heeft een laagste punt in ${pt(x1,y1)} en een hoogste punt in ${pt(x2,y2)}.<br>Welke extreme waarden horen hierbij?`,dd('min.',x1,y1)+' en '+dd('max.',x2,y2),[dd('min.',x2,y2)+' en '+dd('max.',x1,y1),dd('min.',y1,x1)+' en '+dd('max.',y2,x2),dd('min.',x1,y2)+' en '+dd('max.',x2,y1)],'4A','Een minimum is een y-coördinaat: min. is f(x) = y.')};
+const X1b=()=>{let x=R(-5,5),y=R(-6,6),mn=R(0,1);
+ return mk(`De grafiek van f heeft een ${mn?'laagste':'hoogste'} punt in ${pt(x,y)}.<br>Hoe noteer je de extreme waarde?`,dd(mn?'min.':'max.',x,y),[dd(mn?'max.':'min.',x,y),dd(mn?'min.':'max.',y,x),dd(mn?'max.':'min.',y,x)],'4A','Noteer als min. is f(x) = … of max. is f(x) = …')};
+const X2=()=>{let k=P(['maximum','minimum']),a=k=='maximum'?'max.':'min.',o=k=='maximum'?'min.':'max.',X=P([-3.5,-2.5,-1.5,-.5,1.5,2.5,3.5,4]),Y=(R(-2500,2500)/100).toFixed(2),f=(t,x,y)=>nw(`${t} is f(${dc(x)}) ≈ ${dc(y)}`);
+ return mk(`De GR geeft bij de optie <b>${k}</b>: ${nw(`x = ${dc(X)} en y ≈ ${dc(Y)}`)}.<br>Hoe noteer je deze extreme waarde?`,f(a,X,Y),[f(o,X,Y),f(a,Y,X),f(o,Y,X),nw(`${a} is ${dc(X)}`)],'4B','Werkschema stap 3: noteer min. is f(x) ≈ y of max. is f(x) ≈ y.')};
+const X3=()=>{let r1=P([-2,-1,0]),r2=P([1,2,3]),c=R(-5,5),f=r=>2*r**3-3*(r1+r2)*r*r+6*r1*r2*r+c,v1=f(r1),v2=f(r2);
+ return mk(`${nw(`<b>f(x) = ${F(2,'x³')}${T(-3*(r1+r2),'x²')}${T(6*r1*r2,'x')}${T(c,'')}</b>`)} heeft extremen bij ${nw('x = '+m(r1))} en ${nw('x = '+m(r2))}.<br>Wat is het maximum?`,dd('max.',r1,v1),[dd('max.',r2,v2),dd('min.',r1,v1),dd('max.',v1,r1),dd('max.',r1,v2)],'4B','Bij een positieve x³-coëfficiënt hoort het maximum bij de kleinste x. Vul in en noteer.')};
+const X4=()=>{let T2=R(2,4),a=-R(1,5),b=R(12,30),H1=a+b,HT=T2*T2*a+T2*b,s=(x,y)=>nw(`a + b = ${m(H1)}`)+' en '+nw(`${x}a + ${y}b = ${m(HT)}`);
+ return mk(`Bij het model ${nw('<b>h = at² + bt</b>')} is ${nw('h = '+m(H1))} voor ${nw('t = 1')} en ${nw('h = '+m(HT))} voor ${nw('t = '+T2)}.<br>Welk stelsel hoort hierbij?`,s(T2*T2,T2),[s(T2,1),s(T2,T2),s(T2*T2,T2*T2),s(T2,T2*T2)],'4C','Vul t en h in bij h = at² + bt: t = 4 geeft 16a + 4b.')};
+const X5=()=>{let a=R(1,5),mm=R(2,5),z=v=>nw(`${v} meter`);
+ return mk(`Voor een kogel geldt ${nw(`<b>h = −${a==1?'':a}t² + ${2*a*mm}t</b>`)} (h in meter).<br>Wat is de maximale hoogte?`,z(a*mm*mm),[z(mm),z(2*a*mm),z(2*a*mm*mm),z(a*mm*mm+mm)],'4C','Top bij t = −b / (2a). Vul die t in om de hoogte te krijgen.')};
+const G4=[{l:1,t:'lees',f:X1},{l:1,t:'lees',f:X1b},{l:2,t:'gr',f:X2},{l:3,t:'gr',f:X3},{l:2,t:'model',f:X5},{l:3,t:'model',f:X4},{l:3,t:'model',f:X5}];
+const _sc_unused=()=>`<div class="sc">${['x-as ×2','x-as ×½','x-as ×−1','y-as ×2','y-as ×½'].slice(0,S.l>1?5:3).map((t,o)=>`<button class="btn" onclick="sc2(${o})">${t}</button>`).join('')}</div>`;
+const SN=['vermenigvuldigen t.o.v. de x-as, factor 2','vermenigvuldigen t.o.v. de x-as, factor ½','vermenigvuldigen t.o.v. de x-as, factor −1','vermenigvuldigen t.o.v. de y-as, factor 2','vermenigvuldigen t.o.v. de y-as, factor ½'];
+function path(ty,p,q,cl,k=1){let d='',st=1,f=ty=='par'?x=>k*(x-p)**2+q:x=>k/(x-p)+q;
+ for(let x=-7;x<=7.001;x+=ty=='par'?.25:.05){if(ty=='hyp'&&ab(x-p)<.03){st=1;continue}d+=(st?'M':'L')+x.toFixed(2)+' '+f(x).toFixed(2);st=0}
+ return`<path class="${cl}" d="${d}"/>`}
+return {
+  gen(no, L, go) { S.l = L; if (no === 3) return genMove(L, go); return pick({1: G1, 2: W, 4: G4, 5: G5}[no], L, go); },
+  mk, fm, ap, path, SN, pt, m
+};
+})();
+const FA_GAME = {fapar: 1, fastap: 2, faschuif: 3, fabreuk: 5, fatop: 4};
+const FA_LET = {fapar: 'P', fastap: 'S', faschuif: 'Z', fabreuk: 'K', fatop: 'T'};
+const FA_HINT = {1: 'Kies het juiste antwoord', 2: 'Wat is de volgende stap?', 3: 'Maak van de grafiek de doelgrafiek', 4: 'Kies het juiste antwoord', 5: 'Welke vergelijking(en) volgt/volgen hieruit?'};
+const faPlain = h => String(h).replace(/<span class="hfr"><span>(.*?)<\/span><span>(.*?)<\/span><\/span>/g, '($1)/($2)').replace(/<br\s*\/?>/g, ' ').replace(/<[^>]+>/g, '').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/\s+/g, ' ').trim();
+const faTheory = tag => FA_TH[tag] ? `<div class="fath">📖 <b>${FA_TH[tag][0]}</b> · ${FA_TH[tag][1]}</div>` : '';
+function faGoal() {
+  const no = FA_GAME[G.game], key = 'fg' + no, sel = (G.cfg[key] && G.cfg[key].length ? G.cfg[key] : OPTDEFS[key].choices.map(c => c.v));
+  if (!G.faGoals || !G.faGoals.length) G.faGoals = shuffle(sel.slice());
+  return G.faGoals.pop();
+}
+function faWrongTag(tag) { G.faW = G.faW || {}; G.faW[tag] = (G.faW[tag] || 0) + 1; }
+function faAfterWrong(html, next) {
+  pauseClock(); G.after = next;
+  $('#faexp').innerHTML = `<div class="hlwork">${html}<div class="hlfoot"><span class="muted">${LANE ? '' : '❚❚ De tijd staat stil. Bekijk de uitleg rustig.'}</span><button class="btn primary big wnx" data-act="wNext">Volgende ▶</button></div></div>`;
+}
+/* --- meerkeuzespellen: Parabool-Parade, Breukenbreker, Toppenjacht --- */
+function faNext() {
+  const no = FA_GAME[G.game];
+  if (no === 2) { fsNext(); return; } if (no === 3) { fzNext(); return; }
+  G.fq = FA.gen(no, G.cfg.fal, faGoal()); G.locked = false; G.after = null; G.qStart = performance.now(); flash('');
+  $('#faq').innerHTML = `<div class="wlab">${FA_HINT[no]}</div><div class="faqt">${G.fq.q}</div>`;
+  $('#faexp').innerHTML = '';
+  $('#faopts').innerHTML = G.fq.o.map((o, i) => `<button class="ans wopt faopt" data-fast="fa" data-arg="${i}">${o}</button>`).join('');
+}
+function faPick(i) {
+  const q = G && G.fq; if (!G || !G.running || G.locked || !q) return;
+  i = +i; const ok = i === q.a; G.locked = true;
+  recordGen(FA_LET[G.game], q.tag, ok, ok ? null : q.tag, faPlain(q.q), faPlain(q.o[q.a]), faPlain(q.o[i]));
+  const btns = document.querySelectorAll('#faopts .faopt'); btns[q.a].classList.add('right');
+  if (ok) {
+    award(10); beep(true); flash('good', 400);
+    if (G.game === 'fabreuk' && performance.now() - G.qStart < 8000) bonusPoints(5, 'snel');
+    G.timers.push(setTimeout(() => { if (G && G.running && G.fq === q) faNext(); }, 1000)); return;
+  }
+  btns[i].classList.add('wrong'); penalty(); beep(false); flash('bad', 500); faWrongTag(q.tag);
+  G.mistakes.push({q: faPlain(q.q) + ' → ' + faPlain(q.o[q.a]), given: faPlain(q.o[i])});
+  faAfterWrong(`<div class="hlhead"><span class="hlbad">✗ Jij koos: ${q.o[i]}</span><span class="hlgood">✓ Goed: ${q.o[q.a]}</span></div><div class="faex">${q.ex || ''}</div>${faTheory(q.tag)}`, faNext);
+}
+/* --- Stappenspel: een hele vergelijking stap voor stap --- */
+function fsNext() {
+  G.sq = FA.gen(2, G.cfg.fal, faGoal()); G.sq.si = 0; G.sq.perr = 0; G.after = null; fsRender();
+}
+function fsRender(done) {
+  const q = G.sq; G.locked = false; G.qStart = performance.now(); flash('');
+  $('#faq').innerHTML = `<div class="wlab">Los op</div><div class="fseq">${q.steps[0].s}</div>` +
+    q.steps.slice(0, q.si).map(x => `<div class="fsop">→ ${x.o}</div><div class="fseq">${x.n}</div>`).join('') +
+    (done ? '<div class="fsdone">✓ Opgelost</div>' : `<div class="fsask">Stap ${q.si + 1}: wat is de volgende stap?</div>`);
+  const qc = $('#faq'); qc.scrollTop = qc.scrollHeight;
+  $('#faexp').innerHTML = '';
+  if (done) { $('#faopts').innerHTML = ''; return; }
+  const s = q.steps[q.si]; G.sc = FA.mk('', s.o, s.w, q.tag, s.ex);
+  $('#faopts').innerHTML = G.sc.o.map((o, j) => `<button class="ans wopt faopt fsopt" data-fast="fa" data-arg="${j}">${o}</button>`).join('');
+}
+function fsPick(i) {
+  const q = G && G.sq, c = G && G.sc; if (!G || !G.running || G.locked || !q || !c) return;
+  i = +i; const ok = i === c.a, s = q.steps[q.si]; G.locked = true;
+  recordGen('S', q.tag, ok, ok ? null : q.tag, faPlain(s.s), faPlain(s.o), faPlain(c.o[i]));
+  const btns = document.querySelectorAll('#faopts .faopt'); btns[c.a].classList.add('right');
+  if (ok) { award(5); beep(true); flash('good', 350); G.timers.push(setTimeout(() => { if (G && G.running && G.sq === q) fsAdvance(); }, 650)); return; }
+  btns[i].classList.add('wrong'); penalty(); beep(false); flash('bad', 500); q.perr = 1; faWrongTag(q.tag);
+  G.mistakes.push({q: faPlain(s.s) + ' → ' + faPlain(s.o), given: faPlain(c.o[i])});
+  faAfterWrong(`<div class="hlhead"><span class="hlbad">✗ Jij koos: ${c.o[i]}</span><span class="hlgood">✓ Goed: ${s.o}</span></div><div class="faex">${s.ex || ''} De goede stap wordt uitgevoerd.</div>${faTheory(q.tag)}`, fsAdvance);
+}
+function fsAdvance() {
+  const q = G.sq; q.si++;
+  if (q.si >= q.steps.length) {
+    fsRender(true); if (!q.perr) bonusPoints(10, 'foutloos');
+    G.locked = true; G.timers.push(setTimeout(() => { if (G && G.running && G.sq === q) fsNext(); }, 1600)); return;
+  }
+  fsRender();
+}
+/* --- Schuifpuzzel: grafieken verschuiven en vermenigvuldigen --- */
+function fzNext() {
+  const q = FA.gen(3, G.cfg.fal, faGoal()); G.zq = q; G.locked = false; G.after = null; G.qStart = performance.now(); flash('');
+  const sc = ['x-as ×2', 'x-as ×½', 'x-as ×−1', 'y-as ×2', 'y-as ×½'].slice(0, G.cfg.fal > 1 ? 5 : 3);
+  $('#fzleft').innerHTML = `<div class="card fzc"><div class="wlab">Maak van de grafiek de doelgrafiek</div>
+      <div class="fzf">van <b>${FA.fm(q.ty, q.sp, q.sq)}</b><br>naar <b>${FA.fm(q.ty, q.tp, q.tq, q.tk)}</b></div>
+      <div class="muted small">Minimaal aantal stappen: <b>${q.min}</b>. Elk hokje verschuiven en elke vermenigvuldiging telt als 1 stap.</div></div>
+    <div class="card fzc" id="fzlive"></div>
+    ${q.verm ? `<div class="fzsc">${sc.map((t, o) => `<button class="key sm" data-fast="fzs" data-arg="${o}">${t}</button>`).join('')}</div>` : ''}
+    <div class="fzpad"><button class="key" style="grid-area:1/2" data-fast="fzm" data-arg="0,1" aria-label="omhoog">▲</button><button class="key" style="grid-area:2/1" data-fast="fzm" data-arg="-1,0" aria-label="naar links">◀</button><button class="key" style="grid-area:2/3" data-fast="fzm" data-arg="1,0" aria-label="naar rechts">▶</button><button class="key" style="grid-area:3/2" data-fast="fzm" data-arg="0,-1" aria-label="omlaag">▼</button></div>
+    <div class="fzrow"><button class="btn" data-fast="fzu">↶ Stap terug</button><button class="btn" data-fast="fzr">Opnieuw</button><button class="btn primary" data-fast="fzc">Controleer</button></div>`;
+  $('#faexp').innerHTML = '';
+  fzDraw();
+}
+function fzDraw() {
+  const q = G.zq;
+  let s = '<svg viewBox="-7 -7 14 14" class="fzplot" role="img" aria-label="assenstelsel met grafiek">';
+  for (let i = -7; i <= 7; i++) s += `<line x1="${i}" y1="-7" x2="${i}" y2="7" class="gl${i ? '' : ' ax'}"/><line x1="-7" y1="${i}" x2="7" y2="${i}" class="gl${i ? '' : ' ax'}"/>`;
+  for (let i = -6; i <= 6; i += 2) if (i) s += `<text class="tn" x="${i - .2}" y=".75">${FA.m(i)}</text><text class="tn" x=".15" y="${-i + .2}">${FA.m(i)}</text>`;
+  s += '<g transform="scale(1,-1)">' + FA.path(q.ty, 0, 0, 'gh') + FA.path(q.ty, q.tp, q.tq, 'tgt', q.tk) + (q.ty === 'hyp' ? `<line class="as" x1="${q.p}" y1="-7" x2="${q.p}" y2="7"/><line class="as" x1="-7" y1="${q.q}" x2="7" y2="${q.q}"/>` : '') + FA.path(q.ty, q.p, q.q, 'cur', q.k) + '</g></svg>';
+  const L = []; for (const e of q.log) { const l = L[L.length - 1]; if (e.c === 'T') { if (l && l.c === 'T') { l.dx += e.dx; l.dy += e.dy; l.n++; } else L.push({c: 'T', dx: e.dx, dy: e.dy, n: 1}); } else L.push({c: 'S', o: e.o, n: 1}); }
+  $('#fzright').innerHTML = `<div class="fzwrap">${s}</div><div class="fzleg"><span class="lc"></span>jouw grafiek <span class="lt"></span>doelgrafiek <span class="lg"></span>start</div>
+    <div class="fzhist">${L.length ? L.map((e, j) => `${j + 1}. ${e.c === 'T' ? 'translatie ' + FA.pt(e.dx, e.dy) : FA.SN[e.o]} <span class="muted">(${e.n} ${e.n > 1 ? 'stappen' : 'stap'})</span>`).join('<br>') : '<span class="muted">Nog niets gedaan.</span>'}</div>`;
+  $('#fzlive').innerHTML = `<div class="wlab">Jouw grafiek</div><div class="fzf"><b>${FA.fm(q.ty, q.p, q.q, q.k)}</b></div><div class="muted small">${q.ty === 'hyp' ? `Asymptoten: x = ${FA.m(q.p)} en y = ${FA.m(q.q)}` : `Top: ${FA.pt(q.p, q.q)}`}</div>
+    ${q.verm ? '<div class="muted small">x-as ×g: alle y-waarden ×g. y-as ×g: alle x-waarden ×g.</div>' : ''}<div class="small">Jouw stappen: <b>${q.log.length}</b> (minimaal ${q.min})</div>`;
+}
+function fzAct(f, arg) {
+  const q = G && G.zq; if (!G || !G.running || G.locked || !q) return;
+  const push = e => { q.stk.push({p: q.p, q: q.q, k: q.k}); q.log.push(e); };
+  if (f === 'fzm') { const [dx, dy] = arg.split(',').map(Number); push({c: 'T', dx, dy}); q.p = Math.max(-7, Math.min(7, q.p + dx)); q.q = Math.max(-7, Math.min(7, q.q + dy)); }
+  else if (f === 'fzs') { push({c: 'S', o: +arg}); Object.assign(q, FA.ap(q.ty, q, +arg)); }
+  else if (f === 'fzu') { if (!q.log.length) return; q.log.pop(); Object.assign(q, q.stk.pop()); }
+  else if (f === 'fzr') Object.assign(q, {p: q.sp, q: q.sq, k: 1, log: [], stk: []});
+  else if (f === 'fzc') { fzCheck(); return; }
+  $('#faexp').innerHTML = ''; fzDraw();
+}
+function fzCheck() {
+  const q = G.zq, n = q.log.length, ok = q.p === q.tp && q.q === q.tq && Math.abs(q.k - q.tk) < 1e-9;
+  const target = faPlain(FA.fm(q.ty, q.tp, q.tq, q.tk)), mine = faPlain(FA.fm(q.ty, q.p, q.q, q.k));
+  if (!q.cnt) recordGen('Z', q.tag, ok, ok ? null : q.tag, `${faPlain(FA.fm(q.ty, q.sp, q.sq))} → ${target}`, target, mine);
+  if (ok) {
+    G.locked = true; const min = n <= q.min;
+    award(10);
+    if (min) bonusPoints(5, 'minimaal'); beep(true); flash('good', 400);
+    $('#faexp').innerHTML = `<div class="fzmsg good">✓ Goed! ${min ? 'Minimaal aantal stappen gehaald: ' + n + '.' : 'Het kon in ' + q.min + ' stappen; jij gebruikte er ' + n + '.'}</div>`;
+    G.timers.push(setTimeout(() => { if (G && G.running && G.zq === q) fzNext(); }, 2400)); return;
+  }
+  if (!q.cnt) { q.cnt = 1; faWrongTag(q.tag); G.mistakes.push({q: `Schuif naar ${target}`, given: mine}); }
+  penalty(); beep(false); flash('bad', 450);
+  $('#faexp').innerHTML = `<div class="fzmsg bad">Nog niet goed. Let op: x − 3 is 3 naar rechts. Vermenigvuldigen verandert ook de top of asymptoot mee. ${faTheory(q.tag)}</div>`;
+}
+function faResultExtra() {
+  const tags = Object.entries(G.faW || {}).sort((a, b) => b[1] - a[1]);
+  return `<div class="mist fath2"><h4>Theorie om door te nemen</h4>${tags.length ? tags.map(([k, n]) => `<div>📖 ${FA_TH[k][0]} <span class="muted">${FA_TH[k][1]}</span> <b class="bad">${n}× fout</b></div>`).join('') : '<div>Geen fouten: kies een hogere moeilijkheid voor een nieuwe uitdaging!</div>'}</div>`;
+}
+/* --- Klassikaal: één vraag per keer --- */
+function faDuo(gid, cfg) {
+  const no = FA_GAME[gid], key = 'fg' + no, goals = cfg[key] && cfg[key].length ? cfg[key] : OPTDEFS[key].choices.map(c => c.v), go = goals[rnd(0, goals.length - 1)];
+  if (no === 2) {
+    const q = FA.gen(2, cfg.fal, go), si = rnd(0, q.steps.length - 1), s = q.steps[si], c = FA.mk('', s.o, s.w, q.tag, s.ex);
+    return {prompt: `<div class="dsub">Wat is de volgende stap?</div><div class="ddesc faqt">${s.s}</div>`, opts: c.o.map((h, j) => ({html: h, ok: j === c.a, err: q.tag})), explain: s.ex, full: `${s.ex}${faTheory(q.tag)}`};
+  }
+  if (no === 3) {
+    const ty = go === 'par' ? 'par' : 'hyp', dx = [-4, -3, -2, -1, 1, 2, 3, 4][rnd(0, 7)], dy = [-3, -2, -1, 1, 2, 3][rnd(0, 5)];
+    const opt = (a, b) => FA.fm(ty, a, b), good = opt(dx, dy), tag = ty === 'hyp' ? '3A' : '3V';
+    const all = shuffle([[dx, dy, true], [-dx, dy], [dx, -dy], [-dx, -dy]]);
+    return {prompt: `<div class="dsub">Welke formule krijg je?</div><div class="ddesc faqt">De grafiek van <b>${FA.fm(ty, 0, 0)}</b> wordt verschoven over de translatie ${FA.pt(dx, dy)}.</div>`,
+      opts: all.map(([a, b, ok]) => ({html: opt(a, b), ok: !!ok, err: tag})), explain: `Goed: ${good}`, full: `Translatie (a, b): vervang x door x − a en tel b op. Goed: <b>${good}</b>${faTheory(tag)}`};
+  }
+  const q = FA.gen(no, cfg.fal, go);
+  return {prompt: `<div class="dsub">${FA_HINT[no]}</div><div class="ddesc faqt">${q.q}</div>`, opts: q.o.map((h, j) => ({html: h, ok: j === q.a, err: q.tag})), explain: q.ex, full: `${q.ex}${faTheory(q.tag)}`};
+}
+
 /* ===================== Voorrangsregels ===================== */
 // Tokens: {t:'n', v} | {t:'op', v:'+'|'−'|'×'|':'} | {t:'('} | {t:')'}
 const VR_LEVELS = [['×', ':'], ['+', '−']];
@@ -4141,6 +4504,7 @@ function duoQuestion(gid, cfg) {
       explain: `In regel ${q.bad} ging het mis (${FD_ERRNAME[q.err] || 'rekenfout'}). Goed was: = ${vrText(q.opts.find(x => x.ok).t)}`,
       rec: (ln, o) => push(ln, [Math.floor(Date.now() / 1000), DUO.classId, ln.p.id, 'd', vrKind(q.good[q.bad - 1], vrValid(q.good[q.bad - 1])[0]), o.ok ? 1 : 0, o.ok ? '' : q.err, Math.round(performance.now() - ms0), 0, `Fout zoeken: ${start}`, `regel ${q.bad}`, o.html])};
   }
+  if (FA_GAME[gid]) return faDuo(gid, cfg);
   if (gid === 'herleid') {
     const q = genHL(cfg), good = q.opts.find(o => o.ok);
     return {prompt: `<div class="hlq duo">${q.prompt}</div>`, opts: q.opts.map(o => ({html: q.optHTML(o), ok: o.ok, err: o.err})),
@@ -4487,7 +4851,7 @@ function showSettings() {
           <div class="lvrow" style="margin-top:0"><b>Leerlingen tonen als</b><div class="seg">${[['karakter', 'Karakter', 'eigen figuur'], ['pixel', 'Pixel-foto', 'bewerkte foto'], ['foto', 'Foto', 'echte foto']].map(([v, n, sub]) => `<button class="${avMode() === v ? 'on' : ''}" data-act="avMode" data-arg="${v}">${n}<small>${sub}</small></button>`).join('')}</div></div>
           ${avMode() !== 'foto' ? `<div class="lvrow"><b>Stijl van de karakters</b><div class="seg avstyles">${[['street', 'Streetwear'], ['held', 'Helden'], ['dier', 'Dieren'], ['strak', 'Strak'], ['monster', 'Monsters'], ['robot', 'Robots'], ['pixel', 'Pixel']].map(([v, n]) => `<button class="${avStyle() === v ? 'on' : ''}" data-act="avStyle" data-arg="${v}"><span class="av char sm">${charSVG(4242, v)}</span>${n}</button>`).join('')}</div></div>` : ''}
           <div class="lvrow"><b>Weergavegrootte</b><div class="seg">${[[0.75, 'Klein'], [0.85, 'Normaal'], [1, 'Groot']].map(([v, n]) => `<button class="${zoomLv() === v ? 'on' : ''}" data-act="zoom" data-arg="${v}">${n}</button>`).join('')}</div></div>
-          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 9-11-2026</span></div>
+          <div class="row"><button class="btn" data-act="touchTest">✋ Aanraaktest</button><span class="muted small">Versie 11-11-2026</span></div>
           <div class="row between"><span>Kleuren stempelkaarten <small class="muted">(tik om te wisselen)</small></span><div class="kcrow">${kCards().map((k, i) => `<button class="kcbtn" style="--kc:${KCOL[k]}" data-act="kcol" data-arg="${i}"><b>${'ABCD'[i]}</b>${k}</button>`).join('')}</div></div>
           <div class="row between"><span>Geluid</span><button class="switch ${D.sound ? 'on' : ''}" data-act="sound" aria-label="Geluid"><i></i></button></div>
           <div class="row"><button class="btn" data-act="exportB">💾 Back-up opslaan</button><button class="btn" data-act="importB">📂 Back-up terugzetten</button></div>
@@ -4732,6 +5096,8 @@ function fastAct(b) {
   else if (f === 'key') rrKey(b.dataset.arg);
   else if (f === 'bmove') blMove(b.dataset.arg);
   else if (f === 'bkey') bdKey(b.dataset.arg);
+  else if (f === 'fa') { if (G && G.game === 'fastap') fsPick(b.dataset.arg); else faPick(b.dataset.arg); }
+  else if (f && f.startsWith('fz')) fzAct(f, b.dataset.arg || '');
   else if (f === 'bundo') blUndo();
   else if (f === 'gans') grAnswer(b.dataset.arg);
   else if (f === 'vop') vrOp(b.dataset.arg);
