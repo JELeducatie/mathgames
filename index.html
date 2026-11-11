@@ -443,6 +443,8 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 @keyframes blink{to{opacity:.55}}
 .ttext{font-family:var(--fd)}
 .timer.untimed{display:flex;align-items:center;justify-content:center}.timer.untimed .timerfill,.timer.untimed::after{display:none}.tnote{font-size:.95rem;color:var(--muted);font-weight:700}
+.laneover{position:fixed;left:.6rem;right:.6rem;bottom:.6rem;z-index:50;background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--ctaInk);font-family:var(--fd);font-weight:900;font-size:1.6rem;text-align:center;padding:.7rem;border-radius:1rem;box-shadow:0 .5rem 1.5rem rgba(0,0,0,.5)}.laneover span{display:block;font-size:1rem;font-family:inherit;opacity:.8}
+.ldone{font-weight:800;color:var(--gold);font-size:.95rem;margin-left:.4rem;white-space:nowrap}
 .donebtn{min-height:3rem;padding:.3rem 1.4rem;font-size:1.15rem;white-space:nowrap}
 .scorebox b{font-family:var(--fd);font-style:italic;color:var(--gold);text-shadow:0 .15rem 0 rgba(0,0,0,.5)}
 .qcard{border-radius:1.1rem;border:.3rem solid rgba(255,255,255,.08)}
@@ -775,6 +777,7 @@ svg.tapgraph{cursor:crosshair;touch-action:none}
 .bwcg{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}.bwcg .key{min-height:2.9rem;font-size:1.3rem;border-radius:.6rem}.bwcg .key.eq{grid-column:span 2;background:linear-gradient(180deg,var(--cta1),var(--cta2));color:var(--ctaInk);font-weight:900}
 .bwok{background:rgba(46,229,157,.12);color:var(--good);border-radius:1rem;padding:.7rem 1.1rem;font-size:1.3rem;font-weight:800}.bwok .bwe{color:#DCE1F7;font-weight:500;font-size:1.1rem;margin-top:.2rem}
 .bwe{font-size:1.25rem}.bwe b{color:var(--good)}
+.bwdone{font-size:1.6rem;color:var(--gold);margin-top:.2rem}
 .bwhint{background:rgba(255,210,63,.12);color:var(--gold);border-radius:1rem;padding:.6rem 1rem;font-size:1.2rem;font-weight:700}
 .bwpause .bwtools{display:none}
 .bwres .bwrespark svg{width:100%;max-width:34rem;max-height:30vh;border-radius:1rem;display:block;margin:.4rem 0 .8rem}
@@ -1466,7 +1469,7 @@ const GAMES = {
   },
   mystery: {
     section: 'coord', title: 'Mystery Graph', sub: 'Tik de punten aan in het assenstelsel. Welk plaatje verschijnt er?', scoreLabel: 'punten goed',
-    opts: ['mgl', 'time'], choices: {time: [120, 180, 300, 480].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {mgl: 0, time: 180},
+    opts: ['mgl', 'time'], choices: {time: [{v: 0, name: 'Geen tijd', sub: 'tot het plaatje af is'}].concat([120, 180, 300].map(t => ({v: t, name: timeLabel(t), sub: 'zoveel mogelijk plaatjes'})))}, defaults: {mgl: 0, time: 0}, resultExtra: () => mgResultExtra(),
     example: c => `Voorbeeld: trek een lijn naar <b>${c.mgl === 3 ? '(4,5; −2)' : '(3, −2)'}</b>`,
     tile: () => `<div class="mini-w"><span>Trek een lijn naar (3, −2)</span><b>🏠 ★ Huis ★</b></div>`,
     frame: () => `<div class="mgwrap"><div class="mgboard" id="mgboard"></div><div class="mgside"><div class="qcard wq mgcard" id="qcard"><div class="wlab" id="mglab"></div><div class="mgtg" id="mgtg"></div><div id="mgprog"></div></div><div id="mgexp"></div></div></div>`,
@@ -1474,7 +1477,7 @@ const GAMES = {
   },
   bouw: {
     section: 'bouw', title: 'De Bouwmeesters', sub: 'Bouw je eigen pretpark: maten, oppervlakte, cirkels, inhoud en aanzichten', scoreLabel: 'opdrachten goed',
-    opts: ['bm', 'bml', 'time'], choices: {time: [180, 300, 480, 600].map(t => ({v: t, name: timeLabel(t)}))}, defaults: {bm: ['meet', 'opp', 'cirkel', 'inhoud', 'aanzicht'], bml: 0, time: 300},
+    opts: ['bm', 'bml', 'time'], choices: {time: [{v: 0, name: 'Geen tijd', sub: 'tot het pretpark af is'}].concat([180, 300, 600].map(t => ({v: t, name: timeLabel(t)})))}, defaults: {bm: ['meet', 'opp', 'cirkel', 'inhoud', 'aanzicht'], bml: 0, time: 0},
     example: c => { const mi = BW_MIS.findIndex(m => m[0] === (c.bm[0] || 'opp')); return `Voorbeeld: ${bwPlain(BW.gen(mi, 0, c.bml).t)}`; },
     tile: () => `<div class="mini-w"><span>Zwembad 12 × 5 × 2 m</span><b>🎢 120 m³ ✓</b></div>`,
     frame: () => `<div class="bwwrap" id="bwwrap"><div class="bwleft"><div class="bwpark" id="bwpark"></div><div class="bwfig card" id="bwfig"></div></div><div class="bwright"><div class="qcard wq bwcard" id="qcard"><div class="faqt bwq" id="bwq"></div></div><div id="bwexp"></div><div id="bwtools" class="bwtools"></div></div></div>`,
@@ -1826,7 +1829,7 @@ function stopGame() {
 }
 function finish() {
   if (!G || !G.running) return;
-  if (LANE) { stopGame(); laneDone(); return; }
+  if (LANE) { stopGame(); laneDone(true); return; }
   stopGame(); saveAns();
   const mk = modeKey(G.game, G.cfg); let prevBest = null, rec = false;
   if (!G.player.guest && G.classId) {
@@ -4457,6 +4460,15 @@ function mgSvg(m, extra) {
   else if (idx > 0 && !steps[idx].f) Dt += `<circle cx="${steps[idx - 1].x}" cy="${-steps[idx - 1].y}" r=".45" class="mgpen"/>`;
   return `<svg viewBox="-11.6 -11.6 23.2 23.2" class="mgsvg" id="mgsvg" role="img" aria-label="assenstelsel">${mgGrid(P.dec)}<g>${F}</g><g>${L}</g><g>${Dt}</g>${extra || ''}</svg>`;
 }
+function mgDone(m) {
+  G.mgDone = (G.mgDone || []).concat([{n: m.P.n, err: m.err, t: performance.now() - G.end}]);
+  if (!G.cfg.time) $('#mglab').textContent = 'Het plaatje is af! Het is…';
+  G.timers.push(setTimeout(() => { if (!G || !G.running || G.mg !== m) return; if (!G.cfg.time) finish(); else mgNext(); }, G.cfg.time ? 2600 : 3200));
+}
+function mgResultExtra() {
+  const d = G.mgDone || []; if (!d.length) return '';
+  return `<div class="mist"><h4>🖼️ ${d.length === 1 ? 'Jouw plaatje' : 'Jouw plaatjes'}</h4>${d.map(x => `<div>★ <b>${x.n}</b> <span class="muted">${x.err ? x.err + (x.err === 1 ? ' fout' : ' fouten') : 'foutloos!'}${G.cfg.time ? '' : ' · denktijd ' + clockTxt(x.t)}</span></div>`).join('')}</div>`;
+}
 function mgCat(t, P) { return P.dec ? 'dec' : (t.x === 0 || t.y === 0) ? 'as' : (t.x > 0 && t.y > 0) ? 'k1' : 'neg'; }
 function mgErr(t, x, y) {
   if (x === t.x && y === t.y) return null;
@@ -4499,13 +4511,13 @@ function mgTap(e) {
     if (m.idx < m.steps.length) { mgRender(); return; }
     G.locked = true; mgRender(); beep(true); flash('good', 900);
     bonusPoints(m.err ? 10 : 20, m.err ? 'plaatje af' : 'foutloos plaatje');
-    G.timers.push(setTimeout(() => { if (G && G.running && G.mg === m) mgNext(); }, 2600)); return;
+    mgDone(m); return;
   }
   penalty(); beep(false); flash('bad', 500); m.err++;
   G.mistakes.push({q: `Punt ${want} (${m.P.n.toLowerCase()})`, given: got});
   const help = `<path d="M0 0H${t.x}V${-t.y}" class="mghelp"/><circle cx="${t.x}" cy="${-t.y}" r=".45" class="mggood"/><path d="M${x - .4} ${-y - .4}l.8 .8m0 -.8l-.8 .8" class="mgbad"/>`;
   mgRender(help); pauseClock();
-  G.after = () => { m.idx++; $('#mgexp').innerHTML = ''; if (m.idx < m.steps.length) mgRender(); else { G.locked = true; mgRender(); bonusPoints(10, 'plaatje af'); G.timers.push(setTimeout(() => { if (G && G.running && G.mg === m) mgNext(); }, 2600)); } };
+  G.after = () => { m.idx++; $('#mgexp').innerHTML = ''; if (m.idx < m.steps.length) mgRender(); else { G.locked = true; mgRender(); bonusPoints(10, 'plaatje af'); mgDone(m); } };
   $('#mgexp').innerHTML = `<div class="hlwork"><div class="hlhead"><span class="hlbad">✗ Jij tikte ${got}</span><span class="hlgood">✓ Gezocht: ${want}</span></div>
     <div class="mgsteps"><div><b>x = ${mgC(t.x)}</b>: ${mgDir(t.x, 'x')}</div><div><b>y = ${mgC(t.y)}</b>: ${mgDir(t.y, 'y')}</div></div>
     <div class="faex">${MG_TIP[err]} Het groene pad laat de weg zien. Het punt wordt nu voor je gezet.</div>
@@ -4611,8 +4623,10 @@ function bwCheck(x, given) {
     const v = $('#bwval'); if (v) v.classList.add('right');
     let built = '';
     if ((G.bwBuilt || 0) < BW.IT.length) { const it = BW.IT[G.bwBuilt || 0]; G.bwBuilt = (G.bwBuilt || 0) + 1; built = ` ${it[2]} ${it[1]} gebouwd!`; bwParkInfo(); }
-    $('#bwexp').innerHTML = `<div class="bwok">✓ Goed gebouwd!${built}<div class="bwe">${q.e}</div></div>`;
-    G.timers.push(setTimeout(() => { if (G && G.running && G.bq === b) bwNext(); }, 2200)); return;
+    const parkDone = G.bwBuilt >= BW.IT.length && built;
+    $('#bwexp').innerHTML = `<div class="bwok">✓ Goed gebouwd!${built}${parkDone ? '<div class="bwdone">🎉 Het pretpark is af!</div>' : ''}<div class="bwe">${q.e}</div></div>`;
+    if (parkDone) { G.bwTime = performance.now() - G.end; bonusPoints(25, 'pretpark af'); }
+    G.timers.push(setTimeout(() => { if (!G || !G.running || G.bq !== b) return; if (parkDone && !G.cfg.time) finish(); else bwNext(); }, parkDone ? 3000 : 2200)); return;
   }
   penalty(); beep(false); flash('bad', 500);
   const v = $('#bwval'); if (v) v.classList.add('wrong');
@@ -4632,7 +4646,7 @@ function bwDrag(e) {
 }
 function bwResultExtra() {
   const n = G.bwBuilt || 0, w = Object.entries(G.bwW || {}).sort((a, b) => b[1] - a[1]);
-  return `<div class="mist bwres"><h4>🎢 Jouw pretpark: ${n} van ${BW.IT.length} attracties gebouwd</h4><div class="bwrespark">${bwParkSvg()}</div>
+  return `<div class="mist bwres"><h4>🎢 ${n >= BW.IT.length ? `Het pretpark is af!${G.bwTime && !G.cfg.time ? ` <span class="muted">denktijd ${clockTxt(G.bwTime)}</span>` : ''}` : `Jouw pretpark: ${n} van ${BW.IT.length} attracties gebouwd`}</h4><div class="bwrespark">${bwParkSvg()}</div>
     ${w.length ? '<h4>Let op</h4>' + w.map(([k, c]) => `<div>⚠️ <b>${BW_ERR[k].name}</b> <span class="muted">${BW_ERR[k].tip}</span> <b class="bad">${c}×</b></div>`).join('') : ''}</div>`;
 }
 function bwDuo(cfg) {
@@ -4982,7 +4996,7 @@ function duoStart() {
   duoStop(); stopGame();
   DUO.sel.forEach(p => { if (!p.guest) DUO.played.add(p.id); });
   const c = curClass();
-  Object.assign(DUO, {game: GID, cfg: effCfg(c && c.id), classId: c ? c.id : null, last: 0});
+  Object.assign(DUO, {game: GID, cfg: effCfg(c && c.id), classId: c ? c.id : null, last: 0, doneN: 0});
   DUO.time = DUO.cfg.time;
   DUO.lanes = DUO.sel.map((p, i) => ({p, i, points: 0, good: 0, wrong: 0, streak: 0, best: 0, q: null, locked: true}));
   screen = 'duo'; rerender = null;
@@ -5036,6 +5050,11 @@ window.addEventListener('message', e => {
   const ln = DUO.lanes && DUO.lanes[m.lane]; if (!ln) return;
   const fr = $('#lfr' + ln.i); if (!fr || e.source !== fr.contentWindow) return;
   if (m.type === 'lane-ready') ln.ready = true;
+  else if (m.type === 'lane-done' && DUO.running && !ln.done) {
+    ln.done = true; DUO.doneN = (DUO.doneN || 0) + 1;
+    const h = $('#lane' + ln.i + ' .lhead'); if (h) h.insertAdjacentHTML('beforeend', `<span class="ldone">${['🥇', '🥈', '🥉'][DUO.doneN - 1] || '✓'} klaar</span>`);
+    if (DUO.lanes.every(l => l.done)) ACT.duoDone();
+  }
   else if (m.type === 'lane-ans') { if (!ln.p.guest && DUO.classId) A.push(m.row); }
   else if (m.type === 'lane-pts' && DUO.running) {
     Object.assign(ln, {points: m.points, good: m.good, wrong: m.wrong, streak: m.streak, best: m.best});
@@ -5043,8 +5062,11 @@ window.addEventListener('message', e => {
     else { const pt = $('#lpt' + ln.i); if (pt) pt.textContent = ln.points; }
   }
 });
-function laneDone() {
+function laneDone(self) {
   laneMsg({type: 'lane-pts', points: G.points, good: G.score, wrong: G.wrong, streak: G.streak, best: G.best});
+  const own = self && !G.cfg.time;   // spel zonder tijd: deze speler is zelf klaar (plaatje of pretpark af)
+  if (own) laneMsg({type: 'lane-done'});
+  if (own) { document.body.insertAdjacentHTML('beforeend', '<div class="laneover">🎉 Klaar! <span>Wacht op de anderen…</span></div>'); return; }   // plaatje of park blijft zichtbaar
   app.innerHTML = `<section class="screen lanewait"><div class="lwbig">⏱</div><div class="lwtxt">Tijd is om!</div></section>`;
 }
 function duoPts(ln, txt, up) {
