@@ -476,6 +476,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;background-im
 .lanemode .playbar{display:none}.lanemode .screen{padding:.6rem .7rem .8rem}
 .lanemode .bwrap{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:.6rem}.lanemode .side{display:flex;order:-1;padding:.5rem}
 .lanemode .side .scale{zoom:.62;margin:0}.lanemode .hopt{font-size:2rem}.lanemode .hgiven{font-size:2.5rem}.lanemode .hcard{padding:.8rem}.lanemode .side .vrules{font-size:.85em}
+/* Samen spelen: de uitwerking gaat voor; is de baan te laag, dan maakt de weegschaal/volgorde plaats */
+.lanemode .qcard.work{min-height:min(14rem,32vh)}
+@media (max-height:820px){
+.lanemode .bwrap>.side{display:none}.lanemode .bwrap{grid-template-rows:minmax(0,1fr)}
+.lanemode .moves{gap:.5rem;min-height:0}.lanemode .mv{height:3.7rem;min-width:5.5rem;padding:0 .9rem;font-size:1.8rem;border-radius:.9rem}
+.lanemode .bhint{font-size:.95rem}.lanemode .qcard.work{padding:.6rem 1rem}
+}
 .lanemode .gnwrap{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:.6rem}.lanemode .gnfig{padding:.3rem}.lanemode .gnleg{font-size:1rem;gap:.8rem}.lanemode .gnnote{font-size:1.15rem;padding:.6rem .9rem}
 .lanewait{align-items:center;justify-content:center;text-align:center}.lwtxt{font-family:var(--fd);font-style:italic;font-size:2rem;color:var(--muted)}.lwbig{font-size:4rem}
 /* uitslag */
